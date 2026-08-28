@@ -19,10 +19,12 @@ from __future__ import annotations
 
 import os
 import logging
+import time
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from fastapi.staticfiles import StaticFiles
 from dotenv import load_dotenv
 from pathlib import Path
 
@@ -35,6 +37,7 @@ from agentsociety2.backend.routers import (
     modules,
     agent_skills,
 )
+from agentsociety2.backend import dashboard
 
 # 加载环境变量
 _project_root = Path(__file__).resolve().parents[2]
@@ -42,6 +45,33 @@ load_dotenv(_project_root / ".env")
 
 
 # 配置标准 logging
+class _QuietInternalAccessFilter(logging.Filter):
+    """Keep high-frequency panel probes out of the persisted access log."""
+
+    def filter(self, record: logging.LogRecord) -> bool:
+        args = record.args
+        if isinstance(args, tuple) and len(args) >= 3:
+            path = str(args[2]).split("?", 1)[0]
+            return not (
+                path == "/health"
+                or path.startswith("/api/v1/dashboard/")
+                or path.startswith("/panel/assets/")
+            )
+        message = record.getMessage()
+        return not (
+            ' /health HTTP/' in message
+            or ' /api/v1/dashboard/' in message
+            or ' /panel/assets/' in message
+        )
+
+
+def _quiet_internal_access_logs() -> None:
+    access_logger = logging.getLogger("uvicorn.access")
+    if any(isinstance(item, _QuietInternalAccessFilter) for item in access_logger.filters):
+        return
+    access_logger.addFilter(_QuietInternalAccessFilter())
+
+
 def _setup_logging():
     """配置后端服务日志。
 
@@ -68,11 +98,13 @@ def _setup_logging():
     # 设置 agentsociety2 相关模块的日志等级
     agentsociety_logger = logging.getLogger("agentsociety2")
     agentsociety_logger.setLevel(level)
+    _quiet_internal_access_logs()
 
     return agentsociety_logger
 
 
 _setup_logging()
+dashboard.install_log_handler()
 from agentsociety2.logger import get_logger
 
 logger = get_logger()
@@ -115,6 +147,41 @@ app.include_router(replay.router, prefix="/api/v1")
 app.include_router(custom.router)
 app.include_router(modules.router)
 app.include_router(agent_skills.router)
+app.include_router(dashboard.router)
+
+app.mount(
+    "/panel/assets",
+    StaticFiles(directory=Path(__file__).resolve().parent / "web" / "assets"),
+    name="dashboard-assets",
+)
+
+
+@app.middleware("http")
+async def dashboard_request_history(request: Request, call_next):
+    """Collect bounded request metadata for the local observability panel."""
+
+    started_at = time.time()
+    status_code = 500
+    try:
+        response = await call_next(request)
+        status_code = response.status_code
+        return response
+    finally:
+        dashboard.record_request(
+            method=request.method,
+            path=request.url.path,
+            status=status_code,
+            duration_ms=(time.time() - started_at) * 1000,
+            timestamp=started_at,
+        )
+
+
+@app.get("/panel", include_in_schema=False)
+@app.get("/panel/", include_in_schema=False)
+async def browser_dashboard():
+    """Serve the read-only browser control room."""
+
+    return dashboard.panel_file()
 
 
 @app.get("/")
@@ -131,6 +198,7 @@ async def root():
             "custom": "/api/v1/custom/*",
             "modules": "/api/v1/modules/*",
             "agent_skills": "/api/v1/agent-skills/*",
+            "dashboard": "/panel",
         },
     }
 

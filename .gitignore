@@ -148,7 +148,8 @@ presentation/
 synthesis/
 user_data/
 datasets/
-/custom/
+# Track research source code in /custom/, exclude runtime caches
+/custom/**/__pycache__/
 
 # Game results
 result_*/
@@ -209,3 +210,5 @@ examples/
 # Allow JSON configs (but not generated JSON data)
 # Note: *.json and *.jsonl are ignored by default for generated data
 !packages/agentsociety2/agentsociety2/agent/skills/**/references/*.json
+# 调查微观数据（CHARLS/CLHLS）不入 git，只用于本地生成校准分布
+data/raw/

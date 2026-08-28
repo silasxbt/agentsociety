@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light" />
+    <title>AgentSociety 本地控制台</title>
+    <link rel="stylesheet" href="/panel/assets/panel.css" />
+    <script src="/panel/assets/panel.js" defer></script>
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="brand-block">
+        <div class="brand-mark" aria-hidden="true">AS</div>
+        <div>
+          <h1>AgentSociety</h1>
+          <p>本地控制台</p>
+        </div>
+      </div>
+      <div class="topbar-actions">
+        <span class="connection" id="connectionState"><span class="status-dot"></span>连接中</span>
+        <a class="button quiet" href="/docs" target="_blank" rel="noreferrer">API 文件</a>
+        <button class="button primary" id="refreshButton" type="button" title="刷新面板">刷新</button>
+      </div>
+    </header>
+
+    <nav class="tabs" aria-label="面板分页">
+      <button class="tab active" type="button" data-tab="overview">概览</button>
+      <button class="tab" type="button" data-tab="experiments">实验</button>
+      <button class="tab" type="button" data-tab="replay">Replay</button>
+      <button class="tab" type="button" data-tab="logs">日志</button>
+      <button class="tab" type="button" data-tab="requests">请求</button>
+    </nav>
+
+    <main>
+      <section class="page active" id="page-overview" aria-labelledby="overviewHeading">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">运行状态</p>
+            <h2 id="overviewHeading">本地运行概览</h2>
+          </div>
+          <p class="timestamp" id="lastUpdated">尚未同步</p>
+        </div>
+
+        <details class="usage-guide">
+          <summary>使用说明</summary>
+          <div class="guide-content">
+            <p>此页每 3.5 秒自动同步后端、模型路由和工作区状态。点击右上角“刷新”可立即同步。</p>
+            <p>密钥区域只显示是否已加载，不会在页面或接口中返回密钥内容。</p>
+          </div>
+        </details>
+
+        <div class="metric-strip" id="metricStrip">
+          <div class="metric"><span>后端</span><strong id="metricBackend">--</strong></div>
+          <div class="metric"><span>实验</span><strong id="metricExperiments">--</strong></div>
+          <div class="metric"><span>运行中</span><strong id="metricRunning">--</strong></div>
+          <div class="metric"><span>已完成</span><strong id="metricCompleted">--</strong></div>
+        </div>
+
+        <div class="overview-grid">
+          <section class="tool-panel">
+            <div class="panel-heading"><h3>服务</h3><span class="badge success" id="serviceBadge">检查中</span></div>
+            <dl class="definition-list">
+              <div><dt>版本</dt><dd id="serviceVersion">--</dd></div>
+              <div><dt>进程</dt><dd id="servicePid">--</dd></div>
+              <div><dt>运行时间</dt><dd id="serviceUptime">--</dd></div>
+              <div><dt>监听</dt><dd id="serviceBind">--</dd></div>
+            </dl>
+          </section>
+
+          <section class="tool-panel">
+            <div class="panel-heading"><h3>模型路由</h3><span class="badge" id="keyBadge">检查中</span></div>
+            <dl class="definition-list">
+              <div><dt>模型</dt><dd id="llmModel">--</dd></div>
+              <div><dt>端点</dt><dd class="truncate" id="llmBase">--</dd></div>
+              <div><dt>Coder</dt><dd id="coderModel">--</dd></div>
+              <div><dt>Embedding</dt><dd id="embeddingState">--</dd></div>
+            </dl>
+          </section>
+
+          <section class="tool-panel wide">
+            <div class="panel-heading"><h3>研究工作区</h3><span class="badge" id="workspaceBadge">检查中</span></div>
+            <dl class="definition-list compact">
+              <div><dt>名称</dt><dd id="workspaceName">--</dd></div>
+              <div><dt>路径</dt><dd class="path-value" id="workspacePath">--</dd></div>
+            </dl>
+            <p class="inline-error hidden" id="workspaceError"></p>
+          </section>
+        </div>
+      </section>
+
+      <section class="page" id="page-experiments" aria-labelledby="experimentsHeading">
+        <div class="section-heading">
+          <div><p class="eyebrow">实验运行</p><h2 id="experimentsHeading">实验进程</h2></div>
+          <span class="badge" id="experimentCount">0 个实验</span>
+        </div>
+        <details class="usage-guide">
+          <summary>使用说明</summary>
+          <div class="guide-content">
+            <p>面板会扫描当前工作区中的 <code>hypothesis_*/experiment_*</code> 目录，并从 <code>run/pid.json</code> 读取状态和步数。</p>
+            <p>当实验包含 Replay 数据时，点击表格中的“打开”会直接切换到 Replay 页。</p>
+          </div>
+        </details>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>状态</th><th>假设 / 实验</th><th>步数</th><th>开始</th><th>Replay</th><th>产出</th></tr></thead>
+            <tbody id="experimentRows"></tbody>
+          </table>
+          <div class="empty-state hidden" id="experimentEmpty">
+            <strong>暂无实验记录</strong>
+            <span>工作区已连接，新的 experiment 目录出现后会自动显示。</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="page" id="page-replay" aria-labelledby="replayHeading">
+        <div class="section-heading replay-heading">
+          <div><p class="eyebrow">可视回放</p><h2 id="replayHeading">模拟回放</h2></div>
+          <label class="select-label">实验<select id="replaySelect"><option value="">选择 Replay</option></select></label>
+        </div>
+        <details class="usage-guide">
+          <summary>使用说明</summary>
+          <div class="guide-content">
+            <p>先从右上角选择包含 Replay 数据的实验。拖动时间轴可跳转步骤，播放按钮可连续回放。</p>
+            <p>点击场景中的 Agent 圆点可查看该 Agent 的资料和当前步骤状态；地理数据存在时会按经纬度布局。</p>
+          </div>
+        </details>
+        <div class="replay-empty" id="replayEmpty">
+          <strong>选择一个包含 Replay 数据的实验</strong>
+          <span>时间轴、Agent 状态和环境快照会显示在这里。</span>
+        </div>
+        <div class="replay-workspace hidden" id="replayWorkspace">
+          <div class="replay-stage" id="replayStage" aria-label="Agent 位置视图"></div>
+          <aside class="replay-inspector">
+            <div class="panel-heading"><h3>当前步骤</h3><span class="badge" id="replayLayout">--</span></div>
+            <dl class="definition-list compact">
+              <div><dt>Step</dt><dd id="replayStep">--</dd></div>
+              <div><dt>时间</dt><dd id="replayTime">--</dd></div>
+              <div><dt>Agents</dt><dd id="replayAgents">--</dd></div>
+            </dl>
+            <div class="state-preview" id="replayStatePreview">没有可显示的状态数据</div>
+          </aside>
+          <div class="timeline-control">
+            <button class="icon-button" type="button" id="replayPlay" title="播放 Replay" aria-label="播放 Replay">▶</button>
+            <input id="replaySlider" type="range" min="0" max="0" value="0" step="1" />
+            <span id="replayPosition">0 / 0</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="page" id="page-logs" aria-labelledby="logsHeading">
+        <div class="section-heading">
+          <div><p class="eyebrow">实时流</p><h2 id="logsHeading">可视化日志</h2></div>
+          <div class="inline-controls">
+            <select id="logSource"><option value="backend">后端服务</option></select>
+            <label class="toggle"><input type="checkbox" id="logFollow" checked /><span>自动跟随</span></label>
+          </div>
+        </div>
+        <details class="usage-guide">
+          <summary>使用说明</summary>
+          <div class="guide-content">
+            <p>通过右上角下拉框切换后端日志或具体实验日志。“自动跟随”开启时会保持显示最新内容。</p>
+            <p>日志为只读视图，常见 API Key 和 Bearer Token 会在返回浏览器前自动隐藏。</p>
+          </div>
+        </details>
+        <div class="log-view" id="logView" role="log" aria-live="polite"></div>
+      </section>
+
+      <section class="page" id="page-requests" aria-labelledby="requestsHeading">
+        <div class="section-heading">
+          <div><p class="eyebrow">HTTP</p><h2 id="requestsHeading">API 请求</h2></div>
+          <span class="badge" id="requestCount">0 条</span>
+        </div>
+        <details class="usage-guide">
+          <summary>使用说明</summary>
+          <div class="guide-content">
+            <p>此页展示浏览器、脚本或其他客户端调用后端 API 的方法、路径、状态码和耗时。</p>
+            <p>面板自身的轮询、静态资源请求和健康检查已过滤，便于定位真实业务请求。</p>
+          </div>
+        </details>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>时间</th><th>方法</th><th>路径</th><th>状态</th><th>耗时</th></tr></thead>
+            <tbody id="requestRows"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <div class="toast hidden" id="toast" role="status"></div>
+  </body>
+</html>

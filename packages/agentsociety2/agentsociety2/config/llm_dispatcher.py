@@ -524,15 +524,20 @@ class LLMClient:
                     )
                     await asyncio.sleep(delay)
                 else:
+                    # 连接错误/瞬时 5xx 也指数退避：供应商断连往往持续数十秒，
+                    # 立即重试会在一秒内烧光所有尝试次数。
+                    delay = min(base_delay * (2**attempt), max_delay)
                     logger.warning(
                         "Request failed for '%s' via LLMClient(%s) (attempt %d/%d). "
-                        "Retrying immediately. Error: %s",
+                        "Backoff %.1fs. Error: %s",
                         effective_model,
                         self.model_type,
                         attempt + 1,
                         max_retries + 1,
+                        delay,
                         e,
                     )
+                    await asyncio.sleep(delay)
             finally:
                 await sem.release(overloaded=overloaded)
 
