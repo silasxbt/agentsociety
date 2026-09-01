@@ -179,7 +179,7 @@ async def dashboard_request_history(request: Request, call_next):
 @app.get("/panel", include_in_schema=False)
 @app.get("/panel/", include_in_schema=False)
 async def browser_dashboard():
-    """Serve the read-only browser control room."""
+    """Serve the local browser control room."""
 
     return dashboard.panel_file()
 

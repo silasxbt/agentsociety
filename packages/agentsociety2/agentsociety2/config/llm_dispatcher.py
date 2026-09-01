@@ -461,7 +461,7 @@ class LLMClient:
         model: str | None = None,
         messages: list[AllMessageValues] | None = None,
         stream: bool = False,
-        max_retries: int = 3,
+        max_retries: int | None = None,
         base_delay: float = 1.0,
         max_delay: float = 60.0,
         **kwargs: Any,
@@ -473,6 +473,9 @@ class LLMClient:
             )
         if messages is None:
             messages = []
+        if max_retries is None:
+            # 供应商断连可持续数分钟；默认重试次数可用环境变量整体调高
+            max_retries = int(os.getenv("AGENTSOCIETY_LLM_MAX_RETRIES", "3"))
         max_retries = max(max_retries, 1)
         effective_model = model or self.model_name
         self._ensure_runtime()
@@ -481,6 +484,15 @@ class LLMClient:
         assert sem is not None  # _ensure_runtime guarantees it
         last_error: Exception | None = None
         last_error_was_rate_limit = False
+
+        # Panel / env runtime controls (reasoning depth, temperature, …).
+        # Explicit caller kwargs win over env defaults.
+        try:
+            from agentsociety2.backend.panel_settings import llm_call_overrides
+
+            call_kwargs = {**llm_call_overrides(), **kwargs}
+        except Exception:
+            call_kwargs = dict(kwargs)
 
         for attempt in range(max_retries + 1):
             await sem.acquire()
@@ -492,7 +504,7 @@ class LLMClient:
                     messages=messages,
                     stream=False,
                     timeout=_LLM_REQUEST_TIMEOUT,
-                    **kwargs,
+                    **call_kwargs,
                 )
                 latency_ms = (time.monotonic() - t0) * 1000
                 sem.record_latency(latency_ms, is_error=False)

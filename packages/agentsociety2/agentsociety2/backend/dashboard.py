@@ -1,4 +1,4 @@
-"""Read-only browser dashboard for the AgentSociety v2 backend."""
+"""Browser dashboard for the AgentSociety v2 backend (status + local controls)."""
 
 from __future__ import annotations
 
@@ -15,8 +15,10 @@ from typing import Any
 
 from fastapi import APIRouter, HTTPException, Query
 from fastapi.responses import FileResponse
+from pydantic import BaseModel, Field
 
 from agentsociety2 import __version__
+from agentsociety2.backend import panel_settings as panel_cfg
 from agentsociety2.backend.path_security import (
     require_safe_segment,
     resolve_experiment_dir,
@@ -46,7 +48,22 @@ _INTERNAL_REQUEST_PATHS = {
     "/api/v1/dashboard/experiments",
     "/api/v1/dashboard/logs",
     "/api/v1/dashboard/requests",
+    "/api/v1/dashboard/settings",
+    "/api/v1/dashboard/presets",
 }
+
+
+class LlmSettingsUpdate(BaseModel):
+    model: str | None = None
+    coder_model: str | None = None
+    api_base: str | None = None
+    max_retries: int | None = Field(default=None, ge=1, le=20)
+    reasoning_depth: str | None = None
+    temperature: float | None = Field(default=None, ge=0.0, le=2.0)
+
+
+class ScaleApplyRequest(BaseModel):
+    scale: str = Field(..., description="small | medium | large")
 
 _log_entries: deque[dict[str, Any]] = deque(maxlen=_MAX_LOG_ENTRIES)
 _request_entries: deque[dict[str, Any]] = deque(maxlen=_MAX_REQUEST_ENTRIES)
@@ -342,6 +359,7 @@ async def get_dashboard_status() -> dict[str, Any]:
     with _state_lock:
         log_count = len(_log_entries)
         request_count = len(_request_entries)
+    panel_state = panel_cfg.load_settings()
     return {
         "service": "AI Social Scientist Backend",
         "version": __version__,
@@ -366,11 +384,88 @@ async def get_dashboard_status() -> dict[str, Any]:
             "embedding_configured": bool(
                 os.getenv("AGENTSOCIETY_EMBEDDING_API_KEY", "").strip()
             ),
+            "max_retries": int(os.getenv("AGENTSOCIETY_LLM_MAX_RETRIES", "3")),
+            "reasoning_depth": os.getenv("AGENTSOCIETY_LLM_REASONING_EFFORT", "none")
+            or "none",
+            "temperature": (
+                float(v)
+                if (v := os.getenv("AGENTSOCIETY_LLM_TEMPERATURE", "").strip())
+                else None
+            ),
+        },
+        "scale": {
+            "active": panel_state.active_scale,
+            "preset": panel_cfg.SCALE_PRESETS.get(panel_state.active_scale),
         },
         "experiments": _experiment_summary(experiments),
         "telemetry": {"log_entries": log_count, "request_entries": request_count},
         "links": {"panel": "/panel", "docs": "/docs", "openapi": "/openapi.json"},
     }
+
+
+@router.get("/presets")
+async def get_dashboard_presets() -> dict[str, Any]:
+    """Return model / reasoning / scale catalogs for the control panel."""
+
+    return panel_cfg.catalog_payload()
+
+
+@router.get("/settings")
+async def get_dashboard_settings() -> dict[str, Any]:
+    settings = panel_cfg.load_settings()
+    return {
+        "settings": settings.model_dump(),
+        "catalog": panel_cfg.catalog_payload(),
+        "effective": {
+            "model": os.getenv("AGENTSOCIETY_LLM_MODEL", ""),
+            "coder_model": os.getenv("AGENTSOCIETY_CODER_LLM_MODEL", "")
+            or os.getenv("AGENTSOCIETY_LLM_MODEL", ""),
+            "api_base": os.getenv("AGENTSOCIETY_LLM_API_BASE", ""),
+            "max_retries": int(os.getenv("AGENTSOCIETY_LLM_MAX_RETRIES", "3")),
+            "reasoning_depth": os.getenv("AGENTSOCIETY_LLM_REASONING_EFFORT", "none")
+            or "none",
+            "temperature": (
+                float(v)
+                if (v := os.getenv("AGENTSOCIETY_LLM_TEMPERATURE", "").strip())
+                else None
+            ),
+            "active_scale": settings.active_scale,
+        },
+    }
+
+
+@router.put("/settings")
+async def update_dashboard_settings(body: LlmSettingsUpdate) -> dict[str, Any]:
+    """Update runtime LLM controls from the local panel."""
+
+    settings = panel_cfg.load_settings()
+    llm = settings.llm
+    data = body.model_dump(exclude_unset=True)
+    for key, value in data.items():
+        setattr(llm, key, value)
+    try:
+        # Re-validate after partial update.
+        settings.llm = panel_cfg.LlmControlSettings.model_validate(llm.model_dump())
+    except Exception as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    applied = panel_cfg.apply_llm_runtime(settings.llm)
+    panel_cfg.save_settings(settings)
+    return {
+        "ok": True,
+        "settings": settings.model_dump(),
+        "applied": applied,
+    }
+
+
+@router.post("/settings/scale")
+async def apply_dashboard_scale(body: ScaleApplyRequest) -> dict[str, Any]:
+    """Activate small / medium / large agent-scale preset."""
+
+    try:
+        result = panel_cfg.apply_scale_preset(body.scale)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    return {"ok": True, **result}
 
 
 @router.get("/experiments")

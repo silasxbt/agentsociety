@@ -26,6 +26,7 @@
 
     <nav class="tabs" aria-label="面板分页">
       <button class="tab active" type="button" data-tab="overview">概览</button>
+      <button class="tab" type="button" data-tab="controls">控制</button>
       <button class="tab" type="button" data-tab="experiments">实验</button>
       <button class="tab" type="button" data-tab="replay">Replay</button>
       <button class="tab" type="button" data-tab="logs">日志</button>
@@ -74,7 +75,18 @@
               <div><dt>模型</dt><dd id="llmModel">--</dd></div>
               <div><dt>端点</dt><dd class="truncate" id="llmBase">--</dd></div>
               <div><dt>Coder</dt><dd id="coderModel">--</dd></div>
+              <div><dt>推理深度</dt><dd id="llmReasoning">--</dd></div>
               <div><dt>Embedding</dt><dd id="embeddingState">--</dd></div>
+            </dl>
+          </section>
+
+          <section class="tool-panel">
+            <div class="panel-heading"><h3>规模预设</h3><span class="badge" id="scaleBadge">检查中</span></div>
+            <dl class="definition-list">
+              <div><dt>当前</dt><dd id="scaleActive">--</dd></div>
+              <div><dt>总 Agent</dt><dd id="scaleTotal">--</dd></div>
+              <div><dt>焦点层</dt><dd id="scaleFocal">--</dd></div>
+              <div><dt>月数 / seed</dt><dd id="scaleMonthsSeeds">--</dd></div>
             </dl>
           </section>
 
@@ -85,6 +97,74 @@
               <div><dt>路径</dt><dd class="path-value" id="workspacePath">--</dd></div>
             </dl>
             <p class="inline-error hidden" id="workspaceError"></p>
+          </section>
+        </div>
+      </section>
+
+      <section class="page" id="page-controls" aria-labelledby="controlsHeading">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">运行参数</p>
+            <h2 id="controlsHeading">模型与规模控制</h2>
+          </div>
+          <span class="badge" id="controlsBadge">本地运行时</span>
+        </div>
+
+        <details class="usage-guide">
+          <summary>使用说明</summary>
+          <div class="guide-content">
+            <p>此页可切换默认 / Coder 模型、推理深度、重试次数，以及小 / 中 / 大规模 Agent 预设。</p>
+            <p>设置会写入进程环境变量并持久化到工作区 <code>.agentsociety/panel_settings.json</code>；规模预设同时写出 <code>scale_config.json</code> 供实验脚本读取。</p>
+            <p>推理深度对应 API 的 <code>reasoning_effort</code>（low / medium / high）；普通 chat 模型请选“关闭”。</p>
+          </div>
+        </details>
+
+        <div class="controls-grid">
+          <section class="tool-panel wide">
+            <div class="panel-heading"><h3>模型控制</h3><span class="badge" id="llmFormBadge">未保存</span></div>
+            <form id="llmForm" class="control-form" autocomplete="off">
+              <div class="form-grid">
+                <label class="field">
+                  <span>默认模型</span>
+                  <select id="modelSelect" name="modelSelect"></select>
+                </label>
+                <label class="field">
+                  <span>自定义模型 ID</span>
+                  <input id="modelCustom" name="modelCustom" type="text" placeholder="例如 gpt-5.6-sol" />
+                </label>
+                <label class="field">
+                  <span>Coder 模型</span>
+                  <input id="coderModelInput" name="coderModel" type="text" placeholder="默认与主模型相同" />
+                </label>
+                <label class="field">
+                  <span>API Base</span>
+                  <input id="apiBaseInput" name="apiBase" type="url" placeholder="https://..." />
+                </label>
+                <label class="field">
+                  <span>推理深度</span>
+                  <select id="reasoningSelect" name="reasoningDepth"></select>
+                </label>
+                <label class="field">
+                  <span>最大重试</span>
+                  <input id="maxRetriesInput" name="maxRetries" type="number" min="1" max="20" step="1" />
+                </label>
+                <label class="field">
+                  <span>Temperature（可选）</span>
+                  <input id="temperatureInput" name="temperature" type="number" min="0" max="2" step="0.1" placeholder="留空=不覆盖" />
+                </label>
+              </div>
+              <p class="hint" id="reasoningHint">选择推理深度后显示说明</p>
+              <div class="form-actions">
+                <button class="button primary" type="submit" id="saveLlmButton">应用模型设置</button>
+                <button class="button quiet dark" type="button" id="reloadSettingsButton">重新加载</button>
+              </div>
+            </form>
+          </section>
+
+          <section class="tool-panel wide">
+            <div class="panel-heading"><h3>规模预设</h3><span class="badge" id="scaleFormBadge">small</span></div>
+            <p class="hint">按文献与研究计划分三档：小规模对齐机制复现案例，中规模对齐社区验证，大规模对齐正式混合分层实验。</p>
+            <div class="scale-cards" id="scaleCards"></div>
           </section>
         </div>
       </section>

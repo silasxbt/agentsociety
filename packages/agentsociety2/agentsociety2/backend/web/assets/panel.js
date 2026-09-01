@@ -3,6 +3,8 @@
 const state = {
   status: null,
   experiments: [],
+  catalog: null,
+  settings: null,
   replay: {
     selected: null,
     timeline: [],
@@ -62,11 +64,15 @@ function showToast(message) {
   showToast.timer = window.setTimeout(() => toast.classList.add("hidden"), 3200);
 }
 
-async function fetchJson(path) {
+async function fetchJson(path, options = {}) {
   const controller = new AbortController();
   const timeout = window.setTimeout(() => controller.abort(), 12000);
   try {
-    const response = await fetch(path, { headers: { Accept: "application/json" }, signal: controller.signal });
+    const response = await fetch(path, {
+      headers: { Accept: "application/json", ...(options.headers || {}) },
+      signal: controller.signal,
+      ...options,
+    });
     if (!response.ok) {
       let detail = `${response.status} ${response.statusText}`;
       try {
@@ -75,8 +81,9 @@ async function fetchJson(path) {
       } catch (_) {
         // Keep the HTTP status when the response is not JSON.
       }
-      throw new Error(detail);
+      throw new Error(typeof detail === "string" ? detail : JSON.stringify(detail));
     }
+    if (response.status === 204) return null;
     return await response.json();
   } finally {
     window.clearTimeout(timeout);
@@ -107,7 +114,19 @@ function renderStatus(status) {
   setText("llmBase", status.llm.base_url);
   byId("llmBase").title = status.llm.base_url || "";
   setText("coderModel", status.llm.coder_model);
+  setText("llmReasoning", status.llm.reasoning_depth || "none");
   setText("embeddingState", status.llm.embedding_configured ? "已配置" : "未配置");
+
+  const scale = status.scale || {};
+  const preset = scale.preset || {};
+  setBadge("scaleBadge", scale.active || "未设置", "success");
+  setText("scaleActive", preset.label || scale.active || "--");
+  setText("scaleTotal", preset.total_agents);
+  setText("scaleFocal", preset.focal_agents != null ? `${preset.focal_agents}（LLM）` : "--");
+  setText(
+    "scaleMonthsSeeds",
+    preset.months != null ? `${preset.months} 月 / ${preset.seeds} seed` : "--"
+  );
 
   const workspace = status.workspace;
   setBadge("workspaceBadge", workspace.configured ? "已连接" : "未配置", workspace.configured ? "success" : "error");
@@ -201,6 +220,161 @@ function renderExperimentSelectors() {
     logSource.add(new Option(`实验 ${experiment.hypothesis_id}/${experiment.experiment_id}`, `experiment:${experiment.hypothesis_id}:${experiment.experiment_id}`));
   }
   if ([...logSource.options].some((option) => option.value === currentLog)) logSource.value = currentLog;
+}
+
+function fillSelect(select, items, valueKey = "id", labelKey = "label") {
+  const current = select.value;
+  select.replaceChildren();
+  for (const item of items) {
+    select.add(new Option(item[labelKey], item[valueKey]));
+  }
+  if ([...select.options].some((option) => option.value === current)) select.value = current;
+}
+
+function syncReasoningHint() {
+  const depth = byId("reasoningSelect").value;
+  const option = (state.catalog?.reasoning_depths || []).find((item) => item.id === depth);
+  byId("reasoningHint").textContent = option?.hint || "选择推理深度后显示说明";
+}
+
+function populateControlForm(payload) {
+  state.settings = payload.settings;
+  state.catalog = payload.catalog;
+  const effective = payload.effective || {};
+  const llm = payload.settings?.llm || {};
+
+  fillSelect(byId("modelSelect"), [
+    ...(state.catalog.models || []),
+    { id: "__custom__", label: "自定义…" },
+  ]);
+  fillSelect(byId("reasoningSelect"), state.catalog.reasoning_depths || []);
+
+  const model = effective.model || llm.model || "";
+  const known = (state.catalog.models || []).some((item) => item.id === model);
+  byId("modelSelect").value = known ? model : "__custom__";
+  byId("modelCustom").value = known ? "" : model;
+  byId("modelCustom").disabled = known;
+  byId("coderModelInput").value = effective.coder_model || llm.coder_model || "";
+  byId("apiBaseInput").value = effective.api_base || llm.api_base || "";
+  byId("reasoningSelect").value = effective.reasoning_depth || llm.reasoning_depth || "none";
+  byId("maxRetriesInput").value = String(effective.max_retries ?? llm.max_retries ?? 3);
+  byId("temperatureInput").value =
+    effective.temperature == null && llm.temperature == null
+      ? ""
+      : String(effective.temperature ?? llm.temperature);
+  syncReasoningHint();
+  setBadge("llmFormBadge", "已同步", "success");
+  renderScaleCards(effective.active_scale || payload.settings?.active_scale || "small");
+}
+
+function renderScaleCards(activeId) {
+  const cards = byId("scaleCards");
+  if (!cards || !state.catalog) return;
+  cards.replaceChildren();
+  setBadge("scaleFormBadge", activeId, "success");
+  for (const preset of state.catalog.scales || []) {
+    const card = document.createElement("article");
+    card.className = `scale-card${preset.id === activeId ? " active" : ""}`;
+    card.innerHTML = "";
+    const head = document.createElement("div");
+    head.className = "scale-card-head";
+    const title = document.createElement("strong");
+    title.textContent = preset.label;
+    const badge = document.createElement("span");
+    badge.className = "badge";
+    badge.textContent = preset.badge;
+    head.append(title, badge);
+
+    const metrics = document.createElement("dl");
+    metrics.className = "definition-list compact";
+    const rows = [
+      ["总 Agent", preset.total_agents],
+      ["焦点层 (LLM)", preset.focal_agents],
+      ["模拟月数", preset.months],
+      ["重复 seed", preset.seeds],
+      ["推理深度", preset.reasoning_depth],
+      ["工具轮次上限", preset.max_tool_rounds],
+    ];
+    for (const [label, value] of rows) {
+      const row = document.createElement("div");
+      const dt = document.createElement("dt");
+      dt.textContent = label;
+      const dd = document.createElement("dd");
+      dd.textContent = String(value);
+      row.append(dt, dd);
+      metrics.appendChild(row);
+    }
+
+    const rationale = document.createElement("p");
+    rationale.className = "hint";
+    rationale.textContent = preset.rationale;
+
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = preset.id === activeId ? "button quiet dark" : "button primary";
+    button.textContent = preset.id === activeId ? "当前预设" : "启用此规模";
+    button.disabled = preset.id === activeId;
+    button.addEventListener("click", () => applyScale(preset.id));
+
+    card.append(head, metrics, rationale, button);
+    cards.appendChild(card);
+  }
+}
+
+async function loadControlSettings() {
+  const payload = await fetchJson("/api/v1/dashboard/settings");
+  populateControlForm(payload);
+}
+
+async function saveLlmSettings(event) {
+  event.preventDefault();
+  const selectValue = byId("modelSelect").value;
+  const custom = byId("modelCustom").value.trim();
+  const model = selectValue === "__custom__" ? custom : selectValue;
+  if (!model) {
+    showToast("请选择或填写模型 ID");
+    return;
+  }
+  const temperatureRaw = byId("temperatureInput").value.trim();
+  const body = {
+    model,
+    coder_model: byId("coderModelInput").value.trim() || model,
+    api_base: byId("apiBaseInput").value.trim(),
+    reasoning_depth: byId("reasoningSelect").value,
+    max_retries: Number(byId("maxRetriesInput").value) || 3,
+    temperature: temperatureRaw === "" ? null : Number(temperatureRaw),
+  };
+  try {
+    setBadge("llmFormBadge", "保存中…", "warning");
+    await fetchJson("/api/v1/dashboard/settings", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+    showToast("模型设置已应用");
+    await loadControlSettings();
+    await refreshAll();
+  } catch (error) {
+    setBadge("llmFormBadge", "失败", "error");
+    showToast(error.message);
+  }
+}
+
+async function applyScale(scaleId) {
+  try {
+    setBadge("scaleFormBadge", "切换中…", "warning");
+    const result = await fetchJson("/api/v1/dashboard/settings/scale", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ scale: scaleId }),
+    });
+    showToast(`已启用${result.preset?.label || scaleId}预设`);
+    await loadControlSettings();
+    await refreshAll();
+  } catch (error) {
+    setBadge("scaleFormBadge", "失败", "error");
+    showToast(error.message);
+  }
 }
 
 function renderRequests(payload) {
@@ -461,6 +635,10 @@ async function refreshAll(showConfirmation = false) {
     renderExperiments(experiments);
     renderRequests(requests);
     await refreshLogs();
+    // Keep control form in sync without fighting in-progress edits on that tab.
+    if (!byId("page-controls")?.classList.contains("active") || !state.catalog) {
+      await loadControlSettings();
+    }
     if (showConfirmation) showToast("面板已同步");
   } catch (error) {
     setConnection(false, "后端离线");
@@ -477,6 +655,9 @@ function activateTab(name) {
     const view = byId("logView");
     if (byId("logFollow").checked) view.scrollTop = view.scrollHeight;
   }, 0);
+  if (name === "controls") {
+    loadControlSettings().catch((error) => showToast(error.message));
+  }
 }
 
 function bindEvents() {
@@ -496,6 +677,16 @@ function bindEvents() {
   document.addEventListener("visibilitychange", () => {
     if (document.hidden) stopReplay();
   });
+  byId("llmForm").addEventListener("submit", saveLlmSettings);
+  byId("reloadSettingsButton").addEventListener("click", () => {
+    loadControlSettings().then(() => showToast("已重新加载设置")).catch((error) => showToast(error.message));
+  });
+  byId("modelSelect").addEventListener("change", () => {
+    const custom = byId("modelSelect").value === "__custom__";
+    byId("modelCustom").disabled = !custom;
+    if (custom) byId("modelCustom").focus();
+  });
+  byId("reasoningSelect").addEventListener("change", syncReasoningHint);
 }
 
 bindEvents();

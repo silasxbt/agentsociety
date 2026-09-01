@@ -71,6 +71,7 @@ class ElderSupportEnv(EnvBase):
         seed: int = 42,
         decay_rate: float = 0.06,
         event_rates: Optional[Dict[str, float]] = None,
+        intervention: Optional[Dict[str, Any]] = None,
     ):
         """初始化环境。
 
@@ -102,6 +103,11 @@ class ElderSupportEnv(EnvBase):
         # 环境级月度计数
         self._counters = {"events": 0, "help_requests": 0, "help_success": 0}
         self._decision_buffer: List[dict] = []
+        # 干预配置：{"type": none|casework|timebank|platform,
+        #           "start_month": int, "end_month": int, "params": {...}}
+        self._intervention: Dict[str, Any] = intervention or {"type": "none"}
+        self._timebank_credits: Dict[int, float] = {}
+        self._timebank_pairs: List[List[int]] = []
 
     # ------------------------------------------------------------------
     # 初始化与状态
@@ -167,6 +173,10 @@ class ElderSupportEnv(EnvBase):
 - seed: int 随机种子（默认 42）
 - decay_rate: float 关系月衰减率（默认 0.06）
 - event_rates: dict 月度事件概率（illness/fall/neighbor_move）
+- intervention: dict 干预配置 {"type": none|casework|timebank|platform,
+  "start_month": int, "end_month": int, "params": {...}}。
+  casework=社工个案管理（n_workers/caseload）；timebank=时间银行互助
+  （max_per_helper/post_persist）；platform=数字平台志愿匹配（coverage）
 
 焦点老人可用工具：observe_my_life（观察自身处境）、call_family（给子女打电话）、
 visit_neighbor（找邻居朋友走动）、seek_help（求助）、join_activity（参加社区活动）、
@@ -190,6 +200,9 @@ stay_home（宅家并说明原因）。统计工具：community_report。
                     "started": self._started,
                     "elders": {str(k): v for k, v in self._elders.items()},
                     "counters": self._counters,
+                    "intervention": self._intervention,
+                    "timebank_credits": {str(k): v for k, v in self._timebank_credits.items()},
+                    "timebank_pairs": self._timebank_pairs,
                 },
                 ensure_ascii=False,
                 indent=2,
@@ -210,6 +223,11 @@ stay_home（宅家并说明原因）。统计工具：community_report。
         self._started = bool(data.get("started", True))
         self._elders = {int(k): v for k, v in data["elders"].items()}
         self._counters = dict(data["counters"])
+        self._intervention = dict(data.get("intervention", {"type": "none"}))
+        self._timebank_credits = {
+            int(k): v for k, v in data.get("timebank_credits", {}).items()
+        }
+        self._timebank_pairs = [list(p) for p in data.get("timebank_pairs", [])]
         self._rng = random.Random(self._seed)
         try:
             st = data.get("rng_state")
@@ -391,6 +409,158 @@ stay_home（宅家并说明原因）。统计工具：community_report。
             elder["months_no_emotional"] >= DEEP_ISOLATION_MONTHS
             and elder["month_instrumental"] == 0
         )
+
+    # ------------------------------------------------------------------
+    # 干预机制（配置驱动，确定性调度，同种子可复现）
+    # ------------------------------------------------------------------
+
+    def _intervention_active(self) -> bool:
+        iv = self._intervention
+        if iv.get("type", "none") == "none":
+            return False
+        return iv.get("start_month", 1) <= self._month <= iv.get("end_month", 10**9)
+
+    def _risk_rank(self) -> List[Dict[str, Any]]:
+        """按孤立风险从高到低排序（社工评估逻辑的简化版）。"""
+
+        def score(e: Dict[str, Any]) -> float:
+            return (
+                2.0 * e["months_no_emotional"]
+                + 1.5 * (1 - e["health"])
+                + 1.0 * max(0, 3 - len(e["ties"]))
+                + 0.8 * len(e["month_events"])
+                + e["loneliness"]
+            )
+
+        return sorted(self._elders.values(), key=score, reverse=True)
+
+    def _make_tie(self, elder, name, kind, strength=0.3) -> None:
+        if name not in elder["ties"]:
+            elder["ties"][name] = {
+                "kind": kind, "distance": "local", "contact_per_month": 0.0,
+                "strength": strength, "last_contact_month": self._month,
+                "emotional_count": 0, "instrumental_count": 0,
+            }
+
+    def _log_intervention(self, action: str, detail: dict) -> None:
+        self._decision_buffer.append(
+            {"month": self._month, "agent_id": -1, "action": action, **detail}
+        )
+
+    def _apply_intervention(self) -> None:
+        if not self._intervention_active():
+            return
+        iv_type = self._intervention["type"]
+        params = self._intervention.get("params", {})
+        if iv_type == "casework":
+            self._iv_casework(params)
+        elif iv_type == "timebank":
+            self._iv_timebank(params)
+        elif iv_type == "platform":
+            self._iv_platform(params)
+
+    def _iv_casework(self, params: dict) -> None:
+        """专业社工个案管理：风险评估 → 高风险者每月探访 + 家庭联结。"""
+        n_workers = int(params.get("n_workers", 2))
+        caseload = int(params.get("caseload", 8))
+        capacity = n_workers * caseload
+        for i, e in enumerate(self._risk_rank()[:capacity]):
+            worker = f"社工小{'王李张刘'[i % n_workers % 4]}"
+            self._make_tie(e, worker, "social_worker", 0.4)
+            # 专业会谈：情感支持概率高
+            self._touch_tie(e, worker, emotional=(self._rng.random() < 0.8), delta=0.05)
+            e["month_events"].append(f"{worker}本月上门探访了一次")
+            # 联结服务：概率性修复最强家庭纽带
+            fam = [n for n, t in e["ties"].items() if t["kind"] == "family"]
+            if fam and self._rng.random() < 0.5:
+                target = max(fam, key=lambda n: e["ties"][n]["strength"])
+                self._touch_tie(e, target, emotional=(self._rng.random() < 0.4),
+                                delta=0.05)
+                self._log_intervention(
+                    "casework_link", {"elder": e["id"], "family": target}
+                )
+            self._log_intervention("casework_visit", {"elder": e["id"], "worker": worker})
+        # 干预后风险重排在下月自然发生；工具性支持走正常求助渠道（社工是强可达 tie）
+
+    def _iv_timebank(self, params: dict) -> None:
+        """时间银行互助：低龄健康老人结对高风险老人，服务换积分，双向受益。
+
+        结对关系一旦建立即持续（写入双方关系账本），这是撤出后可持续性的机制来源。
+        """
+        max_per_helper = int(params.get("max_per_helper", 2))
+        # 每月重算可服务者；结对只增不减（关系存续）
+        helpers = [
+            e for e in self._elders.values()
+            if e["health"] >= 0.6 and e["age"] <= 78
+        ]
+        paired_recipients = {p[1] for p in self._timebank_pairs}
+        load = {h["id"]: 0 for h in helpers}
+        for hid, rid in self._timebank_pairs:
+            if hid in load:
+                load[hid] += 1
+        # 新结对：高风险且未被结对的老人
+        for e in self._risk_rank():
+            if e["id"] in paired_recipients or e["id"] in load:
+                continue
+            avail = [h for h in helpers if load.get(h["id"], 99) < max_per_helper]
+            if not avail:
+                break
+            h = self._rng.choice(avail)
+            self._timebank_pairs.append([h["id"], e["id"]])
+            load[h["id"]] += 1
+            paired_recipients.add(e["id"])
+            self._log_intervention("timebank_match", {"helper": h["id"], "elder": e["id"]})
+        # 每月互动：上门陪伴/搭手，帮扶者赚积分且自身也获益（互惠）
+        for hid, rid in self._timebank_pairs:
+            h, r = self._elders.get(hid), self._elders.get(rid)
+            if h is None or r is None:
+                continue
+            if self._rng.random() < 0.85:  # 偶有当月未成行
+                hname, rname = f"互助伙伴{h['name']}", f"互助对象{r['name']}"
+                self._make_tie(r, hname, "timebank", 0.35)
+                self._make_tie(h, rname, "timebank", 0.35)
+                self._touch_tie(r, hname, emotional=(self._rng.random() < 0.6),
+                                instrumental=(self._rng.random() < 0.5), delta=0.06)
+                self._touch_tie(h, rname, emotional=(self._rng.random() < 0.4),
+                                delta=0.04)
+                self._timebank_credits[hid] = self._timebank_credits.get(hid, 0) + 1
+                r["month_events"].append(f"{hname}本月来陪伴帮忙")
+
+    def _timebank_afterglow(self) -> None:
+        """时间银行撤出后：不再新结对、不再计积分，但已建立的人际结对
+        （非机构服务，而是真实互惠关系）以较低概率延续互动。
+        延续概率是 H4 的关键机制假设，报告中做敏感性分析。"""
+        post_p = float(
+            self._intervention.get("params", {}).get("post_persist", 0.5)
+        )
+        for hid, rid in self._timebank_pairs:
+            h, r = self._elders.get(hid), self._elders.get(rid)
+            if h is None or r is None:
+                continue
+            if self._rng.random() < post_p:
+                hname, rname = f"互助伙伴{h['name']}", f"互助对象{r['name']}"
+                if hname in r["ties"]:
+                    self._touch_tie(r, hname, emotional=(self._rng.random() < 0.5),
+                                    delta=0.03)
+                if rname in h["ties"]:
+                    self._touch_tie(h, rname, emotional=(self._rng.random() < 0.3),
+                                    delta=0.02)
+
+    def _iv_platform(self, params: dict) -> None:
+        """数字平台志愿匹配：响应式、覆盖广，但志愿者轮换、关系浅。"""
+        coverage = float(params.get("coverage", 0.6))
+        for e in self._elders.values():
+            need = bool(e["month_events"]) or e["months_no_emotional"] >= 2
+            if not need or self._rng.random() > coverage:
+                continue
+            vol = f"志愿者{self._rng.choice('甲乙丙丁戊己庚辛')}"
+            self._make_tie(e, vol, "volunteer", 0.2)
+            tie = e["ties"][vol]
+            tie["strength"] = min(tie["strength"], 0.35)  # 轮换制，关系难深
+            self._touch_tie(e, vol, emotional=(self._rng.random() < 0.3),
+                            instrumental=bool(e["month_events"]), delta=0.03)
+            e["month_events"].append(f"{vol}通过社区平台上门服务了一次")
+            self._log_intervention("platform_serve", {"elder": e["id"], "volunteer": vol})
 
     # ------------------------------------------------------------------
     # 焦点老人工具
@@ -602,6 +772,14 @@ stay_home（宅家并说明原因）。统计工具：community_report。
             self._counters["events"] += len(e["month_events"])
             e["month_emotional"] = 0
             e["month_instrumental"] = 0
+        # 干预（若在窗口内）；时间银行撤出后已结对关系以较低概率延续
+        if self._intervention_active():
+            self._apply_intervention()
+        elif (
+            self._intervention.get("type") == "timebank"
+            and self._month > self._intervention.get("end_month", 10**9)
+        ):
+            self._timebank_afterglow()
         # 规则层老人行动
         for e in self._elders.values():
             if not e["focal"]:
