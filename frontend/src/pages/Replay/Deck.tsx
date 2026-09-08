@@ -7,8 +7,8 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import { observer } from 'mobx-react-lite';
 import { StoreContext } from './store';
 
-// Set your mapbox access token here
-const MAPBOX_ACCESS_TOKEN = 'pk.eyJ1IjoiZmh5ZHJhbGlzayIsImEiOiJja3VzMWc5NXkwb3RnMm5sbnVvd3IydGY0In0.FrwFkYIMpLbU83K9rHSe8w';
+// Mapbox access token is injected at build time (frontend/.env: VITE_MAPBOX_TOKEN)
+const MAPBOX_ACCESS_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN ?? '';
 const MAP_STYLE = 'mapbox://styles/mapbox/standard';
 
 const LAND_USE_NAME = new Map<string, string>([

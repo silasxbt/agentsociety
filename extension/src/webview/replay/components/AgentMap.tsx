@@ -15,12 +15,11 @@ import { useReplay } from '../store';
 import { AGENT_ICONS, getAgentIconUrl } from '../icons';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
-// Public Mapbox token for client-side map rendering. This is a pk.* token
-// (public token) designed for browser use and is safe to expose in the client.
-// Override via the MAPBOX_ACCESS_TOKEN environment variable at build time.
+// Mapbox token must be provided via the MAPBOX_ACCESS_TOKEN environment
+// variable at build time; without it the map falls back to blank tiles.
 const MAPBOX_ACCESS_TOKEN = (
-  typeof process !== 'undefined' && process.env?.MAPBOX_ACCESS_TOKEN
-) || 'pk.eyJ1IjoiZmh5ZHJhbGlzayIsImEiOiJja3VzMWc5NXkwb3RnMm5sbnVvd3IydGY0In0.FrwFkYIMpLbU83K9rHSe8w';
+  (typeof process !== 'undefined' && process.env?.MAPBOX_ACCESS_TOKEN) || ''
+);
 const MAP_STYLE = 'mapbox://styles/mapbox/standard';
 
 const resolvedWorker = (MapboxWorker as any).default ?? MapboxWorker;
