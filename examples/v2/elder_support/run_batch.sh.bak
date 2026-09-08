@@ -1,0 +1,61 @@
+#!/bin/zsh
+# 正式实验批量编排：条件 × 种子 串行跑（并发压测通过前不并行跑多个实验）
+# 用法：
+#   AGENTSOCIETY_LLM_API_KEY=sk-xxx ./examples/v2/elder_support/run_batch.sh [months] [seeds...]
+# 例：跑 24 个月、种子 1 2 3：
+#   AGENTSOCIETY_LLM_API_KEY=... ./run_batch.sh 24 1 2 3
+# 已完成的 (condition, seed) 会被跳过；中断后重跑本脚本即自动 --resume。
+set -e
+
+REPO=/Users/silas/Desktop/AgentSociety
+PY=/Users/silas/Documents/Codex/2026-08-21/ba/work/agentsociety-runtime/.venv/bin/python
+EXP=$REPO/examples/v2/elder_support
+MONTHS=${1:-24}
+shift 2>/dev/null || true
+SEEDS=(${@:-1 2 3})
+CONDITIONS=(none casework timebank platform)
+IV_START=7
+IV_END=18
+
+if [ -z "$AGENTSOCIETY_LLM_API_KEY" ]; then
+  echo "请设置 AGENTSOCIETY_LLM_API_KEY"; exit 1
+fi
+export AGENTSOCIETY_LLM_API_BASE=${AGENTSOCIETY_LLM_API_BASE:-https://tokenflux.dev/v1}
+export AGENTSOCIETY_LLM_MODEL=${AGENTSOCIETY_LLM_MODEL:-gpt-5.6-sol}
+export AGENTSOCIETY_LLM_REQUEST_TIMEOUT=${AGENTSOCIETY_LLM_REQUEST_TIMEOUT:-180}
+export AGENTSOCIETY_LLM_MAX_RETRIES=${AGENTSOCIETY_LLM_MAX_RETRIES:-6}
+export WORKSPACE_PATH=$REPO
+cd $REPO
+
+for seed in $SEEDS; do
+  # 同种子共享同一套画像：干预对照的是"同一批老人"
+  $PY $EXP/init/gen_profiles.py --num 20 --focal 6 --seed $seed \
+    --out $EXP/tmp/init/profiles_s$seed.json
+  for cond in $CONDITIONS; do
+    tag="${cond}_s${seed}"
+    RUN_DIR=$EXP/tmp/batch/$tag
+    if [ -f "$RUN_DIR/DONE" ]; then
+      echo "== 跳过已完成: $tag"; continue
+    fi
+    echo "== 运行: $tag (months=$MONTHS iv=$IV_START-$IV_END)"
+    mkdir -p $RUN_DIR
+    $PY $EXP/init/config_params.py --months $MONTHS --seed $seed \
+      --profiles $EXP/tmp/init/profiles_s$seed.json \
+      --intervention $cond --iv-start $IV_START --iv-end $IV_END
+    cp $EXP/tmp/init/init_config.json $RUN_DIR/init_config.json
+    cp $EXP/tmp/init/steps.yaml $RUN_DIR/steps.yaml
+    RESUME_FLAG=""
+    [ -f "$RUN_DIR/SOCIETY.json" ] && RESUME_FLAG="--resume"
+    caffeinate -is $PY -m agentsociety2.society.cli \
+      --config $RUN_DIR/init_config.json \
+      --steps $RUN_DIR/steps.yaml \
+      --run-dir $RUN_DIR \
+      --experiment-id elder_support_$tag \
+      $RESUME_FLAG \
+      --log-file $RUN_DIR/output.log \
+      && touch $RUN_DIR/DONE
+    $PY $EXP/tools/analyze.py --run-dir $RUN_DIR || true
+  done
+done
+echo "批量完成。汇总分析："
+$PY $EXP/tools/compare_conditions.py --batch-dir $EXP/tmp/batch || true

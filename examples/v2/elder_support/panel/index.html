@@ -1,0 +1,1180 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dashboard</title>
+<link rel="icon" href="data:,">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root{
+  color-scheme: light;
+  --page:#f9f9f7; --surface:#fcfcfb; --ink:#0b0b0b; --ink2:#52514e; --muted:#898781;
+  --grid:#e1e0d9; --axis:#c3c2b7; --border:rgba(11,11,11,.10);
+  --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a;
+  --good:#0ca30c; --warn:#fab219; --serious:#ec835a; --critical:#d03b3b;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    color-scheme: dark;
+    --page:#0d0d0d; --surface:#1a1a19; --ink:#ffffff; --ink2:#c3c2b7; --muted:#898781;
+    --grid:#2c2c2a; --axis:#383835; --border:rgba(255,255,255,.10);
+    --s1:#3987e5; --s2:#d95926; --s3:#199e70;
+  }
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--page);color:var(--ink);
+  font:14px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif}
+header{position:sticky;top:0;z-index:5;background:var(--surface);
+  border-bottom:1px solid var(--border);padding:10px 20px;
+  display:flex;flex-wrap:wrap;gap:14px;align-items:center}
+h1{font-size:16px;margin:0 12px 0 0}
+.pill{padding:2px 10px;border-radius:99px;font-size:12px;font-weight:600}
+.pill.run{background:color-mix(in srgb,var(--good) 15%,transparent);color:var(--good)}
+.pill.idle{background:color-mix(in srgb,var(--muted) 18%,transparent);color:var(--ink2)}
+.pill.done{background:color-mix(in srgb,var(--s1) 15%,transparent);color:var(--s1)}
+.status-row{display:flex;align-items:center;gap:6px}
+.iconbtn{width:28px;height:28px;padding:0;display:inline-flex;align-items:center;justify-content:center;
+  border-radius:7px;flex:0 0 auto;line-height:0}
+.iconbtn svg{width:14px;height:14px;display:block}
+.iconbtn.spin svg{animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.hstat{font-size:12px;color:var(--ink2)}
+.hstat b{color:var(--ink);font-size:14px}
+button{border:1px solid var(--border);border-radius:8px;padding:7px 16px;cursor:pointer;
+  font:inherit;font-weight:600;background:var(--surface);color:var(--ink)}
+button.primary{background:var(--s1);border-color:var(--s1);color:#fff}
+button.danger{background:var(--critical);border-color:var(--critical);color:#fff}
+button.ghost{background:transparent}
+button:disabled{opacity:.45;cursor:not-allowed}
+nav{display:flex;gap:22px;padding:12px 20px 2px}
+nav button{border:none;border-radius:0;background:none;color:var(--ink2);font-weight:600;padding:0 0 4px;font-size:13px;cursor:pointer}
+nav button.on{color:var(--ink);border-bottom:2px solid var(--s1)}
+main{padding:12px 20px 60px;max-width:1280px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:14px}
+.card h3{margin:0 0 10px;font-size:13px;color:var(--ink2);font-weight:600;text-transform:none}
+.cardhead{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.grid2{display:grid;grid-template-columns:340px 1fr;gap:14px;align-items:stretch}
+@media (max-width:900px){.grid2{grid-template-columns:1fr}}
+label{display:block;font-size:12px;color:var(--ink2);margin:8px 0 3px}
+input,select,textarea{width:100%;padding:6px 9px;border:1px solid var(--border);border-radius:8px;
+  background:var(--page);color:var(--ink);font:inherit}
+textarea{resize:vertical;min-height:64px}
+.row{display:flex;gap:10px}.row>*{flex:1}
+.agents{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px}
+.agent{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 12px}
+.agent .nm{font-weight:700}
+.agent .tag{font-size:11px;border-radius:5px;padding:1px 6px;margin-left:5px;vertical-align:1px;
+  background:color-mix(in srgb,var(--s1) 14%,transparent);color:var(--s1)}
+.chips{margin:4px 0 6px}
+.chip{display:inline-block;font-size:11px;color:var(--ink2);background:var(--page);
+  border:1px solid var(--border);border-radius:5px;padding:1px 6px;margin:1px 3px 1px 0}
+.meter{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--ink2);margin:3px 0}
+.meter .bar{flex:1;height:6px;background:var(--grid);border-radius:3px;overflow:hidden}
+.meter .bar i{display:block;height:100%;border-radius:3px}
+.words{font-size:12px;color:var(--ink2);border-left:3px solid var(--grid);
+  padding:2px 8px;margin-top:7px;font-style:italic}
+.evt{font-size:11px;color:var(--serious);margin-top:5px}
+.feed{max-height:460px;overflow:auto}
+.feed .item{padding:7px 4px;border-bottom:1px solid var(--grid);font-size:13px}
+.feed .who{font-weight:600}
+.feed .act{color:var(--s1);font-size:12px;margin-left:6px}
+.feed .rsn{color:var(--ink2);margin-top:2px}
+.feed .mo{color:var(--muted);font-size:11px;float:right}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{font-size:12px;color:var(--muted);text-align:left;font-weight:600}
+th,td{padding:7px 8px;border-bottom:1px solid var(--grid);font-variant-numeric:tabular-nums}
+tr.sel td{background:color-mix(in srgb,var(--s1) 9%,transparent)}
+tr[data-run]{cursor:pointer}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-bottom:14px}
+.tile{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px 14px}
+.tile .v{font-size:24px;font-weight:700;margin:2px 0}
+.tile .k{font-size:12px;color:var(--ink2)}
+.tile .sub{font-size:11px;color:var(--muted)}
+.charts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+#tab-conclusions .charts{grid-template-columns:repeat(2,minmax(0,1fr))}
+@media (max-width:900px){.charts{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:600px){.charts,#tab-conclusions .charts{grid-template-columns:1fr}}
+.chartbox{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:10px;height:210px;position:relative;min-width:0;overflow:hidden}
+.chartbox h3{margin:0 0 6px;font-size:13px;color:var(--ink2)}
+.chartbox canvas{display:block;width:100%!important;max-width:100%;max-height:164px}
+.statusdot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:4px;vertical-align:0}
+.hit{color:var(--good);font-weight:700}.miss{color:var(--critical);font-weight:700}
+.quote{border-left:3px solid var(--s1);padding:4px 10px;margin:8px 0;font-size:13px;color:var(--ink2);font-style:italic}
+.note{font-size:12px;color:var(--muted)}
+.scale-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:8px 0 10px}
+@media (max-width:700px){.scale-grid{grid-template-columns:1fr}}
+.scale-card{border:1px solid var(--border);border-radius:10px;padding:10px;cursor:pointer;background:var(--page)}
+.scale-card.on{border-color:var(--s1);box-shadow:0 0 0 1px var(--s1)}
+.scale-card .badge{font-size:10px;color:var(--s1);font-weight:700}
+.scale-card .nums{font-size:12px;color:var(--ink2);margin-top:4px;line-height:1.45}
+.param-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.param{padding:9px 10px;border:1px solid var(--border);border-radius:8px;background:var(--surface);min-width:0}
+.param .k{display:block;font-size:11px;color:var(--muted);margin-bottom:2px}
+.param .v{display:block;font-size:13px;font-weight:700;overflow-wrap:anywhere}
+.param.wide{grid-column:1/-1}
+.scale-detail{font-size:12px;line-height:1.55;color:var(--ink2);background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:9px 10px;margin-top:8px}
+@media (max-width:420px){.param-grid{grid-template-columns:1fr}}
+.codex-box{font-size:12px;color:var(--ink2);background:var(--page);border:1px solid var(--border);
+  border-radius:8px;padding:8px 10px;margin-top:8px;line-height:1.5}
+.codex-box b{color:var(--ink)}
+.settings-actions{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.settings-actions button{font-size:12px;padding:6px 12px}
+.qa-list{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:700px){.qa-list{grid-template-columns:1fr}}
+.qa-item{border:1px solid var(--border);border-radius:10px;padding:12px 14px;background:var(--page)}
+.qa-item .qa-q{font-weight:700;font-size:14px;margin:0 0 8px;color:var(--ink)}
+.qa-item .qa-a{margin:0;font-size:13px;color:var(--ink2);line-height:1.6}
+.qa-item .qa-n{font-size:11px;color:var(--muted);margin-bottom:6px}
+.logbox{font:11px/1.5 ui-monospace,Menlo,monospace;color:var(--ink2);white-space:pre-wrap;
+  background:var(--page);border-radius:8px;padding:8px;max-height:320px;overflow:auto}
+/* 运行台左右等高，内容在各自组件内滚动 */
+.live-card,.rightcard{height:660px;display:flex;flex-direction:column;margin-bottom:0;overflow:hidden}
+.live-card .overview-scroll{flex:1 1 auto;min-height:0;overflow-y:auto;padding-right:2px}
+.rightcard .cardhead{flex:0 0 auto}
+.rightcard .viewbody{flex:1 1 auto;min-height:0;overflow-y:auto;align-content:start}
+.rightcard .feed{max-height:none;overflow:visible}
+.history-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;height:400px;align-items:stretch}
+.history-card{height:100%;display:flex;flex-direction:column;min-width:0;margin-bottom:0}
+.history-scroll{flex:1 1 auto;min-height:0;overflow:auto}
+.history-card .logbox{max-height:none;height:100%}
+.conclusion-tiles{gap:8px;margin-bottom:10px}
+.conclusion-tiles .tile{padding:8px 10px}
+.conclusion-tiles .tile .v{font-size:20px;margin:0}
+.conclusion-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:10px}
+#tab-conclusions{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:stretch}
+#tab-conclusions[hidden]{display:none}
+#tab-conclusions .charts{grid-column:1/-1;margin-top:0!important}
+.conclusion-card{height:248px;display:flex;flex-direction:column;min-width:0;margin:0}
+@media (max-width:900px){#tab-conclusions{grid-template-columns:1fr}}
+.conclusion-scroll{flex:1 1 auto;min-height:0;overflow:auto;padding-right:2px}
+@media (max-width:900px){
+  .live-card,.rightcard{height:620px}
+  .history-grid{grid-template-columns:1fr;height:auto}
+  .history-card{height:300px}
+  .conclusion-grid{grid-template-columns:1fr}
+}
+[hidden]{display:none!important}
+.viewtabs{display:flex;gap:6px}
+.viewtabs button{padding:4px 10px;font-size:12px}
+.viewtabs button.on{background:var(--s1);border-color:var(--s1);color:#fff}
+.villagewrap{position:relative;border:1px solid var(--border);border-radius:10px;overflow:hidden;background:var(--page)}
+#villageCanvas{display:block;width:100%;cursor:pointer}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:11px;color:var(--ink2);margin-top:8px}
+.legend span{display:inline-flex;align-items:center;gap:5px}
+.legend i{width:9px;height:9px;border-radius:50%;display:inline-block}
+.modalbg{position:fixed;inset:0;background:rgba(0,0,0,.35);display:flex;align-items:center;justify-content:center;z-index:20}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px 18px;max-width:340px;width:90%}
+.modal h3{margin:0 0 8px}
+.modal .close{float:right}
+</style>
+</head>
+<body>
+<nav>
+  <button data-tab="live" class="on" data-i18n="navLive">运行台</button>
+  <button data-tab="conclusions" data-i18n="navConcl">结论</button>
+  <button data-tab="history" data-i18n="navHistory">日志</button>
+  <button data-tab="qa" data-i18n="navQa">介绍</button>
+</nav>
+<main>
+
+<section id="tab-live">
+  <div class="grid2">
+    <div>
+      <div class="card live-card">
+        <div class="overview-scroll">
+        <div class="param-grid">
+          <div class="param"><span class="k" data-i18n="paramStatus">状态</span>
+            <div class="status-row">
+              <span class="v pill idle" id="pRunStatus">–</span>
+              <button type="button" id="btnRefresh" class="ghost iconbtn" title="刷新进度" aria-label="刷新进度">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M21 12a9 9 0 1 1-2.6-6.4"/>
+                  <polyline points="21 3 21 9 15 9"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+          <div class="param"><span class="k" data-i18n="paramRun">当前轮次</span><span class="v" id="pRun">–</span></div>
+          <div class="param wide"><span class="k" data-i18n="paramProgress">总进度</span><span class="v" id="pProgress">–</span></div>
+          <div class="param"><span class="k" data-i18n="paramTokens">消耗 tokens</span><span class="v" id="pTokens">–</span></div>
+          <div class="param"><span class="k" data-i18n="paramCost">费用</span><span class="v" id="pCost">–</span></div>
+        </div>
+        <div class="param-grid">
+          <div class="param"><span class="k" data-i18n="paramScale">当前规模</span><span class="v" id="pScale">–</span></div>
+          <div class="param"><span class="k" data-i18n="paramModel">当前模型</span><span class="v" id="pModel">–</span></div>
+          <div class="param"><span class="k" data-i18n="paramReasoning">推理深度</span><span class="v" id="pReasoning">–</span></div>
+          <div class="param"><span class="k" data-i18n="paramMonths">月</span><span class="v" id="pMonths">–</span></div>
+          <div class="param"><span class="k" data-i18n="paramSeed">种子</span><span class="v" id="pSeed">–</span></div>
+          <div class="param"><span class="k" data-i18n="paramElders">老人人数</span><span class="v" id="pElders">–</span></div>
+          <div class="param"><span class="k" data-i18n="paramFocal">焦点数</span><span class="v" id="pFocal">–</span></div>
+          <div class="param"><span class="k" data-i18n="paramIntervention">干预月</span><span class="v" id="pIntervention">–</span></div>
+        </div>
+        <div class="scale-detail" id="pScaleDetail">–</div>
+        </div>
+      </div>
+      <div id="legacyControls" hidden>
+        <div id="scaleGrid"></div><p id="scaleRationale"></p>
+        <select id="fModel"></select><p id="modelStatus"></p><input id="fApiBase" value="https://tokenflux.dev/v1">
+        <select id="fReasoning"></select><input id="fRetries" type="number" value="6"><p id="reasoningHint"></p>
+        <div id="codexInfo"></div><div id="costBox"></div>
+        <input id="fMonths" type="number" value="12"><input id="fSeed" type="number" value="42">
+        <input id="fNum" type="number" value="20"><input id="fFocal" type="number" value="6">
+        <select id="fCond"><option value="none">none</option><option value="casework">casework</option><option value="timebank">timebank</option><option value="platform">platform</option></select>
+        <input id="fIvS" type="number" value="7"><input id="fIvE" type="number" value="18"><textarea id="fNote"></textarea>
+        <p id="startMsg"></p>
+        <button id="btnStart" class="primary" data-i18n="btnStart">启动模拟</button>
+        <button id="btnStop" class="danger" disabled data-i18n="btnStop">停止</button>
+      </div>
+    </div>
+    <div>
+      <div class="card rightcard">
+        <div class="cardhead">
+          <span class="note"><span id="agentCount">0</span><span data-i18n="agentsTitle2"> 位 · 徽标为 LLM 焦点 · 数据实时读取</span></span>
+          <div class="viewtabs">
+            <button id="viewList" class="on" data-i18n="viewList">列表视图</button>
+            <button id="viewMap" data-i18n="viewMap">地图视图</button>
+            <button id="viewDecisions" data-i18n="viewDecisions">决策视图</button>
+            <button id="btnLang" class="ghost">EN</button>
+          </div>
+        </div>
+        <div id="agents" class="agents viewbody"></div>
+        <div id="villageBox" class="viewbody" hidden>
+          <div class="villagewrap"><canvas id="villageCanvas" width="800" height="440"></canvas></div>
+          <div class="legend">
+            <span><i style="background:var(--good)"></i><span data-i18n="legGood">平稳</span></span>
+            <span><i style="background:var(--warn)"></i><span data-i18n="legWarn">偏高</span></span>
+            <span><i style="background:var(--critical)"></i><span data-i18n="legCrit">高孤独</span></span>
+            <span><i style="background:var(--s1);border-radius:2px"></i><span data-i18n="legFocal">LLM 焦点（方框）</span></span>
+          </div>
+          <p class="note" data-i18n="villageNote">纯示意图：房屋与走动位置为随机可视化效果，不代表真实地理坐标或研究参数。点击圆点查看该老人详情。</p>
+        </div>
+        <div id="decisionBox" class="viewbody" hidden>
+          <p class="note" data-i18n="feedNote">全部决策记录（焦点老人 + 规则层干预），最新在前。</p>
+          <div id="feed" class="feed"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="tab-conclusions" hidden>
+  <div class="card conclusion-card">
+    <h3>正式批次论文核心结果</h3>
+    <p class="note">只纳入通过 0–24 月完整性、决策覆盖、LLM 错误率和 DONE 门槛的 run。当前结果是描述性统计，不报告显著性或因果结论。</p>
+    <p class="note" id="batchEvidence">–</p>
+  </div>
+  <div class="charts" style="margin-top:10px">
+    <div class="chartbox"><h3>主结局：跨条件月度孤立率</h3><canvas id="batchTraj"></canvas></div>
+    <div class="chartbox"><h3>干预期主结局：seed-level 孤立率</h3><canvas id="batchScatter"></canvas></div>
+  </div>
+  <div class="card conclusion-card">
+    <h3>论文核心结果：条件均值与有效重复</h3>
+    <div class="conclusion-scroll" id="ivTable">–</div>
+  </div>
+  <div class="card conclusion-card">
+    <h3>H4 相关结果：撤出反弹与同 seed 配对差值</h3>
+    <div class="conclusion-scroll" id="effectTable">–</div>
+  </div>
+  <div class="card conclusion-card">
+    <h3>机制层证据：介入时机 · 剂量 · 延迟成本</h3>
+    <p class="note">规则层扫描（20 种子，无 LLM），预注册假设与主指标；绝对水平不与正式 LLM 批次比较，仅比较方向与量级。</p>
+    <div class="conclusion-scroll" id="mechTiming">–</div>
+  </div>
+  <div class="card conclusion-card">
+    <h3>Harness 自主闭环（设计→运行→评估→修订）</h3>
+    <p class="note">LLM 设计师仅提案，评估为确定性规则层；目标、空间、迭代数预注册，全部轮次落盘无选择性报告。</p>
+    <div class="conclusion-scroll" id="mechLoop">–</div>
+  </div>
+  <div class="card conclusion-card">
+    <h3>真实成本与失效诊断</h3>
+    <p class="note">调用数为 trace 实测；token/单价为文档化假设。真实成本计入被质量门槛淘汰 run 的沉没部分。</p>
+    <div class="conclusion-scroll" id="mechCost">–</div>
+  </div>
+  <div class="card conclusion-card">
+    <h3>数据质量与证据边界</h3>
+    <div class="conclusion-scroll" id="qualityTable">–</div>
+  </div>
+  <div class="card conclusion-card">
+    <h3>模型校准检查，不是干预效果验证</h3>
+    <p class="note">这是当前选中 run 的 n=20 末期截面检查，与 CLHLS 调查年份、样本和指标口径不同，只用于发现模型量级问题。</p>
+    <div class="conclusion-scroll" id="calib">–</div>
+  </div>
+</section>
+
+<section id="tab-history" class="history-grid" hidden>
+  <div class="card history-card">
+    <h3 data-i18n="histTitle">全部模拟轮次（点击行切换查看对象）</h3>
+    <div class="history-scroll"><table>
+        <thead><tr><th data-i18n="thRun">轮次</th><th data-i18n="thCond">条件</th><th data-i18n="thSeed">种子</th><th data-i18n="thProg">进度</th><th data-i18n="thStatus">状态</th>
+          <th data-i18n="thFinalLon">末期孤独</th><th data-i18n="thFinalIso">末期孤立</th><th data-i18n="thFinalDeep">末期深孤</th></tr></thead>
+        <tbody id="runsBody"></tbody>
+      </table></div>
+  </div>
+  <div class="card history-card">
+    <h3 data-i18n="logTitle">运行日志（当前选中轮次 · 尾部）</h3>
+    <div id="logTail" class="logbox"></div>
+  </div>
+</section>
+
+<section id="tab-qa" hidden>
+  <div class="card">
+    <h3 data-i18n="qaTitle">项目介绍</h3>
+    <p class="note" id="qaPrinciple">–</p>
+    <div id="qaList" class="qa-list"></div>
+  </div>
+</section>
+
+</main>
+<div id="detailModal" hidden></div>
+<script>
+const $ = id => document.getElementById(id);
+
+// ---------------- i18n ----------------
+const I18N = {
+  title:['Dashboard','Dashboard'],
+  lblRun:['当前轮次','Current run'], lblProgress:['总进度','Batch progress'],
+  lblElapsed:['已耗时','Elapsed'], lblEta:['预估结束','ETA'],
+  lblCost:['费用','Cost'], lblTokTotal:['消耗 tokens','Tokens used'],
+  etaDone:['已完成','done'],
+  statusRun:['运行中','Running'], statusIdle:['空闲','Idle'], statusDone:['已完成','Done'],
+  runQueued:['排队中','queued'],
+  condNone:['基线','baseline'], condCasework:['社工个案','casework'],
+  condTimebank:['时间银行','timebank'], condPlatform:['数字平台','platform'],
+  btnStart:['启动模拟','Start Simulation'], btnStop:['停止','Stop'],
+  navLive:['运行台','Live'], navConcl:['结论','Conclusions'], navHistory:['日志','Logs'],
+  navQa:['介绍','About'],
+  paramsTitle:['参数概览','Parameter overview'],
+  paramScale:['当前规模','Current scale'], paramModel:['当前模型','Current model'],
+  paramReasoning:['推理深度','Reasoning depth'], paramMonths:['月','Months'],
+  paramSeed:['种子','Seed'], paramElders:['老人人数','Elders'], paramFocal:['焦点数','Focal count'],
+  paramIntervention:['干预月','Intervention months'],
+  scaleDetail:['规模说明','Scale details'], runRecordTitle:['运行记录','Run record'],
+  paramStatus:['状态','Status'], paramRun:['当前轮次','Current run'], paramProgress:['总进度','Total progress'], paramTokens:['消耗 tokens','Tokens used'], paramCost:['费用','Cost'],
+  btnRefresh:['刷新进度','Refresh progress'],
+  scaleDetailText:['{scale}（{badge}）：目标配置为 {agents} 位老人、{focal} 个焦点、{months} 月、{seeds} 个种子、{reasoning}推理。{description}','{scale} ({badge}): target configuration is {agents} elders, {focal} focal agents, {months} months, {seeds} seeds, and {reasoning} reasoning. {description}'],
+  noIntervention:['无干预','No intervention'],
+  scaleSmall:['小规模','Small'], scaleMedium:['中规模','Medium'], scaleLarge:['大规模','Large'],
+  reasoningNone:['关闭','Off'], reasoningLow:['低','Low'], reasoningMedium:['中','Medium'], reasoningHigh:['高','High'],
+  qaTitle:['项目介绍','About this study'],
+  qaPrinciple:['原则：每条100字以内，通俗直接。','Rule: each answer ≤100 words, plain and direct.'],
+  cfgTitle:['实验配置（启动前设置）','Experiment config (set before start)'],
+  scaleTitle:['规模预设（一键填充人数 / 月数 / 推理深度）','Scale presets (fill agents / months / reasoning)'],
+  llmTitle:['模拟 LLM（tokenflux · 不用 coder 角色）','Simulation LLM (tokenflux · no coder role)'],
+  lblModel:['模型','Model'], lblApiBase:['API Base','API Base'],
+  lblReasoning:['推理深度','Reasoning depth'], lblRetries:['最大重试','Max retries'],
+  btnSaveSettings:['保存 LLM 设置','Save LLM settings'],
+  btnRefreshModels:['刷新模型','Refresh models'],
+  btnTestModel:['测试连接','Test connection'],
+  modelsLoading:['正在从网关拉取模型列表…','Fetching model list from gateway…'],
+  modelsOk:['已加载 {n} 个模型（{ms}ms）','Loaded {n} models ({ms}ms)'],
+  modelsFail:['拉取失败：','Fetch failed: '],
+  testLoading:['正在测试 chat/completions…','Testing chat/completions…'],
+  testOk:['连接成功 · {ms}ms · 回复: {reply}','Connected · {ms}ms · reply: {reply}'],
+  testFail:['连接失败：','Connection failed: '],
+  settingsSaved:['LLM 设置已保存','LLM settings saved'],
+  settingsFail:['保存失败：','Save failed: '],
+  codexTitle:['第三方 Codex（开发编排，非模拟 LLM）','Third-party Codex (dev orchestration, not sim LLM)'],
+  codexMissing:['未检测到 ~/.codex/config.toml','No ~/.codex/config.toml found'],
+  lblMonths:['月数','Months'], lblSeed:['随机种子','Random seed'], lblNum:['老人数','Number of elders'],
+  lblFocal:['LLM 焦点数','LLM focal count'], lblCond:['干预条件','Intervention'],
+  condNone:['无干预（基线）','None (baseline)'], condCasework:['社工个案管理','Casework'],
+  condTimebank:['时间银行互助','Timebank'], condPlatform:['数字平台志愿','Digital platform'],
+  lblIvS:['干预开始月','Intervention start month'], lblIvE:['干预结束月','Intervention end month'],
+  lblNote:['备注 / 预留提示词（暂存于 run 元数据，后续版本注入 agent 指引）','Notes / reserved prompt (stored in run metadata, injected into agent instructions in a future version)'],
+  notePh:['例如：本轮观察重点、给焦点老人的附加指引……','e.g. what to watch this run, extra guidance for focal elders…'],
+  logTitle:['运行日志（当前选中轮次 · 尾部）','Run log (selected run · tail)'],
+  eldersOverview:['老人概览','Elder overview'], agentsTitle2:[' 位 · 徽标为 LLM 焦点 · 数据实时读取',' · LLM focal badge · live data'],
+  viewList:['列表视图','List view'], viewMap:['地图视图','Map view'], viewDecisions:['决策视图','Decisions'],
+  feedNote:['全部决策记录（焦点老人 + 规则层干预），最新在前。','All decision records (focal elders + rule-layer interventions), newest first.'],
+  legGood:['平稳','Stable'], legWarn:['偏高','Elevated'], legCrit:['高孤独','High loneliness'], legFocal:['LLM 焦点（方框）','LLM focal (square)'],
+  villageNote:['纯示意图：房屋与走动位置为随机可视化效果，不代表真实地理坐标或研究参数。点击圆点查看该老人详情。','Illustrative only: houses and movement are a random visual effect, not real geography or a research parameter. Click a dot for details.'],
+  feedTitle:['决策流（焦点老人最近的话）','Decision feed (recent words from focal elders)'],
+  calibTitle:['校准打靶（当前轮次末期 vs CLHLS 2021 调查靶标，容差 ±10pp）','Calibration check (run endpoint vs CLHLS 2021 survey target, ±10pp tolerance)'],
+  hypTitle:['四条假设当前证据状态','Current evidence for the four hypotheses'],
+  thHyp:['假设','Hyp.'], thContent:['内容','Statement'], thEvidence:['当前证据','Current evidence'],
+  h1t:['无干预时支持网络级联衰减、孤独缓升','Without intervention, the support network decays and loneliness rises slowly'],
+  h1e:['基线 12 月：孤独 +0.045、关系 −0.30、深孤 0→20%，方向成立','Baseline 12mo: loneliness +0.045, ties −0.30, deep isolation 0→20% — direction confirmed'],
+  h2t:['高龄/体弱/无近亲者更脆弱','Older/frailer/no-close-kin elders are more vulnerable'],
+  h2e:['定性证据已现（87 岁焦点老人案例），定量分层待批量实验','Qualitative evidence seen (87yo focal case); quantitative stratification pending batch runs'],
+  h3t:['预警期介入性价比最高','Intervening during the warning phase is most cost-effective'],
+  h3e:['时机实验未开始（批量实验之后）','Timing experiment not started yet (after batch runs)'],
+  h4t:['时间银行撤出后可持续性最好','Timebank has the best post-withdrawal persistence'],
+  cmpTitle:['三种干预对照','Comparison of the three interventions'],
+  quoteTitle:['行为效度：模拟中自发出现的「中国式求助心理」（对照 CLHLS a58「不想麻烦子女」61.4%）','Behavioral validity: emergent "reluctance to trouble family" (cf. CLHLS a58, 61.4%)'],
+  chLon:['平均孤独感（月度）','Avg loneliness (monthly)'], chIso:['孤立率与深度孤立率（月度）','Isolation & deep isolation rate (monthly)'],
+  chAct:['焦点老人行动分布','Focal elders — action distribution'], chSeek:['求助结局','Help-seeking outcomes'],
+  chNote:['图表展示当前选中轮次（在「历史轮次」页点击可切换）。','Charts show the currently selected run (switch it from the History tab).'],
+  histTitle:['全部模拟轮次（点击行切换查看对象）','All simulation runs (click a row to view it)'],
+  thRun:['轮次','Run'], thCond:['条件','Condition'], thSeed:['种子','Seed'], thProg:['进度','Progress'], thStatus:['状态','Status'],
+  thFinalLon:['末期孤独','Final loneliness'], thFinalIso:['末期孤立','Final isolation'], thFinalDeep:['末期深孤','Final deep isolation'],
+  statusRun:['运行中','Running'], statusDone:['已完成','Done'], statusIdle:['空闲/中断','Idle/stopped'],
+  statusRunShort:['运行中','Running'], statusDoneShort:['完成','Done'], statusIdleShort:['中断','Stopped'],
+  starting:['正在启动…（初始化约 2 分钟）','Starting… (init takes ~2 min)'],
+  startOk:['已启动轮次 ','Started run '], startFail:['启动失败：','Start failed: '],
+  confirmStop:['确定停止当前模拟？（run 目录保留，可续跑）','Stop the current simulation? (run folder is kept and can be resumed)'],
+  stopped:['已停止。','Stopped. '],
+  noRecord:['无记录','No record'],
+  noEndpoint:['该轮次暂无末期截面数据','No endpoint data for this run yet'],
+  noQuotes:['该轮次暂无相关决策语料','No matching decisions for this run yet'],
+  noDecisions:['暂无决策记录','No decisions yet'],
+  hit:['命中','hit'], miss:['未中','miss'],
+  thMetric:['指标','Metric'], thSim:['模拟','Sim'], thTarget:['调查靶标','Target'], thDiff:['偏差','Diff'], thVerdict:['判定','Verdict'],
+  ivCondCol:['条件','Condition'], ivLonCol:['干预期平均孤独感','Avg loneliness during intervention'], ivIsoCol:['撤出后孤立率','Post-withdrawal isolation rate'],
+  batchNote:['（正式批量实验结果）',' (formal batch results)'],
+  smokeNote:['（{label}，正式批量实验后自动替换）',' ({label}, will auto-switch to formal batch results)'],
+  batchPending:['批量结果已生成，见 tmp/batch/comparison.json（表格渲染待接入）','Batch results generated, see tmp/batch/comparison.json (table rendering pending)'],
+  h4ok:['冒烟方向成立：撤出后孤立率 时间银行 {tb}% < 平台 < 个案 < 基线 {none}%（待批量验证）','Smoke-test direction holds: post-withdrawal isolation timebank {tb}% < platform < casework < baseline {none}% (pending batch validation)'],
+  tileLon:['平均孤独感','Avg loneliness'], tileIso:['孤立率','Isolation rate'], tileDeep:['深度孤立率','Deep isolation rate'],
+  tileTies:['平均活跃关系','Avg active ties'], tileCalls:['LLM 调用','LLM calls'],
+  tileLonSub:['起点 ','from '], tileIsoSub:['当月无任何来访/联系','no visit/contact this month'],
+  tileDeepSub:['≥3月无情感支持','≥3 months without emotional support'], tileTiesSub:['起点 ','from '],
+  tileCallsSub:['平均 {s}s/次','avg {s}s/call'],
+  seriesLon:['平均孤独感','Avg loneliness'], seriesIso:['孤立率','Isolation rate'], seriesDeep:['深度孤立率','Deep isolation rate'],
+  seriesActCount:['决策次数','Decisions'], seriesSeekCount:['次数','Count'],
+  monthLabel:['第{n}月','M{n}'],
+  detailAge:['岁','y/o'], detailTies:['关系','ties'], detailLon:['孤独','Loneliness'], detailHealth:['健康','Health'],
+  detailFocal:['LLM 焦点','LLM focal'], detailClose:['关闭','Close'], detailNoWords:['暂无发言','No words yet'],
+  monthWord:['第{n}月','month {n}'],
+  bandGood:['平稳','stable'], bandWarn:['偏高','elevated'], bandCrit:['高孤独','high loneliness'],
+  personaOutgoing:['爱串门','outgoing'], personaMild:['性子随和','easygoing'], personaShy:['内敛怕生','shy'],
+  personaStrong:['身子硬朗','strong health'], personaOk:['健康一般','average health'], personaWeak:['体弱','frail'],
+  personaIsolated:['已深度孤立','deep isolation'],
+};
+const ACTS = {
+  visit_neighbor:['串门','Visit neighbor'], call_family:['联系子女','Call family'], seek_help:['求助','Seek help'],
+  join_activity:['社区活动','Community activity'], stay_home:['待在家','Stay home'],
+  casework_visit:['社工探访','Casework visit'], casework_link:['社工联结家庭','Casework family link'],
+  timebank_match:['时间银行结对','Timebank match'], platform_serve:['平台志愿服务','Platform service'],
+};
+const CONDS = {none:['基线','Baseline'], casework:['社工个案','Casework'], timebank:['时间银行','Timebank'], platform:['数字平台','Platform']};
+const OUT = {success:['求助成功','Succeeded'], declined:['被婉拒','Declined'], no_such_tie:['无人可求','No one to ask']};
+
+let LANG = localStorage.getItem('lang') || 'zh';
+function t(key, vars){
+  let s = (I18N[key]||[key,key])[LANG==='en'?1:0];
+  if(vars) for(const k in vars) s = s.replace('{'+k+'}', vars[k]);
+  return s;
+}
+function tCond(k){ return (CONDS[k]||[k,k])[LANG==='en'?1:0]; }
+function tAct(k){ return (ACTS[k]||[k,k])[LANG==='en'?1:0]; }
+function tOut(k){ return (OUT[k]||[k,k])[LANG==='en'?1:0]; }
+function applyLang(){
+  document.documentElement.lang = LANG==='en' ? 'en' : 'zh-CN';
+  $('btnLang').textContent = LANG==='en' ? '中文' : 'EN';
+  const rf = $('btnRefresh');
+  if(rf){ rf.title = t('btnRefresh'); rf.setAttribute('aria-label', t('btnRefresh')); }
+  document.querySelectorAll('[data-i18n]').forEach(el=>{ el.textContent = t(el.dataset.i18n); });
+  document.querySelectorAll('[data-i18n-ph]').forEach(el=>{ el.placeholder = t(el.dataset.i18nPh); });
+  renderRunRecord(); renderParameterOverview(); renderAgents(); renderFeed(); updateCostEstimate();
+  if(!$('tab-conclusions').hidden){ loadConclusions(); }
+  if(!$('tab-history').hidden) loadRuns();
+  if(!$('tab-qa').hidden) loadQa();
+  renderScaleCards();
+}
+$('btnLang').onclick = ()=>{ LANG = LANG==='en' ? 'zh' : 'en'; localStorage.setItem('lang', LANG); applyLang(); };
+
+let selectedRun = null, state = null, charts = {};
+let panelCfg = null, activeScale = 'small';
+
+function baseOpts(){
+  const ink=cssVar('--ink2'), grid=cssVar('--grid');
+  return {
+    responsive:true,
+    maintainAspectRatio:false,
+    interaction:{mode:'nearest',intersect:false},
+    plugins:{
+      legend:{labels:{color:ink,usePointStyle:true,boxWidth:10}},
+      tooltip:{enabled:true},
+    },
+    scales:{
+      x:{ticks:{color:ink},grid:{color:grid}},
+      y:{ticks:{color:ink},grid:{color:grid}},
+    },
+  };
+}
+function mkChart(id, config){
+  const canvas=$(id);
+  if(!canvas || !window.Chart) return null;
+  if(charts[id]) charts[id].destroy();
+  charts[id]=new Chart(canvas, config);
+  return charts[id];
+}
+
+function overviewValue(id, value){
+  const el = $(id);
+  if(el) el.textContent = value ?? '–';
+}
+function scaleName(id){
+  return ({small:t('scaleSmall'), medium:t('scaleMedium'), large:t('scaleLarge')})[id] || id || '–';
+}
+function reasoningName(id){
+  return ({none:t('reasoningNone'), low:t('reasoningLow'), medium:t('reasoningMedium'), high:t('reasoningHigh')})[id] || id || '–';
+}
+function scaleDescription(id){
+  const descriptions = {
+    small:['用于机制校准与全链路验证。','For mechanism calibration and end-to-end validation.'],
+    medium:['面向街道或中型社区量级，用于社区验证，并保持可控的 API 成本。','Sized for a neighbourhood or mid-sized community; used for community validation with controlled API cost.'],
+    large:['用于正式实验，支持分层样本与多种子结果。','For formal experiments with stratified samples and multi-seed results.'],
+  };
+  return (descriptions[id] || ['',''])[LANG==='en'?1:0];
+}
+function renderParameterOverview(){
+  const settings = panelCfg?.settings || {};
+  const preset = panelCfg?.catalog?.scales?.find(s=>s.id===activeScale) || panelCfg?.preset || {};
+  const agents = state?.agents || [];
+  overviewValue('pScale', scaleName(state?.scale || activeScale));
+  overviewValue('pModel', state?.model || settings.model || panelCfg?.sim_llm?.model || '–');
+  overviewValue('pReasoning', reasoningName(state?.reasoning_depth || settings.reasoning_depth || panelCfg?.sim_llm?.reasoning_depth));
+  overviewValue('pMonths', state?.months_total ?? preset.months ?? '–');
+  overviewValue('pSeed', state?.seed ?? '–');
+  overviewValue('pElders', agents.length || state?.num || preset.total_agents || '–');
+  overviewValue('pFocal', agents.length ? agents.filter(a=>a.focal).length : (state?.focal ?? preset.focal_agents ?? '–'));
+  const ivStart = state?.iv_start, ivEnd = state?.iv_end;
+  const unit = LANG === 'en' ? ' mo' : '月';
+  overviewValue('pIntervention', state?.condition === 'none' ? t('noIntervention') : (ivStart != null && ivEnd != null ? `${ivStart}-${ivEnd}${unit}` : '–'));
+  overviewValue('pScaleDetail', preset?.id ? t('scaleDetailText', {
+    scale: scaleName(preset.id), badge: preset.badge || '–', agents: preset.total_agents || '–',
+    focal: preset.focal_agents || '–', months: preset.months || '–', seeds: preset.seeds || '–',
+    reasoning: reasoningName(preset.reasoning_depth), description: scaleDescription(preset.id),
+  }) : '–');
+}
+
+function renderScaleCards(){
+  const grid = $('scaleGrid');
+  if(!panelCfg?.catalog?.scales?.length){ grid.innerHTML = '<p class="note">–</p>'; return; }
+  grid.innerHTML = panelCfg.catalog.scales.map(s=>`
+    <div class="scale-card ${s.id===activeScale?'on':''}" data-scale="${s.id}">
+      <div><b>${s.label}</b> <span class="badge">${s.badge}</span></div>
+      <div class="nums">${s.total_agents} ${LANG==='en'?'elders':'人'} · ${s.focal_agents} ${LANG==='en'?'focal':'焦点'}<br>
+        ${s.months} ${LANG==='en'?'mo':'月'} · ${s.seeds} seed · ${s.reasoning_depth}</div>
+    </div>`).join('');
+  grid.querySelectorAll('.scale-card').forEach(card=>card.onclick = async ()=>{
+    activeScale = card.dataset.scale;
+    renderScaleCards();
+    const r = await fetch('/api/settings/scale',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({scale:activeScale})});
+    if(r.ok){
+      const j = await r.json();
+      applyPresetToForm(j.preset);
+      if(j.settings) applySettingsToForm(j.settings);
+    }
+  });
+  const preset = panelCfg.catalog.scales.find(s=>s.id===activeScale);
+  $('scaleRationale').textContent = preset?.rationale || '–';
+}
+
+function applyPresetToForm(preset){
+  if(!preset) return;
+  $('fMonths').value = preset.months;
+  $('fNum').value = preset.total_agents;
+  $('fFocal').value = preset.focal_agents;
+  $('fRetries').value = preset.max_retries;
+  const reasoning = $('fReasoning');
+  if(reasoning) reasoning.value = preset.reasoning_depth;
+  updateReasoningHint();
+  updateCostEstimate();
+}
+
+function applySettingsToForm(settings){
+  if(!settings) return;
+  if(settings.model) $('fModel').value = settings.model;
+  if(settings.api_base) $('fApiBase').value = settings.api_base;
+  if(settings.reasoning_depth) $('fReasoning').value = settings.reasoning_depth;
+  if(settings.max_retries) $('fRetries').value = settings.max_retries;
+  if(settings.active_scale) activeScale = settings.active_scale;
+  updateReasoningHint();
+}
+
+function populateModelOptions(models, current){
+  const sel = $('fModel');
+  const prev = current || sel.value;
+  sel.innerHTML = '';
+  const added = new Set();
+  if(prev){
+    sel.add(new Option(prev, prev));
+    added.add(prev);
+  }
+  for(const m of (models||[])){
+    if(added.has(m.id)) continue;
+    sel.add(new Option(m.label || m.id, m.id));
+    added.add(m.id);
+  }
+  if(prev) sel.value = prev;
+}
+
+async function refreshModels(){
+  const status = $('modelStatus');
+  status.textContent = t('modelsLoading');
+  const base = encodeURIComponent($('fApiBase').value.trim());
+  try{
+    const r = await fetch(`/api/models?api_base=${base}`);
+    const j = await r.json();
+    if(j.ok){
+      populateModelOptions(j.models, panelCfg?.settings?.model || $('fModel').value);
+      status.textContent = t('modelsOk', {n: j.count ?? j.models?.length ?? 0, ms: j.latency_ms ?? '–'});
+    } else {
+      status.textContent = t('modelsFail') + (j.error || `HTTP ${r.status}`);
+    }
+  }catch(e){
+    status.textContent = t('modelsFail') + e.message;
+  }
+}
+
+async function testModelConnection(){
+  const status = $('modelStatus');
+  status.textContent = t('testLoading');
+  const body = {
+    model: $('fModel').value,
+    api_base: $('fApiBase').value.trim(),
+    reasoning_depth: $('fReasoning').value,
+  };
+  try{
+    const r = await fetch('/api/models/test', {method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify(body)});
+    const j = await r.json();
+    if(r.ok && j.ok){
+      status.textContent = t('testOk', {ms: j.latency_ms ?? '–', reply: j.reply_preview || '–'});
+    } else {
+      status.textContent = t('testFail') + (j.error || `HTTP ${r.status}`);
+    }
+  }catch(e){
+    status.textContent = t('testFail') + e.message;
+  }
+}
+
+$('btnRefreshModels')?.addEventListener('click', refreshModels);
+$('btnTestModel')?.addEventListener('click', testModelConnection);
+
+function populateReasoningOptions(depths){
+  const sel = $('fReasoning');
+  sel.innerHTML = (depths||[]).map(d=>`<option value="${d.id}">${d.label}</option>`).join('');
+  updateReasoningHint();
+}
+
+function updateReasoningHint(){
+  const id = $('fReasoning')?.value;
+  const item = panelCfg?.catalog?.reasoning_depths?.find(d=>d.id===id);
+  $('reasoningHint').textContent = item?.hint || '–';
+}
+
+function renderCodexInfo(codex){
+  const box = $('codexInfo');
+  if(!codex?.configured){
+    box.innerHTML = `<b>${t('codexTitle')}</b><br>${codex?.note || t('codexMissing')}`;
+    return;
+  }
+  box.innerHTML = `<b>${t('codexTitle')}</b><br>
+    provider: ${codex.model_provider} · model: ${codex.model}<br>
+    base: ${codex.base_url}<br>
+    <span class="note">${codex.note||''}</span>`;
+}
+
+async function savePanelSettings(){
+  const body = {
+    model: $('fModel').value,
+    api_base: $('fApiBase').value.trim(),
+    reasoning_depth: $('fReasoning').value,
+    max_retries: +$('fRetries').value,
+    active_scale: activeScale,
+  };
+  const r = await fetch('/api/settings',{method:'PUT',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify(body)});
+  const j = await r.json();
+  $('startMsg').textContent = r.ok ? t('settingsSaved') : (t('settingsFail')+(j.error||''));
+}
+$('btnSaveSettings')?.addEventListener('click', savePanelSettings);
+$('fReasoning')?.addEventListener('change', updateReasoningHint);
+
+// ---- 内置计费模型（GPT 5.6 SOL 单一模型计费） ----
+// 价格与假设见 PRICING 常量；调用密度来自 baseline12 trace 实测
+// （991 次 / 6 焦点 / 12 月 ≈ 13.8 次/焦点·月，含重试与问卷）。
+const PRICING = {
+  model: 'GPT 5.6 SOL',
+  // OpenAI 官方定价（platform.openai.com/docs/pricing，2026-09-01 查证）：
+  // gpt-5.6-sol 标准 API、短上下文（≤272K）$4/M 输入、$20/M 输出（促销价至少持续到 2026-11-21）
+  usd_per_m_in: 4.0,      // USD / 百万 input tokens
+  usd_per_m_out: 20.0,    // USD / 百万 output tokens
+  usd_cny: 6.74,          // 估算展示用汇率（2026-09-01）
+};
+const EST = {
+  calls_per_focal_month: 13.8, // baseline12 实测
+  tok_in_per_call: 3500,       // 供应商未回传用量，按 profile+上下文规模估算
+  tok_out_per_call: 450,
+};
+function costOfCalls(calls){
+  const usd = calls * (EST.tok_in_per_call * PRICING.usd_per_m_in
+                     + EST.tok_out_per_call * PRICING.usd_per_m_out) / 1e6;
+  return {usd, cny: usd * PRICING.usd_cny};
+}
+function updateCostEstimate(){
+  const months = +$('fMonths').value || 0, focal = +$('fFocal').value || 0;
+  const calls = Math.round(months * focal * EST.calls_per_focal_month);
+  const c = costOfCalls(calls);
+  const zh = LANG !== 'en';
+  $('costBox').innerHTML = zh
+    ? `<b>预估计费（${PRICING.model} 单一模型）</b><br>
+       ${focal} 焦点 × ${months} 月 × ${EST.calls_per_focal_month} 次/焦点·月 ≈ <b>${calls.toLocaleString()}</b> 次调用<br>
+       ≈ <b>$${c.usd.toFixed(2)}</b>（约 ¥${c.cny.toFixed(1)}）<br>
+       <span class="note">单价 $${PRICING.usd_per_m_in}/M 输入 + $${PRICING.usd_per_m_out}/M 输出；
+       每次调用按 ${EST.tok_in_per_call}+${EST.tok_out_per_call} tokens 估算（供应商未回传实际用量）</span>`
+    : `<b>Estimated cost (${PRICING.model} only)</b><br>
+       ${focal} focal × ${months} mo × ${EST.calls_per_focal_month} calls/focal·mo ≈ <b>${calls.toLocaleString()}</b> calls<br>
+       ≈ <b>$${c.usd.toFixed(2)}</b> (≈¥${c.cny.toFixed(1)})<br>
+       <span class="note">$${PRICING.usd_per_m_in}/M input + $${PRICING.usd_per_m_out}/M output;
+       ${EST.tok_in_per_call}+${EST.tok_out_per_call} tokens/call assumed (provider does not report usage)</span>`;
+}
+for(const id of ['fMonths','fFocal']){
+  $(id).addEventListener('input', updateCostEstimate);
+}
+
+// ---- Tab 切换 ----
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('nav button').forEach(x=>x.classList.toggle('on', x===b));
+  for(const tb of ['live','conclusions','history','qa'])
+    $('tab-'+tb).hidden = (b.dataset.tab!==tb);
+  if(b.dataset.tab==='conclusions'){ loadConclusions(); }
+  if(b.dataset.tab==='history') loadRuns();
+  if(b.dataset.tab==='qa') loadQa();
+});
+
+// ---- 视图切换（列表 / 地图 / 决策） ----
+const VIEWS = [['viewList','agents'],['viewMap','villageBox'],['viewDecisions','decisionBox']];
+function switchView(btnId){
+  for(const [b, box] of VIEWS){
+    $(b).classList.toggle('on', b===btnId);
+    $(box).hidden = (b!==btnId);
+  }
+  if(btnId==='viewMap') drawVillage();
+}
+for(const [b] of VIEWS) $(b).onclick = ()=>switchView(b);
+
+// ---- 启停 ----
+$('btnStart').onclick = async ()=>{
+  $('btnStart').disabled = true; $('startMsg').textContent = t('starting');
+  const body = {months:+$('fMonths').value, seed:+$('fSeed').value, condition:$('fCond').value,
+    iv_start:+$('fIvS').value, iv_end:+$('fIvE').value, num:+$('fNum').value,
+    focal:+$('fFocal').value, note:$('fNote').value,
+    model:$('fModel').value, api_base:$('fApiBase').value.trim(),
+    reasoning_depth:$('fReasoning').value, max_retries:+$('fRetries').value,
+    scale:activeScale};
+  const r = await fetch('/api/start',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify(body)});
+  const j = await r.json();
+  $('startMsg').textContent = r.ok ? (t('startOk')+j.run) : (t('startFail')+j.error);
+  if(r.ok){ selectedRun = j.run; }
+  poll();
+};
+$('btnStop').onclick = async ()=>{
+  if(!confirm(t('confirmStop'))) return;
+  const r = await fetch('/api/stop',{method:'POST'});
+  const j = await r.json();
+  $('startMsg').textContent = r.ok ? (t('stopped')+(j.note||'')) : j.error;
+  poll();
+};
+
+// ---- 轮询 ----
+async function poll(force){
+  const btn = $('btnRefresh');
+  if(force && btn){ btn.disabled = true; btn.classList.add('spin'); }
+  try{
+    const params = new URLSearchParams();
+    if(!force && selectedRun) params.set('run', selectedRun);
+    if(force) params.set('_', String(Date.now()));
+    const r = await fetch('/api/state'+(params.toString()?('?'+params):''), {
+      cache: 'no-store',
+      headers: force ? {'Cache-Control':'no-cache'} : {}
+    });
+    if(!r.ok) return;
+    state = await r.json();
+    const live = state.totals && state.totals.current_run;
+    if(force && live) selectedRun = live;
+    else if(!selectedRun) selectedRun = state.run;
+    if(force && live && state.run !== live){
+      const r2 = await fetch('/api/state?run='+encodeURIComponent(live)+'&_='+Date.now(), {cache:'no-store'});
+      if(r2.ok) state = await r2.json();
+    }
+    renderRunRecord(); renderParameterOverview(); renderAgents(); renderFeed();
+    if(!$('villageBox').hidden) drawVillage();
+    $('logTail').textContent = state.log_tail || '–';
+    if(!$('tab-conclusions').hidden){ loadConclusions(); }
+    if(!$('tab-history').hidden) loadRuns();
+  }catch(e){ /* 服务器未就绪时静默 */ }
+  finally{
+    if(btn){ btn.disabled = false; btn.classList.remove('spin'); }
+  }
+}
+$('btnRefresh').onclick = ()=>poll(true);
+$('btnRefresh').title = t('btnRefresh');
+setInterval(poll, 5000); poll();
+setInterval(()=>{ if(!$('villageBox').hidden) drawVillage(true); }, 900);
+
+function fmtDur(s){
+  if(s==null) return '–';
+  s = Math.floor(s);
+  const h = Math.floor(s/3600), m = Math.floor(s%3600/60);
+  return h ? `${h}h${m}m` : `${m}m${s%60}s`;
+}
+function renderRunRecord(){
+  if(!state) return;
+  $('btnStop').disabled = !state.running;
+  $('btnStart').disabled = !!state.running;
+  const totals = state.totals || {};
+  const planned = totals.batch_runs_planned || 12;
+  const done = totals.batch_runs_done || 0;
+  const totalMonths = totals.batch_total_months || (planned * 24);
+  const doneMonths = totals.batch_months_done || 0;
+  const progress = totalMonths ? (100 * doneMonths / totalMonths) : 0;
+  const current = totals.current_run;
+  const condition = current ? current.split('_s')[0] : '';
+  const conditionLabel = ({none:t('condNone'), casework:t('condCasework'), timebank:t('condTimebank'), platform:t('condPlatform')})[condition] || condition;
+  const seed = current && current.includes('_s') ? current.split('_s')[1] : '';
+  const isLive = !!(current && doneMonths < totalMonths);
+  const status = $('pRunStatus');
+  if(doneMonths >= totalMonths && totalMonths){
+    status.className = 'v pill done'; status.textContent = t('statusDone');
+  }else if(isLive || state.running || state.external_hint){
+    status.className = 'v pill run'; status.textContent = t('statusRun');
+  }else{
+    status.className = 'v pill idle'; status.textContent = t('statusIdle');
+  }
+  overviewValue('pRun', current
+    ? `${current}（${conditionLabel}${seed ? ' s'+seed : ''} · ${totals.current_month || 0}/24）`
+    : (done >= planned && planned ? `${done}/${planned} ${t('statusDone')}` : `${done}/${planned} ${t('runQueued')}`));
+  overviewValue('pProgress', totalMonths ? `${progress.toFixed(1)}%  ${doneMonths}/${totalMonths}${LANG==='en'?' mo':'月'}  ${done}/${planned}${LANG==='en'?' runs':'轮'}` : '–');
+  const allCalls = totals.calls_all_runs ?? 0;
+  overviewValue('pTokens', allCalls ? fmtTok(allCalls * (EST.tok_in_per_call + EST.tok_out_per_call)) : '–');
+  const budget = costOfCalls(allCalls);
+  overviewValue('pCost', allCalls ? `≈ $${budget.usd.toFixed(0)} / ¥${budget.cny.toFixed(0)}` : '–');
+}
+function fmtTok(v){
+  return v >= 1e6 ? (v/1e6).toFixed(1)+'M' : v >= 1e3 ? Math.round(v/1e3)+'k' : String(v);
+}
+function fmtEta(tt){
+  if(tt.batch_total_months && tt.batch_months_done >= tt.batch_total_months) return t('etaDone');
+  if(!tt.eta_ts) return '–';
+  const d = new Date(tt.eta_ts * 1000);
+  const pad = n => String(n).padStart(2,'0');
+  const remainH = Math.max(0, (tt.eta_ts*1000 - Date.now()) / 3.6e6);
+  const when = `${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  return remainH >= 0.1 ? `${when}（~${remainH.toFixed(1)}h）` : when;
+}
+
+function lonBand(v){
+  if(v>=0.6) return {c:'var(--critical)', t:t('bandCrit')};
+  if(v>=0.45) return {c:'var(--warn)', t:t('bandWarn')};
+  return {c:'var(--good)', t:t('bandGood')};
+}
+function lonColor(v){
+  if(v>=0.6) return 'var(--critical)';
+  if(v>=0.45) return 'var(--warn)';
+  return 'var(--good)';
+}
+function persona(p){
+  const chips = [];
+  chips.push(p.extroversion>=0.6?t('personaOutgoing'):(p.extroversion>=0.4?t('personaMild'):t('personaShy')));
+  chips.push(p.health>=0.75?t('personaStrong'):(p.health>=0.5?t('personaOk'):t('personaWeak')));
+  if(p.deep_isolation) chips.push(t('personaIsolated'));
+  return chips;
+}
+function renderAgents(){
+  if(!state) return;
+  $('agentCount').textContent = state.agents.length;
+  $('agents').innerHTML = state.agents.map(a=>{
+    const b = lonBand(a.loneliness||0);
+    return `<div class="agent">
+      <div class="nm">${a.name||('#'+a.id)}
+        <span class="note">${a.age}${t('detailAge')}·${a.gender||''}</span>
+        ${a.focal?`<span class="tag">${t('detailFocal')}</span>`:''}</div>
+      <div class="chips">${persona(a).map(c=>`<span class="chip">${c}</span>`).join('')}
+        <span class="chip">${t('detailTies')} ${a.active_ties??'–'}</span></div>
+      <div class="meter">${t('detailLon')} <span class="bar"><i style="width:${Math.round((a.loneliness||0)*100)}%;background:${b.c}"></i></span>
+        <span style="color:${b.c}">${b.t}</span></div>
+      <div class="meter">${t('detailHealth')} <span class="bar"><i style="width:${Math.round((a.health||0)*100)}%;background:var(--s1)"></i></span>
+        <span>${(a.health??0).toFixed(2)}</span></div>
+      ${a.last_reason?`<div class="words">「${a.last_reason}」<br>
+        <span class="note">— ${t('monthWord',{n:a.last_month})} · ${tAct(a.last_action)||a.last_action||''}${a.last_target?' · '+a.last_target:''}</span></div>`:''}
+      ${a.last_event?`<div class="evt">${a.last_event}</div>`:''}
+    </div>`;
+  }).join('');
+}
+function renderFeed(){
+  if(!state) return;
+  const rows = (state.feed_full?.length && state.feed_full[0].month!==undefined)
+    ? state.feed_full.slice().reverse() : (state.feed||[]);
+  $('feed').innerHTML = rows.map(d=>{
+    const sysRow = d.agent_id===-1;
+    const ag = state.agents.find(a=>a.id===d.agent_id);
+    const who = sysRow ? (LANG==='en'?'System':'系统干预')
+      : (ag?ag.name:('#'+d.agent_id));
+    const target = d.target || d.elder || '';
+    return `<div class="item"><span class="mo">${t('monthLabel',{n:d.month})}</span>
+      <span class="who"${sysRow?' style="color:var(--s3)"':''}>${who}</span>
+      <span class="act">${tAct(d.action)||d.action}${target?' → '+target:''}${d.outcome?' · '+(tOut(d.outcome)||d.outcome):''}</span>
+      ${d.reason?`<div class="rsn">「${d.reason}」</div>`:''}</div>`;
+  }).join('') || `<p class="note">${t('noDecisions')}</p>`;
+}
+
+// ---- 村落地图视图（纯可视化，非研究参数） ----
+const villagePos = {}; // agent_id -> {x,y,vx,vy,hx,hy}
+function ensurePos(a, idx, n, w, h){
+  if(villagePos[a.id]) return villagePos[a.id];
+  const cols = Math.ceil(Math.sqrt(n));
+  const cellW = w/cols, cellH = h/Math.ceil(n/cols);
+  const col = idx % cols, row = Math.floor(idx/cols);
+  const hx = cellW*col + cellW*0.5, hy = cellH*row + cellH*0.5;
+  const p = {x:hx, y:hy, vx:(Math.random()-0.5)*1.2, vy:(Math.random()-0.5)*1.2, hx, hy};
+  villagePos[a.id] = p;
+  return p;
+}
+function stepPos(p, w, h){
+  p.x += p.vx; p.y += p.vy;
+  if(Math.random()<0.02){ p.vx = (Math.random()-0.5)*1.2; p.vy = (Math.random()-0.5)*1.2; }
+  const dx = p.x-p.hx, dy = p.y-p.hy;
+  if(Math.hypot(dx,dy) > 70){ p.vx -= dx*0.002; p.vy -= dy*0.002; }
+  p.x = Math.max(14, Math.min(w-14, p.x));
+  p.y = Math.max(14, Math.min(h-14, p.y));
+}
+function cssVar(n){ return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
+function drawVillage(stepOnly){
+  const cv = $('villageCanvas'); if(!cv || !state || !state.agents?.length) return;
+  const w = cv.width, h = cv.height;
+  const ctx = cv.getContext('2d');
+  const n = state.agents.length;
+  const cols = Math.ceil(Math.sqrt(n));
+  const cellW = w/cols, cellH = h/Math.ceil(n/cols);
+  ctx.clearRect(0,0,w,h);
+  ctx.fillStyle = cssVar('--page'); ctx.fillRect(0,0,w,h);
+  state.agents.forEach((a,idx)=>{
+    const p = ensurePos(a, idx, n, w, h);
+    if(!stepOnly) { p.x = p.hx; p.y = p.hy; }
+    else stepPos(p, w, h);
+    // house
+    const hs = Math.min(cellW,cellH)*0.32;
+    ctx.strokeStyle = cssVar('--axis'); ctx.lineWidth = 1.4;
+    ctx.strokeRect(p.hx-hs/2, p.hy-hs/2, hs, hs*0.8);
+    ctx.beginPath();
+    ctx.moveTo(p.hx-hs*0.65, p.hy-hs*0.4);
+    ctx.lineTo(p.hx, p.hy-hs*0.9);
+    ctx.lineTo(p.hx+hs*0.65, p.hy-hs*0.4);
+    ctx.stroke();
+    // dot
+    const color = lonColor(a.loneliness||0);
+    const cssColor = getComputedStyle(document.documentElement).getPropertyValue(color.replace('var(','').replace(')','')) || color;
+    ctx.fillStyle = getComputedStyle(cv).getPropertyValue(color) || color;
+    ctx.fillStyle = colorOf(color);
+    ctx.beginPath();
+    if(a.focal){
+      ctx.fillRect(p.x-6, p.y-6, 12, 12);
+    } else {
+      ctx.arc(p.x, p.y, 6, 0, Math.PI*2);
+      ctx.fill();
+    }
+    p._r = a.focal ? 8 : 7;
+  });
+}
+function colorOf(varExpr){
+  const name = varExpr.replace('var(','').replace(')','');
+  return cssVar(name) || '#888';
+}
+$('villageCanvas').addEventListener('click', (ev)=>{
+  if(!state) return;
+  const cv = $('villageCanvas');
+  const rect = cv.getBoundingClientRect();
+  const scaleX = cv.width/rect.width, scaleY = cv.height/rect.height;
+  const mx = (ev.clientX-rect.left)*scaleX, my = (ev.clientY-rect.top)*scaleY;
+  let hit = null, best = 1e9;
+  for(const a of state.agents){
+    const p = villagePos[a.id]; if(!p) continue;
+    const d = Math.hypot(p.x-mx, p.y-my);
+    if(d < (p._r||8)+6 && d < best){ best = d; hit = a; }
+  }
+  if(hit) showDetail(hit);
+});
+function showDetail(a){
+  const b = lonBand(a.loneliness||0);
+  $('detailModal').hidden = false;
+  $('detailModal').innerHTML = `<div class="modalbg"><div class="modal">
+    <button class="close ghost" id="closeDetail">${t('detailClose')}</button>
+    <h3>${a.name||('#'+a.id)} <span class="note">${a.age}${t('detailAge')}·${a.gender||''}</span></h3>
+    ${a.focal?`<span class="tag">${t('detailFocal')}</span>`:''}
+    <div class="chips" style="margin-top:8px">${persona(a).map(c=>`<span class="chip">${c}</span>`).join('')}
+      <span class="chip">${t('detailTies')} ${a.active_ties??'–'}</span></div>
+    <div class="meter">${t('detailLon')} <span class="bar"><i style="width:${Math.round((a.loneliness||0)*100)}%;background:${b.c}"></i></span>
+      <span style="color:${b.c}">${b.t}</span></div>
+    <div class="meter">${t('detailHealth')} <span class="bar"><i style="width:${Math.round((a.health||0)*100)}%;background:var(--s1)"></i></span>
+      <span>${(a.health??0).toFixed(2)}</span></div>
+    ${a.last_reason?`<div class="words">「${a.last_reason}」<br>
+      <span class="note">— ${t('monthWord',{n:a.last_month})} · ${tAct(a.last_action)||a.last_action||''}${a.last_target?' · '+a.last_target:''}</span></div>`
+      :`<p class="note">${t('detailNoWords')}</p>`}
+  </div></div>`;
+  $('closeDetail').onclick = ()=>{ $('detailModal').hidden = true; $('detailModal').innerHTML=''; };
+  $('detailModal').querySelector('.modalbg').addEventListener('click', (e)=>{
+    if(e.target.classList.contains('modalbg')){ $('detailModal').hidden = true; $('detailModal').innerHTML=''; }
+  });
+}
+
+// ---- 核心结论 ----
+function renderBatchTrajectory(comp){
+  if(!comp?.trajectories || !window.Chart) return;
+  const dark=document.documentElement.dataset.theme==='dark'||(!document.documentElement.dataset.theme&&matchMedia('(prefers-color-scheme: dark)').matches);
+  const colors=dark?{none:'#3987E5',casework:'#D95926',timebank:'#199E70',platform:'#C98500'}:{none:'#2A78D6',casework:'#EB6834',timebank:'#1BAF7A',platform:'#EDA100'};
+  const dashes={none:[],casework:[9,4],timebank:[3,3],platform:[11,3,2,3]};
+  const conds=['none','casework','timebank','platform'];
+  const datasets=conds.flatMap(c=>{
+    const rows=comp.trajectories.isolation_rate?.[c]||[];
+    if(!rows.length) return [];
+    const seedLines=[];
+    const seeds=[...new Set(rows.flatMap(r=>(r.seed_values||[]).map(v=>v.seed)))].sort();
+    for(const seed of seeds) seedLines.push({label:c+' seed '+seed,data:rows.map(r=>{const v=(r.seed_values||[]).find(x=>x.seed===seed);return {x:r.month,y:v?.value};}).filter(p=>p.y!=null),borderColor:colors[c]+'45',backgroundColor:colors[c],borderWidth:1,borderDash:dashes[c],pointRadius:0,tension:.2,showLine:true});
+    return [...seedLines,{label:c+' mean',data:rows.map(r=>({x:r.month,y:r.mean})),borderColor:colors[c],backgroundColor:colors[c],borderWidth:3,borderDash:dashes[c],pointRadius:3,pointStyle:['circle','rect','triangle','rectRot'][conds.indexOf(c)],pointHoverRadius:7,tension:.2,showLine:true}];
+  });
+  const interventionPlugin={id:'interventionBand',beforeDraw(chart){const {ctx,chartArea,scales}=chart;if(!chartArea||!scales.x)return;const x1=scales.x.getPixelForValue(6.5),x2=scales.x.getPixelForValue(18.5);ctx.save();ctx.fillStyle='rgba(120,120,120,.12)';ctx.fillRect(x1,chartArea.top,x2-x1,chartArea.bottom-chartArea.top);ctx.restore();}};
+  const trajectoryValues=datasets.flatMap(d=>d.data.map(p=>p.y)).filter(Number.isFinite);
+  const trajectoryMax=Math.min(1,Math.max(.4,Math.ceil((Math.max(...trajectoryValues,0)+.05)*10)/10));
+  mkChart('batchTraj',{type:'line',data:{datasets},plugins:[interventionPlugin],options:{...baseOpts(),plugins:{...baseOpts().plugins,legend:{labels:{filter:item=>item.text.endsWith('mean')}}},scales:{x:{type:'linear',min:0,max:24,title:{display:true,text:'模拟月份'},grid:{display:false}},y:{min:0,max:trajectoryMax,title:{display:true,text:'孤立率'},ticks:{callback:v=>(v*100).toFixed(0)+'%'}}}}});
+  const offsets={none:-.18,casework:-.06,timebank:.06,platform:.18};
+  const scatter=conds.flatMap(c=>{const rows=comp.conditions?.[c]?.seeds||[];return rows.length?[{label:c,data:rows.map(r=>({x:r.seed+offsets[c],y:r.iso_iv,seed:r.seed})),borderColor:colors[c],backgroundColor:colors[c],pointStyle:['circle','rect','triangle','rectRot'][conds.indexOf(c)],pointRadius:6,pointHoverRadius:9}]:[];});
+  mkChart('batchScatter',{type:'scatter',data:{datasets:scatter},options:{...baseOpts(),plugins:{...baseOpts().plugins,tooltip:{callbacks:{title:items=>'seed '+items[0].raw.seed}}},scales:{x:{min:.5,max:3.5,ticks:{stepSize:1,callback:v=>Number.isInteger(v)?v:''},title:{display:true,text:'seed（条件横向错位以防重叠）'}},y:{min:0,max:.5,title:{display:true,text:'干预期平均孤立率'},ticks:{callback:v=>(v*100).toFixed(0)+'%'}}}}});
+}
+
+function renderMechanism(m){
+  if(!m){ $('mechTiming').innerHTML='<p class="note">机制扫描尚未运行。</p>'; $('mechLoop').innerHTML='<p class="note">闭环尚未运行。</p>'; const e=$('mechCost'); if(e)e.innerHTML='<p class="note">尚无成本/诊断数据。</p>'; return; }
+  const t=m.timing;
+  if(t){
+    const pc=v=>(v*100).toFixed(1)+'%';
+    const rows=t.rows.map(r=>'<tr><td>'+r.name+'</td><td>'+r.window[0]+'–'+r.window[1]+'</td><td>'+pc(r.overall)+' ±'+(r.sd*100).toFixed(1)+'</td><td>'+pc(r.iv)+'</td><td>'+(r.rebound>=0?'+':'')+(r.rebound*100).toFixed(1)+'pp</td><td>'+r.post_window+'</td></tr>').join('');
+    const dc=Object.entries(t.delay_cost).map(([k,v])=>'<tr><td>'+k+'</td><td>'+(v.slope_per_month>=0?'+':'')+(v.slope_per_month*100).toFixed(2)+'pp/月</td></tr>').join('');
+    $('mechTiming').innerHTML='<div class="table-scroll"><table><thead><tr><th>配置</th><th>窗口</th><th>全时程孤立率</th><th>干预期</th><th>反弹</th><th>后窗月数</th></tr></thead><tbody>'+rows+'</tbody></table></div>'
+      +'<p class="note">none 基线全时程 '+pc(t.baseline_overall)+'。延迟成本（启动每推迟 1 月）：</p><table><tbody>'+dc+'</tbody></table>'
+      +'<ul class="note" style="padding-left:18px">'+t.findings.map(f=>'<li>'+f+'</li>').join('')+'</ul>';
+  }
+  const h=m.harness_loop;
+  if(h){
+    const its=h.iterations.map(r=>'<tr><td>'+r.iter+'</td><td>'+r.condition+' start='+r.iv_start+' dur='+r.duration+'</td><td>'+(r.overall*100).toFixed(2)+'%</td><td class="note">'+(r.rationale||'')+'</td></tr>').join('');
+    $('mechLoop').innerHTML='<div class="table-scroll"><table><thead><tr><th>轮</th><th>候选</th><th>全时程孤立率</th><th>设计师理由</th></tr></thead><tbody>'+its+'</tbody></table></div>'
+      +'<p class="note">设计师 '+h.designer_model+'；约束 '+h.constraint+'。'+h.finding+'</p>';
+  }
+  const co=m.cost, si=m.silence_diagnosis;
+  const el=$('mechCost');
+  if(el){
+    let html='';
+    if(co){
+      const t=co.totals;
+      html+='<table><thead><tr><th>类别</th><th>LLM 调用</th><th>估算成本</th></tr></thead><tbody>'
+        +['valid','invalid','pending'].map(k=>'<tr><td>'+({valid:'有效 run',invalid:'无效沉没',pending:'进行中'})[k]+'</td><td>'+t[k].llm_calls.toLocaleString()+'</td><td>$'+t[k].est_cost_usd.toFixed(2)+'</td></tr>').join('')
+        +'</tbody></table><p class="note">累计估算 $'+co.grand_total_usd+'，沉没占比 '+(co.waste_share*100).toFixed(1)+'%（含归档的 .invalid-* 目录，共 '+co.n_runs_counted+' 个 run 目录）。</p>';
+    }
+    if(si){
+      html+='<p class="note"><b>无效 run 根因：</b></p><ul class="note" style="padding-left:18px">'
+        +Object.entries(si.modes).map(([k,v])=>'<li><b>'+(k==='infra_gateway'?'网关故障风暴':'行为性静默')+'</b>（'+v.runs.join('、')+'）：'+v.mitigation+'</li>').join('')+'</ul>';
+    }
+    el.innerHTML=html||'<p class="note">尚无成本/诊断数据。</p>';
+  }
+}
+
+async function loadConclusions(){
+  const q = selectedRun ? ('?run='+encodeURIComponent(selectedRun)) : '';
+  const r = await fetch('/api/conclusions'+q);
+  if(!r.ok) return;
+  const c = await r.json();
+  const comp = c.batch_comparison;
+  const cal = c.calibration||{};
+  $('calib').innerHTML = Object.values(cal).length ? '<table><thead><tr><th>指标</th><th>模拟</th><th>调查靶标</th><th>差值</th><th>检查</th></tr></thead><tbody>'+Object.values(cal).map(v=>{
+    const d=v.sim-v.target, ok=Math.abs(d)<=.10;
+    return '<tr><td>'+v.label+'<div class="note">'+v.source+'</div></td><td>'+((v.sim||0)*100).toFixed(1)+'%</td><td>'+((v.target||0)*100).toFixed(0)+'%</td><td>'+(d>=0?'+':'')+(d*100).toFixed(1)+'pp</td><td class="'+(ok?'hit':'miss')+'">'+(ok?'✓ 通过':'✗ 超出')+'</td></tr>';
+  }).join('')+'</tbody></table>' : '<p class="note">暂无校准数据</p>';
+  renderMechanism(c.mechanism);
+  if(!comp || !comp.conditions){
+    $('batchEvidence').textContent='正式批次汇总尚未生成；仅有规则层冒烟结果，不能作为正式批次结论。';
+    $('ivTable').innerHTML='<p class="note">正式批次结果待生成。</p>';
+    $('effectTable').innerHTML='<p class="note">暂无可用于论文的配对证据。</p>';
+    $('qualityTable').innerHTML='<p class="note">暂无批次质量汇总。</p>';
+    return;
+  }
+  renderBatchTrajectory(comp);
+  const conds=['none','casework','timebank','platform'];
+  const fmt=(v)=>v&&v.mean!=null?v.mean.toFixed(3)+' ± '+(v.sd==null?'—':v.sd.toFixed(3)):'—';
+  const seeds=(v)=>(v.seeds||[]).map(x=>x.seed).join(', ')||'—';
+  const n=(v)=>v&&v.n!=null?v.n:0;
+  const labels={none:'基线',casework:'个案管理',timebank:'时间银行',platform:'数字平台'};
+  const invalidCount=(comp.invalid_runs||[]).length, pendingCount=(comp.pending_runs||[]).length;
+  $('batchEvidence').textContent='有效 run '+comp.valid_runs+' 条；无效 '+invalidCount+' 条；运行中或未完成 '+pendingCount+' 条。干预期为第 7–18 月，撤出后为第 19–24 月。';
+  $('ivTable').innerHTML='<div class="table-scroll"><table><thead><tr><th>条件</th><th>有效 n</th><th>干预期孤立率</th><th>撤出后孤立率</th><th>干预期孤独感</th><th>撤出后孤独感</th><th>有效 seed</th></tr></thead><tbody>'+conds.map(k=>{const v=comp.conditions[k]||{};return '<tr><td>'+labels[k]+'</td><td>'+n(v.iso_iv)+'</td><td>'+fmt(v.iso_iv)+'</td><td>'+fmt(v.iso_post)+'</td><td>'+fmt(v.lon_iv)+'</td><td>'+fmt(v.lon_post)+'</td><td>'+seeds(v)+'</td></tr>';}).join('')+'</tbody></table></div><p class="note">均值 ± seed-level 标准差。月份和 agent-month 不作为独立实验重复。</p>';
+  const paired=comp.paired_contrasts_vs_none||{};
+  $('effectTable').innerHTML='<div class="table-scroll"><table><thead><tr><th>条件</th><th>有效配对 n</th><th>孤立率反弹<br>撤出后 − 干预期</th><th>反弹相对基线<br>同 seed 配对差值</th><th>干预期孤立率<br>相对基线</th><th>撤出后孤立率<br>相对基线</th></tr></thead><tbody>'+conds.filter(k=>k!=='none').map(k=>{const v=comp.conditions[k]||{}, p=paired[k]||{};const rebound=v.iso_rebound?.mean;const fs=x=>x&&x.mean_difference!=null?(x.mean_difference>=0?'+':'')+x.mean_difference.toFixed(3):'—';const pn=p.iso_rebound?.n||0;return '<tr><td>'+labels[k]+'</td><td>'+pn+'</td><td>'+(rebound==null?'—':(rebound>=0?'+':'')+rebound.toFixed(3))+'</td><td>'+fs(p.iso_rebound)+'</td><td>'+fs(p.iso_iv)+'</td><td>'+fs(p.iso_post)+'</td></tr>';}).join('')+'</tbody></table></div><p class="note">反弹先在每个 run 内计算，再与同 seed 的 none 反弹配对。正值表示撤出后孤立率上升。配对 n 不足时仅作探索性描述。</p>';
+  const byCond=conds.map(k=>{const v=comp.conditions[k]||{};return '<tr><td>'+labels[k]+'</td><td>'+(v.seeds||[]).length+'</td><td>'+((v.seeds||[]).map(x=>x.seed).join(', ')||'—')+'</td></tr>';}).join('');
+  $('qualityTable').innerHTML='<div class="table-scroll"><table><thead><tr><th>质量项目</th><th>当前值</th><th>解释</th></tr></thead><tbody><tr><td>有效正式 run</td><td>'+comp.valid_runs+'</td><td>进入条件统计</td></tr><tr><td>无效 run</td><td>'+invalidCount+'</td><td>排除，不进入正式比较</td></tr><tr><td>运行中或未完成</td><td>'+pendingCount+'</td><td>等待完成后再判定</td></tr>'+byCond+'</tbody></table></div><p class="note">当前有效 seed 不足以确认 H4。不能据此报告显著性、因果性或四条件稳定排序。</p>';
+}
+
+// ---- Q&A ----
+let qaCache = null;
+async function loadQa(){
+  try{
+    if(!qaCache){
+      const r = await fetch('/api/qa');
+      if(!r.ok) return;
+      qaCache = await r.json();
+    }
+    const en = LANG === 'en';
+    $('qaPrinciple').textContent = qaCache.principle || t('qaPrinciple');
+    $('qaList').innerHTML = (qaCache.items || []).map((item, i)=>`
+      <article class="qa-item">
+        <p class="qa-q">${en && item.question_en ? item.question_en : item.question}</p>
+        <p class="qa-a">${en && item.answer_en ? item.answer_en : item.answer}</p>
+      </article>`).join('') || '<p class="note">–</p>';
+  }catch(e){}
+}
+
+// ---- 历史 ----
+async function loadRuns(){
+  const r = await fetch('/api/runs'); if(!r.ok) return;
+  const runs = await r.json();
+  $('runsBody').innerHTML = runs.map(x=>{
+    const st = x.running?`<span class="pill run">${t('statusRunShort')}</span>`:(x.valid===false?`<span class="pill" style="color:var(--critical)">无效</span>`:(x.valid===true?`<span class="pill done">有效</span>`:(x.done?`<span class="pill done">${t('statusDoneShort')}</span>`:`<span class="pill idle">${t('statusIdleShort')}</span>`)));
+    return `<tr data-run="${x.name}" class="${x.name===selectedRun?'sel':''}">
+      <td>${x.name}</td><td>${tCond(x.condition)||x.condition||'–'}</td><td>${x.seed??'–'}</td>
+      <td>${x.months_done}${x.months_total?'/'+x.months_total:''}</td><td>${st}</td>
+      <td>${x.final_loneliness?.toFixed(3)??'–'}</td>
+      <td>${x.final_isolation!=null?(x.final_isolation*100).toFixed(0)+'%':'–'}</td>
+      <td>${x.final_deep!=null?(x.final_deep*100).toFixed(0)+'%':'–'}</td></tr>`;
+  }).join('');
+  document.querySelectorAll('tr[data-run]').forEach(tr=>tr.onclick=()=>{
+    selectedRun = tr.dataset.run;
+    document.querySelectorAll('tr[data-run]').forEach(x=>x.classList.toggle('sel', x===tr));
+    poll();
+  });
+}
+
+async function loadPanelConfig(){
+  try{
+    const r = await fetch('/api/config');
+    if(!r.ok) return;
+    panelCfg = await r.json();
+    activeScale = panelCfg.settings?.active_scale || panelCfg.preset?.id || 'small';
+    populateReasoningOptions(panelCfg.catalog?.reasoning_depths);
+    applySettingsToForm(panelCfg.settings);
+    const preset = panelCfg.catalog?.scales?.find(s=>s.id===activeScale) || panelCfg.preset;
+    applyPresetToForm(preset);
+    renderScaleCards();
+    renderParameterOverview();
+    renderCodexInfo(panelCfg.codex);
+    await refreshModels();
+    if(panelCfg.readonly){
+      $('btnStart').hidden = true; $('btnStop').hidden = true;
+      const banner = document.createElement('p');
+      banner.className = 'note';
+      banner.textContent = LANG==='en'
+        ? 'Read-only display instance — simulations run on the local machine, this page only mirrors synced run data.'
+        : '只读展示实例——模拟在本地机器运行，此页面仅镜像已同步的 run 数据。';
+      const msg = $('startMsg');
+      if(msg) msg.replaceWith(banner);
+    }
+  }catch(e){}
+}
+
+applyLang();
+loadPanelConfig();
+</script>
+</body>
+</html>

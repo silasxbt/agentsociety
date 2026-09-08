@@ -607,7 +607,10 @@ async def init_dispatchers() -> None:
                 ignore_reinit_error=True,
                 include_dashboard=False,
                 num_cpus=Config.LLM_RAY_MAX_WORKERS,
-                object_store_memory=1_000_000_000,
+                # 小内存主机（如 1GB 云实例）可用环境变量调低；默认 1GB 不变
+                object_store_memory=int(
+                    os.getenv("AGENTSOCIETY_RAY_OBJECT_STORE_BYTES", "1000000000")
+                ),
                 job_config=_build_ray_job_config(),
                 runtime_env=None,
             )

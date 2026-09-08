@@ -183,8 +183,20 @@ paper_sources/
 # Sphinx generated .pot templates
 packages/agentsociety2/docs/locale/gettext/
 
-# Temporary examples
-examples/
+# Temporary examples (elder_support 放行用于团队协作)
+examples/*
+!examples/v2/
+examples/v2/*
+!examples/v2/elder_support/
+examples/v2/elder_support/tmp/
+examples/v2/elder_support/data_pipeline/literature/*.pdf
+!examples/v2/elder_support/paper/
+examples/v2/elder_support/paper/*.aux
+examples/v2/elder_support/paper/*.log
+examples/v2/elder_support/paper/*.out
+examples/v2/elder_support/paper/*.blg
+examples/v2/elder_support/paper/*.bbl
+examples/v2/elder_support/paper/*.synctex.gz
 
 # =========================================
 # Pattern Exceptions

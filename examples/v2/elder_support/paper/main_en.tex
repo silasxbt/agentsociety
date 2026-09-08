@@ -1,0 +1,222 @@
+% !TEX program = xelatex
+% English version: AISS 2026 Challenge
+% Build: tools/build_paper.sh (xelatex x2 + bibtex)
+% Discipline: no experimental number is hand-copied into the text;
+%   all figures are injected via numbers.tex macros. Re-run
+%   tools/gen_paper_numbers.py after the batch freeze to update the paper.
+\documentclass[10pt,twocolumn]{article}
+\usepackage{geometry}
+\geometry{a4paper,top=2.2cm,bottom=2.4cm,left=1.8cm,right=1.8cm,columnsep=0.75cm}
+% 仅作者姓名含中文字符，需 xeCJK；正文全英文不受影响
+\usepackage{xeCJK}
+\setCJKmainfont{Songti SC}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{amsmath}
+\usepackage[numbers,sort&compress]{natbib}
+\usepackage{xcolor}
+\usepackage{caption}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true,linkcolor=black,citecolor=blue!50!black,urlcolor=blue!50!black}
+\captionsetup{font=small,labelfont=bf}
+% 章节标题不做连字符断词（避免 "Sim-ulation" 这类断法）
+\usepackage{titlesec}
+\titleformat{\section}{\normalfont\Large\bfseries\raggedright}{\thesection}{1em}{}
+\titleformat{\subsection}{\normalfont\large\bfseries\raggedright}{\thesubsection}{1em}{}
+\setlength{\bibsep}{2pt}
+\renewcommand{\bibfont}{\small}
+
+\input{numbers.tex}
+\graphicspath{{../figures/}}
+
+\title{\textbf{Layered Generative-Agent Simulation of Social Support Interventions for Older Adults Living Alone:\\ In-Intervention Effects, Post-Withdrawal Sustainability, and Timing of Entry}}
+\author{Dongshuai Hui (惠栋帅) \quad Caihou Wang (王才厚) \quad Mingren Lei (雷明仁)\\ \small AISS 2026 Challenge Submission}
+\date{}
+
+\begin{document}
+\twocolumn[
+\maketitle
+\vspace{-2em}
+\begin{center}\fbox{\parbox{0.92\textwidth}{\small\DraftBadgeEn}}\end{center}
+\vspace{0.5em}
+\begin{minipage}{\textwidth}
+\begin{center}\textbf{Abstract}\end{center}
+\small
+Social isolation among older adults living alone is a central public concern of ageing societies, yet conventional survey data cannot observe the counterfactual trajectory \emph{after an intervention is withdrawn}. Building on AgentSociety2, we construct a \textbf{layered hybrid generative-agent simulation}: six LLM-driven focal elders (whose decisions carry natural-language rationales) are embedded in a 20-person rules-layer support network, with 1 step = 1 month over 24 months; profile distributions are anchored to the CLHLS 2021 and Harmonized CHARLS surveys. Under a preregistered design we compare three social-work interventions---professional casework, timebank mutual aid, and digital-platform volunteer matching---implemented in months 7--18 and then withdrawn, with six months of post-withdrawal observation. Draft results (\ValidRuns/\TargetRuns\ valid runs) show that casework achieves the lowest isolation rate during the intervention window (\IsoIvCasework\% vs.\ a \IsoIvNone\% baseline), but rebounds by \IsoRebCasework pp after withdrawal, all but erasing its advantage; the timebank barely rebounds. The finding that \emph{structural mutual aid is more sustainable than external input} holds in both the LLM behavioural layer and the rules layer. A rules-layer timing scan (\TimingSeeds\ seeds) further yields a delay-cost estimate: each month of postponing casework raises the two-year mean isolation rate by roughly \DelayCostCasework pp. We report calibration deviations, root causes of failed runs, and true costs in full (including a \WasteShare\ sunk-cost share), and demonstrate an autonomous experimentation loop pairing an LLM designer with a deterministic evaluator under preregistration constraints. All results can be reproduced with the released scripts in a single command.\par\vspace{0.4em}
+\noindent\textbf{Keywords}: generative agents; social support networks; older adults living alone; social work interventions; timebank; multi-agent simulation
+\end{minipage}
+\vspace{1.2em}
+]
+
+\section{Introduction}
+Loneliness and social isolation among Chinese adults aged 65+ who live alone are problems of considerable scale: in the CLHLS 2008/09 wave, 52\% of older adults living alone reported feeling lonely, nearly twice the share among those living with others (29.5\%)\citep{wei2022living}. Social-work practice has developed several intervention routes---professional casework, community mutual aid (timebanks), and digital-platform volunteering---but two key questions remain stubbornly out of reach of the empirical literature:
+
+\textbf{(1) What happens after the intervention is withdrawn?} RCTs and quasi-experiments almost always measure outcomes during or at the end of the programme\citep{lu2024timebank}; the post-withdrawal counterfactual trajectory is unobservable in the real world: one cannot both deliver and withhold an intervention from the same cohort.
+
+\textbf{(2) When is entry most worthwhile?} Waiting lists and budget constraints make the start date a genuine policy variable, yet the marginal cost of timing has never been systematically quantified.
+
+Generative-agent simulation\citep{park2023generative} offers a new instrument: LLM-driven agents produce reasoned behavioural decisions in a controlled environment, and identical random seeds allow ``parallel worlds'' to be replayed. Multi-agent LLM simulation nevertheless faces a threefold challenge---are the data fabricated, are the conclusions reproducible, and is the cost bearable? Taking ``science first'' as its design principle, this paper offers a complete answer. Our contributions:
+
+\begin{enumerate}
+  \item \textbf{A layered hybrid architecture}: an LLM focal layer (six elders, supplying mechanistic and individual narrative evidence) plus a rules layer (20-person network dynamics at zero API cost, supplying large-sample sensitivity scans). Scale is achieved through layering, not spending.
+  \item \textbf{Real-data anchoring}: the profile generator is aligned dimension by dimension with the CLHLS 2021 living-alone subsample ($n=1707$) and Harmonized CHARLS longitudinal transition anchors; simulation outputs are cross-checked against published studies, with deviations reported rather than concealed.
+  \item \textbf{A post-withdrawal sustainability finding (H4)}: casework is strongest during the intervention window but rebounds sharply after withdrawal, whereas the timebank barely rebounds---a mechanism that holds independently in the rules layer and the LLM behavioural layer, constituting cross-layer corroboration.
+  \item \textbf{A delay-cost estimate for timing of entry}: a preregistered rules-layer scan quantifies the price of ``each month of delay'' and identifies the mechanistic root of the interventions' immediate onset.
+  \item \textbf{End-to-end transparency}: preregistered hypotheses and validity gates, root-cause diagnosis of failed runs, true-cost accounting including sunk costs, and a demonstration of an LLM designer exploring a preregistered space autonomously---with all scripts and audit logs released alongside the paper.
+\end{enumerate}
+
+\section{Related Work and Theoretical Basis}
+\textbf{Social support theory and the convoy model.} The convoy model\citep{kahn1980convoys} views an older person's social ties as layered convoys moving through the life course: the inner circle (spouse, children) is stable but eroded by widowhood and health shocks, while the outer circle (neighbours, friends) is more fluid. Our relationship ledger operationalises this structure directly: every tie has a strength, a type, and a most-recent-contact month, and decays when contact lapses.
+
+\textbf{The empirical shape of tie decay.} Burt's cross-study fits show that decay rates are non-constant and follow a power function---``older ties are more stable''\citep{burt2000decay}; tie termination among older adults has also been measured directly\citep{kleinikkink1999broken}. In Section~\ref{sec:honest} we measure our model's survival curves against Burt's yardstick and report the structural deviation candidly.
+
+\textbf{Effect-size evidence for loneliness interventions.} The meta-analysis by Masi et al.\ provides an effect-size yardstick for four intervention classes (social-cognitive interventions largest, $d=-0.598$)\citep{masi2011meta}; the subtype breakdown of Hoang et al.\ shows technology-based interventions with CIs crossing zero and multi-component interventions significant in community settings\citep{hoang2022interventions}. Two casework RCTs (older adults living alone\citep{ristolainen2020effects}; community-dwelling frail elders\citep{taube2018case}) point in the same direction with conservative ITT estimates. Quasi-experimental timebank evidence indicates effects lasting at least to programme end with no crowding-out\citep{lu2024timebank}. These effect sizes and directions supply both the parameter basis and the outcome benchmark for our three interventions.
+
+\textbf{Generative-agent simulation.} Park et al.\ established the paradigm of LLM agents producing believable social behaviour\citep{park2023generative}. This paper differs in its policy-comparison purpose: a preregistered experimental design, calibration to real survey data, and systematic validity checking.
+
+\section{Method: Layered Hybrid Simulation}
+\subsection{Overall architecture}
+The simulation is built on the AgentSociety2 framework (Ray parallelism, full tracing, replayable decisions). Twenty older adults living alone form a support network; six of them are \textbf{LLM focal elders} (PersonAgent, model gpt-5.6-sol) who, each month, run a multi-round tool loop to perceive the environment, retrieve memory, act, and articulate a natural-language rationale. The remaining fourteen residents and all network dynamics (tie decay, monthly events, intervention mechanics) are driven by the \textbf{rules layer} and consume no LLM calls. The focal layer supplies mechanistic and narrative evidence; the rules layer preserves the integrity of the network structure and supports zero-cost large-sample sensitivity scans. Measured call density is roughly 13.8 calls per focal elder per month.
+
+\subsection{Environment and the relationship ledger}
+The environment module (ElderSupportEnv) maintains a relationship ledger for every elder: tie type (child / neighbour / friend / volunteer / social worker), strength $s\in[0,1]$, monthly contact frequency, and most recent contact month. A tie with no contact in a given month decays as $s \leftarrow s\times(1-\delta)$ (baseline $\delta=0.06$; sensitivity scan 0.15/0.25) and is deleted at $s<0.05$. Monthly events include health shocks, widowhood (triggering a loneliness jump calibrated to the CHARLS +27pp risk difference and CLHLS widowhood dynamics\citep{yang2021widowhood}), and child visits. Loneliness $\ell\in[0,1]$ is driven by tie activation and events; $\ell\ge0.6$ counts as ``lonely'' (mapping to CLHLS item b38 ``often/always'', baseline target about 15\%).
+
+\subsection{The three interventions}\label{sec:interventions}
+\begin{itemize}
+  \item \textbf{casework --- professional case management}: after risk-ranked assessment, social workers visit high-risk elders and reconnect them with family; top-down and precise, but constrained by caseload. Parameters draw on Masi's social-cognitive effect class\citep{masi2011meta} and the two casework RCTs\citep{ristolainen2020effects,taube2018case}; the coverage cap equals the number of workers $\times$ caseload.
+  \item \textbf{timebank --- time-bank mutual aid}: younger-old healthy elders are paired with high-risk elders and exchange services for credits under automatic rules; the pairings are real interpersonal ties and persist after withdrawal with probability post\_persist (midpoint 0.5, scanned 0.3--0.7). Parameters draw on the Hong Kong timebank quasi-experiment\citep{lu2024timebank}; no literature point estimate exists for post-withdrawal persistence, so it is treated as a scan.
+  \item \textbf{platform --- digital volunteer matching}: responsive, broad-coverage, rotating volunteers, shallow ties. Its effect is set weakest of the three, following meta-analytic evidence that technology-based interventions have CIs crossing zero\citep{hoang2022interventions}.
+\end{itemize}
+
+\subsection{Data calibration}
+The profile generator is anchored dimension by dimension to real surveys: sex (63.8\% female), self-rated health, a five-level loneliness baseline, number of surviving children, and the share of children who visit regularly (78.7\%) come from the CLHLS 2021 living-alone subsample; child proximity comes from CHARLS 2015; longitudinal anchors (three-year loneliness onset 27.2\% among those living alone, persistence 53.3\%, widowhood shock +27pp) come from Harmonized CHARLS 2011--2018. Outcome-definition mappings and known biases (reweighting for CLHLS oversampling of the oldest-old, unweighted panel attrition, etc.) are documented in the appendix and repository. Calibration is checked by triangulation: the simulated three-year gradient of new-onset loneliness matches, in direction and magnitude, the living-alone vs.\ co-residing incidence gap reported by Wei et al.\ (34.0\% vs.\ 22.3\%)\citep{wei2022living}---noting that the difference in that study loses significance after covariate adjustment, so the comparison serves only as descriptive corroboration.
+
+\subsection{Preregistration and validity gates}\label{sec:prereg}
+Hypotheses (H1--H4), primary and secondary outcomes, seeds, and validity criteria were written into script headers before the formal batch was launched:
+\textbf{primary outcome} isolation\_rate (monthly isolation rate); \textbf{secondary outcome} avg\_loneliness; deep\_isolation\_rate enters sensitivity analyses only, and avg\_active\_ties is descriptive only. \textbf{Validity gates}: a run must complete 24 months, have non-empty decision records, focal-elder silence rate $\le$10\%, and LLM call error rate $\le$5\%; any violation renders the run invalid and triggers a full rerun, with invalid runs archived rather than deleted. With $n=3$ seeds we perform no significance tests and claim no stable ranking; H4 is a within-run paired contrast (post-withdrawal $-$ intervention window) and is flagged as exploratory.
+
+\section{Experimental Design}
+Four conditions (none / casework / timebank / platform) $\times$ 3 seeds $\times$ 24 months, targeting \TargetRuns\ valid runs; the intervention window spans months 7--18, with post-withdrawal observation in months 19--24. Hypotheses:
+\textbf{H1} all three interventions lower the isolation rate during the window, with casework lowering it most;
+\textbf{H2} loneliness improves in the same direction during the window;
+\textbf{H3} the three interventions leave distinguishable behavioural signatures (help-seeking routes, pairing, volunteer matching);
+\textbf{H4} (exploratory) casework rebounds more than the timebank after withdrawal---structural mutual aid is more sustainable.
+
+\section{Main Results (LLM Behavioural Layer)}\label{sec:results}
+\DraftBadgeEn
+
+\begin{table}[t]
+\centering\small
+\caption{Primary outcome by window (isolation rate, \%; condition means). Rebound $=$ post-withdrawal $-$ intervention window, pp.}
+\label{tab:main}
+\begin{tabular}{lcccc}
+\toprule
+Condition & $n$ & Interv. & Post & Rebound \\
+\midrule
+none      & \NNone     & \IsoIvNone     & \IsoPostNone     & \IsoRebNone \\
+casework  & \NCasework & \textbf{\IsoIvCasework} & \IsoPostCasework & \textbf{\IsoRebCasework} \\
+timebank  & \NTimebank & \IsoIvTimebank & \IsoPostTimebank & \IsoRebTimebank \\
+platform  & \NPlatform & \IsoIvPlatform & \IsoPostPlatform & \IsoRebPlatform \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=0.95\textwidth]{fig1_trajectory_isolation_en.png}
+\caption{Monthly isolation-rate trajectories (thick lines: condition means; thin lines: individual seeds; shading: intervention window, months 7--18). The pattern of casework suppressing isolation within the window and rebounding quickly after withdrawal is clearly visible.}
+\label{fig:traj}
+\end{figure*}
+
+\subsection{During the intervention: casework leads}
+During the window, casework yields an isolation rate of \IsoIvCasework\%, a relative reduction of \CaseworkIvReduction\ against the \IsoIvNone\% baseline; the same-seed paired difference is \PairIvCasework pp (paired $n=$\PairIvCaseworkN). The timebank (\IsoIvTimebank\%) and platform (\IsoIvPlatform\%) improve outcomes only modestly. Loneliness (the secondary outcome) moves in the same direction: casework \LonIvCasework\% vs.\ baseline \LonIvNone\%. This is directionally consistent with the Masi meta-analysis, in which cognitively oriented interventions show the largest effects\citep{masi2011meta}, supporting H1/H2.
+
+\subsection{H4: divergent post-withdrawal sustainability}
+After withdrawal, the casework isolation rate rebounds by \IsoRebCasework pp (same-seed paired difference \PairRebCasework pp), all but erasing the in-window advantage and converging on the baseline; the timebank rebounds by \IsoRebTimebank pp---essentially not at all (Figs.~\ref{fig:traj} and~\ref{fig:paired}). The same mechanism holds independently in the rules layer (casework rebound \RulesRebCwLo\ to \RulesRebCwHi pp, timebank \RulesRebTb pp, 20 seeds)---\textbf{``structural mutual aid is more sustainable than external input'' is corroborated across both layers of the simulation}, the paper's most policy-relevant finding. The mechanistic account: what is withdrawn under casework is the active stimulation supplied by the social worker as a network node, whereas timebank pairings are genuine ties between elders, some of which persist after withdrawal.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{fig4_paired_rebound_en.png}
+\caption{Same-seed paired contrasts (left: in-window effect; right: post-withdrawal rebound, exploratory).}
+\label{fig:paired}
+\end{figure}
+
+\subsection{Behavioural signatures and mechanistic corroboration (H3)}
+The three interventions leave clearly distinguishable signatures in the focal elders' behaviour logs\footnote{Exact behavioural-signature values will enter the final manuscript at batch freeze; the observations here are draft impressions from \ValidRuns\ valid runs.}: the timebank arm has the highest help-success rate of any condition (mutual-aid pairing at work); the casework arm generates the most help requests (proactive social-worker outreach) but only average success; the baseline arm requests least. Notable is casework's \textbf{``tie-count paradox''}: after withdrawal the focal elders still hold many active ties, yet the isolation rate rebounds regardless---a tie's \emph{existence} is not its \emph{functioning}; what was removed is the social-worker node that activated those ties.
+
+An individual trajectory makes the paradox concrete (preregistered case-selection rule: among valid casework runs, the focal elder who received a social-worker visit before withdrawal and shows the largest post-withdrawal loneliness rebound; exploratory evidence). Elder \CaseCwAgent\ in \CaseCwRun\ stood at loneliness \CaseCwLonWd\ with \CaseCwTiesWd\ active ties at the point of withdrawal (month 18); by month 24 the network had shrunk by a single tie (\CaseCwTiesEnd), yet loneliness had climbed to \CaseCwLonEnd---the network was nearly intact; what vanished was the social-worker node that activated it. No counterpart timebank case from a valid run exists (the only run with an explicit pairing record failed the silence gate, so its case is excluded from evidence), which we state plainly. The practice implication: casework should build in referral toward reciprocal networks and an exit plan.
+
+\subsection{Reporting a cross-layer discrepancy candidly}
+The in-window ranking is not fully consistent across layers: the rules layer puts timebank above platform, while the LLM layer (draft) puts platform slightly above timebank (platform has only \NPlatform\ seed; whether this is real or noise awaits the freeze). It is mechanistically explicable: the LLM layer's platform intervention introduces new volunteer ties and raises active-tie counts. We report this as ``a cross-layer difference and its explanation'' rather than concealing it---exposing exactly such inconsistencies is where the layered design earns its keep.
+
+\section{Mechanism Layer: Timing, Dosage, and an Autonomous Loop}\label{sec:mechanism}
+\subsection{The delay cost of entry timing}
+A preregistered rules-layer scan (start month $\{3,5,7,9,12\}\times$ duration $\{6,12,18\}\times$ 3 conditions, \TimingSeeds\ seeds; baseline full-horizon isolation rate \RulesBaselineOverall\%) yields three findings:
+\begin{enumerate}
+  \item \textbf{Interventions act immediately}: within the window, the isolation rate barely varies with start month---the entire cost of delay comes from unprotected waiting months, not from ``missing a critical window'';
+  \item \textbf{Delay cost is quantifiable}: each month of postponement raises the two-year mean isolation rate by about \DelayCostCasework pp (casework) / \DelayCostTimebank pp (timebank); the platform's total effect is weak, so it is timing-insensitive (\DelayCostPlatform pp);
+  \item \textbf{Rebound is dose-independent}: extending casework from 6 to 12 months does not soften the post-withdrawal rebound (\RulesRebCwLo\ to \RulesRebCwHi pp)---the rebound of dependency-type support is a property of the mechanism, not a symptom of underdosing.
+\end{enumerate}
+Disclosures: a later start implies a shorter post-withdrawal observation window (a confound), and the 18-month duration has no post-window at all; rules-layer absolute levels are not compared with the LLM batch---only direction and magnitude are used. An LLM-behavioural-layer timing contrast across prevention / early-warning / crisis stages has \emph{not} been run; it is future work, and we do not write plans as results.
+
+\subsection{An autonomous harness loop}
+We demonstrate an automated research loop under preregistration constraints: an LLM designer proposes candidate configurations round by round within a preregistered search space (condition $\times$ start month 3--12 $\times$ duration 6--12, objective: minimise full-horizon isolation rate, resource cap duration $\le$12), a deterministic rules-layer evaluator executes them, and all \LoopIters\ rounds are logged to disk. The loop converges to \LoopBestDesc\ (full-horizon isolation rate \LoopBestScore\%), within one seed standard deviation of the grid optimum---\textbf{the loop works as a procedure, and we report candidly that it rediscovered the grid's plateau without surpassing it}. The guardrails (LLM proposes only; evaluation is deterministic; space and round count preregistered; every round logged) ensure the demonstration introduces no selective reporting. In addition, the per-run automated analysis--reflection mechanism (analyze.py) currently implements ``detect and flag'': any change to the experimental configuration requires human review, preventing mid-experiment design drift.
+
+\section{Scientific Checks and Honest Bias Reporting}\label{sec:honest}
+\subsection{Calibration alignment and emergent validity}
+Input distributions are aligned with the survey data dimension by dimension (Section 3.4). Run-level dynamics are cross-checked against the literature: the simulated widowhood shock matches the direction of CLHLS widowhood--loneliness dynamics (OR 3.09 in the first years of widowhood)\citep{yang2021widowhood}. We prescribe only the profile distributions, the intervention rules, and the decay mechanism; the distribution of isolation, the loneliness trajectories, and the post-withdrawal persistence of mutual aid are all emergent.
+
+\subsection{Structural limits of tie decay}
+Measuring our model's tie-survival curves against Burt's yardstick (rules layer, 50 persons $\times$ 48 months) reveals two \textbf{mechanism-level limits}: (1) tie loss is markedly slower than in the literature (4-year survival 78.8\% vs.\ 38.3\% under Burt's fit); (2) there is a survival floor of about 46\%---children with fixed contact schedules and high-frequency neighbours refresh their contact timestamps monthly, never enter the decay branch, and thus no value of $\delta$ can reproduce the sustained decline of Burt's power function. Accordingly we \textbf{do not treat tie-loss rate as a calibration target}, only as a sensitivity dimension. One correction attaches to the Burt citation: the paper's ``2.63-year half-life for ties outside the family'' is an arithmetic slip (a constant term left unsubtracted); recomputed from the paper's own equation it is 1.63 years\citep{burt2000decay}. The deep-isolation measure is truncated by the survival floor and therefore enters sensitivity analyses only.
+
+\subsection{Modelling choices handled as scans}
+Three independent literature searches (the third via a multi-source aggregator covering CrossRef/OpenAlex/arXiv) concurred: no authoritative source supports $\delta=0.06$ or caseload $=8$---search results that conjured ``perfectly matching'' numbers (the project encountered one fabricated reference and one fabricated statistic in its first search round) were all rejected and archived. These two parameters are therefore treated as \textbf{modelling choices}: $\delta$ is scanned over 0.06/0.15/0.25 (scan points chosen from the measured survival curves); caseload in this model effectively controls intervention coverage of high-risk elders (4/8/12 mapping to 40\%/80\%/100\%), a different unit from real-world client rosters---measured average rosters in New York City home-bound elder case management run around 75 clients per worker and are considered overloaded\citep{pardasani2018caseload}. The Chinese industry standard specifies staffing ratios but no caseload clause\citep{mzt064}, and NASW explicitly declines to set a uniform caseload standard\citep{nasw2013}, so the scan is expressed in coverage terms. Scan conclusions: $\delta$ shifts overall levels but does not reorder the interventions; caseload is monotone within the window and converges after withdrawal---coverage affects the in-place effect, not sustainability.
+
+\subsection{Root-cause diagnosis of failed runs}
+Every run failing the validity gates (Section~\ref{sec:prereg}) was archived and diagnosed, revealing two failure modes: (1) \textbf{infrastructure failures}---LLM gateway error storms blacking out whole months of decisions (errors visibly clustered in the trace), handled by rerunning with a higher retry count (an infrastructure parameter, not a protocol change); (2) \textbf{behavioural failures}---the LLM reasons normally but initiates no environmental action, concentrated inside the intervention window and consistent with the casework dependency mechanism. The latter has no infrastructure fix; such runs are rerun under the preregistered gate, and if the pattern recurs the run is excluded per the rules while the tension is reported in the limitations (the gate may conflate ``silent malfunction'' with ``legitimate dependent inaction''), with an additional sensitivity analysis that retains the run---the gate itself is not altered.
+
+\subsection{Model and inference-setting disclosure}
+The formal batch uses a single model (gpt-5.6-sol) with uniform sampling settings; reasoning-effort level was not recorded by the run script and is disclosed as ``not recorded'', to be supplemented with a small-sample contrast. Cross-model robustness (contrast batches on two other models) is listed as planned robustness analysis and sits outside the main results.
+
+\section{True Cost Accounting}
+Cost reporting for multi-agent LLM experiments must include runs eliminated by quality gates. This project accumulated \TotalCalls\ LLM calls (measured from traces, archived invalid runs included), with an estimated total cost of \$\CostTotal: \$\CostValid\ on valid runs and \$\CostWasted\ sunk on invalid ones (a \WasteShare\ share). Token usage is a documented assumption (traces do not record per-call usage) and unit prices follow public pricing; the full accounting basis is released with the data files. Here the layered design pays off concretely: the rules-layer scans (\TimingSeeds\ seeds $\times$ 45 configurations) and the harness loop cost zero API dollars; running the same scans through the LLM layer would exceed the main batch's cost by an order of magnitude.
+
+\section{Discussion and Policy Implications}
+\textbf{(1) Waiting time is itself an intervention design variable.} The mechanism-layer estimates show immediate onset and a delay cost accruing linearly by the month (about \DelayCostCasework pp/month). For practice: compressing the administrative cycle from identification to case opening yields gains of the same order as intensifying the intervention.
+
+\textbf{(2) Casework needs a built-in exit plan.} Strongest in-window effect and largest post-withdrawal rebound are two faces of one mechanism: the social worker is an injected active node. The rebound does not soften with dosage, suggesting that exit design (gradual tapering, referral into reciprocal networks) should be a standard component of casework rather than an option---consistent with the behavioural evidence of the tie-count paradox (ties remain; activation is gone).
+
+\textbf{(3) The policy value of structural mutual aid lies after withdrawal.} The timebank trails casework during the window, but the peer ties it builds persist beyond it. If the policy goal is long-run sustainability rather than short-run indicators, combining the two (casework to open, timebank to sustain) is a worthwhile follow-up experiment.
+
+\textbf{(4) Timing talk is pointless for weak interventions.} Platform-type interventions have weak total effects and are timing-insensitive---secure intensity first, then optimise timing.
+
+All of the above are model-mechanism conclusions intended to generate testable policy hypotheses; \textbf{we claim no causal effects in real populations}.
+
+\section{Limitations and Ethics}
+\textbf{Limitations.} (1) $n=3$ seeds support only descriptive contrasts and directional judgements, not significance or stable rankings; (2) the tie-decay mechanism has a 46\% survival floor and is slower than the empirical shape in the literature; (3) the behavioural validity of LLM focal elders depends on the model itself, and behavioural silence is hard to separate from a real elder's ``legitimate inaction''; (4) calibration sources differ in definitions (survey waves; living-alone subsample vs.\ full sample); (5) the post-withdrawal observation window is only six months; (6) the Ristolainen RCT's subgroup effect suffers from non-comparable baselines\citep{ristolainen2020effects}, so casework parameters lean primarily on the Masi meta-analysis.
+
+\textbf{Ethics.} All agents are simulated entities; no real individuals are involved. Survey data enter only as aggregate distributions from public microdata. The LLM-generated ``elders' rationales'' are mechanistic probes, not real elders' voices, and the paper avoids quoting them anthropomorphically. Because simulation conclusions could be misused as direct grounds for resource allocation, we repeatedly stress their hypothesis-generating character.
+
+\section{Conclusion}
+With a layered hybrid generative-agent simulation, this paper answers two questions conventional data cannot: what happens after withdrawal (casework rebounds, the timebank persists---corroborated across two layers) and when to enter (immediate onset, delay cost accruing by the month). Methodologically, we contribute a transferable scientific discipline: preregistration with validity gates, real-data anchoring with honest deviation reporting, root-cause diagnosis of failures, cost transparency including sunk costs, and a guardrailed autonomous experimentation loop. After the batch freeze every number in the paper updates automatically from the scripts; we invite reproduction per the appendix.
+
+\bibliographystyle{unsrtnat}
+\bibliography{refs}
+
+\appendix
+\section{Reproducibility Checklist}\label{app:repro}
+\begin{itemize}
+  \raggedright % 清单多为不可断行的等宽路径，两端对齐会把行内空白拉得过大
+  \item \textbf{Code and data}: AgentSociety2 repository \texttt{examples/v2/elder\_support/}; environment module \texttt{custom/envs/elder\_support\_env.py}.
+  \item \textbf{Formal batch}: \texttt{run\_batch.sh 24 1 2 3} (automatic checkpoint resumption; validity gates and archiving built in).
+  \item \textbf{Analysis and figures}: \texttt{tools/compare\_conditions.py} $\rightarrow$ \texttt{comparison.json}; \texttt{tools/make\_figures.py} (each figure ships with a same-name CSV); \texttt{tools/gen\_paper\_numbers.py} (the sole source of every number in this paper).
+  \item \textbf{Mechanism scans and loop}: \texttt{tests/scan\_timing.py}, \texttt{tools/harness\_loop.py} (preregistered headers + per-round JSONL audit logs).
+  \item \textbf{Cost and diagnosis}: \texttt{tools/cost\_report.py}, \texttt{tests/silence\_diagnosis.json}.
+  \item \textbf{Calibration documents}: \texttt{data\_pipeline/out/calibration\_targets.md}, \texttt{references\_verified.md} (including rejected entries and verification methods).
+  \item \textbf{Live dashboard}: \url{https://agentsociety.shangdian.me} (batch progress, conclusion cards, mechanism evidence, cost and failure diagnosis).
+\end{itemize}
+
+\section{Validity-Gate Adjudication Rules}
+A run is valid if and only if: the DONE flag exists; monthly metrics for months 0--24 are complete; decision records are non-empty; the six focal elders' combined silence rate is $\le$10\% (strictly greater than 0.10 fails); and the LLM call error rate is $\le$5\%. Invalid runs are archived under timestamped directories (\texttt{*.invalid-<timestamp>}) with all traces and decision logs preserved for diagnosis---never deleted.
+
+\end{document}

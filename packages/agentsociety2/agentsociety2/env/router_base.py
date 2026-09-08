@@ -29,6 +29,7 @@ Example::
 """
 
 import asyncio
+import os
 import time
 import uuid
 from abc import ABC, abstractmethod
@@ -566,7 +567,13 @@ class RouterBase(ABC):
         :raises ValueError: 超过重试次数仍失败时抛出。
         """
         if max_retries is None:
-            max_retries = self.max_llm_call_retry
+            # 环境变量优先：与 llm_dispatcher 默认口径一致，供批次脚本统一
+            # 调大 HTTP 重试预算（router 构造时的 max_llm_call_retry 仅作兜底；
+            # codegen 层的代码重生成重试不受此影响）。
+            env_budget = os.getenv("AGENTSOCIETY_LLM_MAX_RETRIES")
+            max_retries = (
+                int(env_budget) if env_budget else self.max_llm_call_retry
+            )
         else:
             max_retries = max(max_retries, 1)
 
@@ -676,11 +683,12 @@ Your corrected response:
                 ]
 
                 # Send request to LLM
+                # 注意：这里的 max_retries 是 pydantic 校验反馈重试预算，
+                # 不下传——HTTP 连接重试由 acompletion 按环境变量口径兜底。
                 response = await self.acompletion(
                     model=model,
                     messages=request_messages,
                     stream=False,
-                    max_retries=max_retries,
                     base_delay=base_delay,
                     max_delay=max_delay,
                     **kwargs,
