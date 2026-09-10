@@ -50,6 +50,9 @@ button:disabled{opacity:.45;cursor:not-allowed}
 nav{display:flex;gap:22px;padding:12px 20px 2px}
 nav button{border:none;border-radius:0;background:none;color:var(--ink2);font-weight:600;padding:0 0 4px;font-size:13px;cursor:pointer}
 nav button.on{color:var(--ink);border-bottom:2px solid var(--s1)}
+nav .langbtn{margin-left:auto;border:1px solid var(--border);border-radius:8px;padding:3px 12px;
+  font-size:12px;color:var(--ink2);background:var(--surface);align-self:flex-start}
+nav .langbtn:hover{color:var(--ink);border-color:var(--s1)}
 main{padding:12px 20px 60px;max-width:1280px}
 .card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:14px}
 .card h3{margin:0 0 10px;font-size:13px;color:var(--ink2);font-weight:600;text-transform:none}
@@ -175,6 +178,7 @@ tr[data-run]{cursor:pointer}
   <button data-tab="conclusions" data-i18n="navConcl">结论</button>
   <button data-tab="history" data-i18n="navHistory">日志</button>
   <button data-tab="qa" data-i18n="navQa">介绍</button>
+  <button id="btnLang" class="langbtn">EN</button>
 </nav>
 <main>
 
@@ -235,7 +239,6 @@ tr[data-run]{cursor:pointer}
             <button id="viewList" class="on" data-i18n="viewList">列表视图</button>
             <button id="viewMap" data-i18n="viewMap">地图视图</button>
             <button id="viewDecisions" data-i18n="viewDecisions">决策视图</button>
-            <button id="btnLang" class="ghost">EN</button>
           </div>
         </div>
         <div id="agents" class="agents viewbody"></div>
@@ -260,44 +263,44 @@ tr[data-run]{cursor:pointer}
 
 <section id="tab-conclusions" hidden>
   <div class="card conclusion-card">
-    <h3>正式批次论文核心结果</h3>
-    <p class="note">只纳入通过 0–24 月完整性、决策覆盖、LLM 错误率和 DONE 门槛的 run。当前结果是描述性统计，不报告显著性或因果结论。</p>
+    <h3 data-i18n="conclTitle">正式批次论文核心结果</h3>
+    <p class="note" data-i18n="conclNote">只纳入通过 0–24 月完整性、决策覆盖、LLM 错误率和 DONE 门槛的 run。当前结果是描述性统计，不报告显著性或因果结论。</p>
     <p class="note" id="batchEvidence">–</p>
   </div>
   <div class="charts" style="margin-top:10px">
-    <div class="chartbox"><h3>主结局：跨条件月度孤立率</h3><canvas id="batchTraj"></canvas></div>
-    <div class="chartbox"><h3>干预期主结局：seed-level 孤立率</h3><canvas id="batchScatter"></canvas></div>
+    <div class="chartbox"><h3 data-i18n="chBatchTraj">主结局：跨条件月度孤立率</h3><canvas id="batchTraj"></canvas></div>
+    <div class="chartbox"><h3 data-i18n="chBatchScatter">干预期主结局：seed-level 孤立率</h3><canvas id="batchScatter"></canvas></div>
   </div>
   <div class="card conclusion-card">
-    <h3>论文核心结果：条件均值与有效重复</h3>
+    <h3 data-i18n="ivTitle">论文核心结果：条件均值与有效重复</h3>
     <div class="conclusion-scroll" id="ivTable">–</div>
   </div>
   <div class="card conclusion-card">
-    <h3>H4 相关结果：撤出反弹与同 seed 配对差值</h3>
+    <h3 data-i18n="effectTitle">H4 相关结果：撤出反弹与同 seed 配对差值</h3>
     <div class="conclusion-scroll" id="effectTable">–</div>
   </div>
   <div class="card conclusion-card">
-    <h3>机制层证据：介入时机 · 剂量 · 延迟成本</h3>
-    <p class="note">规则层扫描（20 种子，无 LLM），预注册假设与主指标；绝对水平不与正式 LLM 批次比较，仅比较方向与量级。</p>
+    <h3 data-i18n="mechTitle">机制层证据：介入时机 · 剂量 · 延迟成本</h3>
+    <p class="note" data-i18n="mechNote">规则层扫描（20 种子，无 LLM），预注册假设与主指标；绝对水平不与正式 LLM 批次比较，仅比较方向与量级。</p>
     <div class="conclusion-scroll" id="mechTiming">–</div>
   </div>
   <div class="card conclusion-card">
-    <h3>Harness 自主闭环（设计→运行→评估→修订）</h3>
-    <p class="note">LLM 设计师仅提案，评估为确定性规则层；目标、空间、迭代数预注册，全部轮次落盘无选择性报告。</p>
+    <h3 data-i18n="loopTitle">Harness 自主闭环（设计→运行→评估→修订）</h3>
+    <p class="note" data-i18n="loopNote">LLM 设计师仅提案，评估为确定性规则层；目标、空间、迭代数预注册，全部轮次落盘无选择性报告。</p>
     <div class="conclusion-scroll" id="mechLoop">–</div>
   </div>
   <div class="card conclusion-card">
-    <h3>真实成本与失效诊断</h3>
-    <p class="note">调用数为 trace 实测；token/单价为文档化假设。真实成本计入被质量门槛淘汰 run 的沉没部分。</p>
+    <h3 data-i18n="costTitle">真实成本与失效诊断</h3>
+    <p class="note" data-i18n="costNote">调用数为 trace 实测；token/单价为文档化假设。真实成本计入被质量门槛淘汰 run 的沉没部分。</p>
     <div class="conclusion-scroll" id="mechCost">–</div>
   </div>
   <div class="card conclusion-card">
-    <h3>数据质量与证据边界</h3>
+    <h3 data-i18n="qualityTitle">数据质量与证据边界</h3>
     <div class="conclusion-scroll" id="qualityTable">–</div>
   </div>
   <div class="card conclusion-card">
-    <h3>模型校准检查，不是干预效果验证</h3>
-    <p class="note">这是当前选中 run 的 n=20 末期截面检查，与 CLHLS 调查年份、样本和指标口径不同，只用于发现模型量级问题。</p>
+    <h3 data-i18n="calibTitle2">模型校准检查，不是干预效果验证</h3>
+    <p class="note" data-i18n="calibNote2">这是当前选中 run 的 n=20 末期截面检查，与 CLHLS 调查年份、样本和指标口径不同，只用于发现模型量级问题。</p>
     <div class="conclusion-scroll" id="calib">–</div>
   </div>
 </section>
@@ -440,6 +443,63 @@ const I18N = {
   personaOutgoing:['爱串门','outgoing'], personaMild:['性子随和','easygoing'], personaShy:['内敛怕生','shy'],
   personaStrong:['身子硬朗','strong health'], personaOk:['健康一般','average health'], personaWeak:['体弱','frail'],
   personaIsolated:['已深度孤立','deep isolation'],
+  // ---- 结论页 ----
+  conclTitle:['正式批次论文核心结果','Formal batch: headline paper results'],
+  conclNote:['只纳入通过 0–24 月完整性、决策覆盖、LLM 错误率和 DONE 门槛的 run。当前结果是描述性统计，不报告显著性或因果结论。','Only runs passing the 0–24 month completeness, decision-coverage, LLM error-rate and DONE gates are included. Results are descriptive; no significance or causal claims.'],
+  chBatchTraj:['主结局：跨条件月度孤立率','Primary outcome: monthly isolation rate by condition'],
+  chBatchScatter:['干预期主结局：seed-level 孤立率','Primary outcome during intervention: seed-level isolation'],
+  ivTitle:['论文核心结果：条件均值与有效重复','Headline results: condition means & valid replicates'],
+  effectTitle:['H4 相关结果：撤出反弹与同 seed 配对差值','H4-related: post-withdrawal rebound & same-seed paired differences'],
+  mechTitle:['机制层证据：介入时机 · 剂量 · 延迟成本','Mechanism-level evidence: timing · dose · delay cost'],
+  mechNote:['规则层扫描（20 种子，无 LLM），预注册假设与主指标；绝对水平不与正式 LLM 批次比较，仅比较方向与量级。','Rule-layer scan (20 seeds, no LLM) with preregistered hypotheses; absolute levels are not compared with the formal LLM batch — direction and magnitude only.'],
+  loopTitle:['Harness 自主闭环（设计→运行→评估→修订）','Autonomous harness loop (design → run → evaluate → revise)'],
+  loopNote:['LLM 设计师仅提案，评估为确定性规则层；目标、空间、迭代数预注册，全部轮次落盘无选择性报告。','The LLM designer only proposes; evaluation is a deterministic rule layer. Objective, search space and iterations were preregistered; every round is logged — no selective reporting.'],
+  costTitle:['真实成本与失效诊断','Real cost & failure diagnosis'],
+  costNote:['调用数为 trace 实测；token/单价为文档化假设。真实成本计入被质量门槛淘汰 run 的沉没部分。','Call counts are measured from traces; tokens/unit prices are documented assumptions. Real cost includes runs sunk by quality gates.'],
+  qualityTitle:['数据质量与证据边界','Data quality & evidence boundaries'],
+  calibTitle2:['模型校准检查，不是干预效果验证','Model calibration check — not intervention validation'],
+  calibNote2:['这是当前选中 run 的 n=20 末期截面检查，与 CLHLS 调查年份、样本和指标口径不同，只用于发现模型量级问题。','An n=20 endpoint cross-section of the selected run; survey year, sample and metric definitions differ from CLHLS — used only to catch magnitude problems.'],
+  axMonth:['模拟月份','Simulation month'], axIso:['孤立率','Isolation rate'],
+  axSeed:['seed（条件横向错位以防重叠）','seed (conditions jittered to avoid overlap)'],
+  axIvIso:['干预期平均孤立率','Avg isolation during intervention'],
+  thCfg:['配置','Config'], thWindow:['窗口','Window'], thIsoAll:['全时程孤立率','Overall isolation'],
+  thIv:['干预期','Intervention'], thReb:['反弹','Rebound'], thPostM:['后窗月数','Post months'],
+  delayNote:['none 基线全时程 {v}。延迟成本（启动每推迟 1 月）：','Baseline (none) overall {v}. Delay cost (per month of postponed start):'],
+  ppPerMonth:['pp/月','pp/mo'],
+  thRound:['轮','Round'], thCand:['候选','Candidate'], thWhy:['设计师理由','Designer rationale'],
+  loopFoot:['设计师 {m}；约束 {c}。','Designer {m}; constraint {c}. '],
+  thCat:['类别','Category'], thCalls:['LLM 调用','LLM calls'], thEstCost:['估算成本','Est. cost'],
+  catValid:['有效 run','Valid runs'], catInvalid:['无效沉没','Invalid (sunk)'], catPending:['进行中','In progress'],
+  costFoot:['累计估算 ${a}，沉没占比 {b}%（含归档的 .invalid-* 目录，共 {n} 个 run 目录）。','Cumulative estimate ${a}; sunk share {b}% (incl. archived .invalid-* dirs, {n} run dirs counted).'],
+  rootCause:['无效 run 根因：','Root causes of invalid runs:'],
+  modeGateway:['网关故障风暴','Gateway failure storm'], modeSilence:['行为性静默','Behavioral silence'],
+  thMetric:['指标','Metric'], thSim:['模拟','Simulated'], thTarget:['调查靶标','Survey target'], thDiff:['差值','Diff'], thCheck:['检查','Check'],
+  calibPass:['✓ 通过','✓ pass'], calibMiss:['✗ 超出','✗ out of tolerance'],
+  noCalib:['暂无校准数据','No calibration data yet'],
+  noMech:['机制扫描尚未运行。','Mechanism scan not run yet.'], noLoop:['闭环尚未运行。','Harness loop not run yet.'],
+  noCost:['尚无成本/诊断数据。','No cost / diagnosis data yet.'],
+  noBatch:['正式批次结果待生成。','Formal batch results pending.'],
+  noEffect:['暂无可用于论文的配对证据。','No paired evidence available for the paper yet.'],
+  noQuality:['暂无批次质量汇总。','No batch quality summary yet.'],
+  evidenceSmoke:['正式批次汇总尚未生成；仅有规则层冒烟结果，不能作为正式批次结论。','Formal batch summary not generated; only rule-layer smoke results exist and must not be read as batch conclusions.'],
+  evidenceLine:['有效 run {v} 条；无效 {i} 条；运行中或未完成 {p} 条。干预期为第 7–18 月，撤出后为第 19–24 月。','{v} valid runs; {i} invalid; {p} running or incomplete. Intervention months 7–18; post-withdrawal months 19–24.'],
+  pillValid:['有效','valid'], pillInvalid:['无效','invalid'],
+  stepWord:['步','steps'], callsWord:['{n} 次调用','{n} calls'],
+  thValidN:['有效 n','Valid n'], thIsoIv:['干预期孤立率','Isolation (intervention)'],
+  thIsoPost:['撤出后孤立率','Isolation (post)'], thLonIv:['干预期孤独感','Loneliness (intervention)'],
+  thLonPost:['撤出后孤独感','Loneliness (post)'], thValidSeeds:['有效 seed','Valid seeds'],
+  ivFoot:['均值 ± seed-level 标准差。月份和 agent-month 不作为独立实验重复。','Mean ± seed-level SD. Months and agent-months are not treated as independent replicates.'],
+  thPairedN:['有效配对 n','Paired n'], thRebound:['孤立率反弹<br>撤出后 − 干预期','Isolation rebound<br>post − intervention'],
+  thRebVsNone:['反弹相对基线<br>同 seed 配对差值','Rebound vs baseline<br>same-seed paired diff'],
+  thIvVsNone:['干预期孤立率<br>相对基线','Isolation (intervention)<br>vs baseline'],
+  thPostVsNone:['撤出后孤立率<br>相对基线','Isolation (post)<br>vs baseline'],
+  effectFoot:['反弹先在每个 run 内计算，再与同 seed 的 none 反弹配对。正值表示撤出后孤立率上升。配对 n 不足时仅作探索性描述。','Rebound is computed within each run, then paired with the same-seed baseline rebound. Positive = isolation rises after withdrawal. With few pairs this is exploratory only.'],
+  thQItem:['质量项目','Quality item'], thQVal:['当前值','Current'], thQExpl:['解释','Interpretation'],
+  qValid:['有效正式 run','Valid formal runs'], qValidExpl:['进入条件统计','Included in condition statistics'],
+  qInvalid:['无效 run','Invalid runs'], qInvalidExpl:['排除，不进入正式比较','Excluded from formal comparison'],
+  qPending:['运行中或未完成','Running / incomplete'], qPendingExpl:['等待完成后再判定','Judged after completion'],
+  qFoot:['当前有效 seed 不足以确认 H4。不能据此报告显著性、因果性或四条件稳定排序。','Valid seeds are insufficient to confirm H4. No significance, causality, or stable four-condition ranking should be reported from this.'],
+  roMirror:['只读展示实例——模拟在本地机器运行，此页面仅镜像已同步的 run 数据。','Read-only mirror — simulations run on a local machine; this page only mirrors synced run data.'],
 };
 const ACTS = {
   visit_neighbor:['串门','Visit neighbor'], call_family:['联系子女','Call family'], seek_help:['求助','Seek help'],
@@ -838,12 +898,15 @@ function renderRunRecord(){
   }else{
     status.className = 'v pill idle'; status.textContent = t('statusIdle');
   }
+  const stepInfo = totals.current_steps != null
+    ? ` · ${totals.current_steps}/${totals.current_total_steps || 33} ${t('stepWord')}` : '';
   overviewValue('pRun', current
-    ? `${current}（${conditionLabel}${seed ? ' s'+seed : ''} · ${totals.current_month || 0}/24）`
+    ? `${current}（${conditionLabel}${seed ? ' s'+seed : ''} · ${totals.current_month || 0}/24${stepInfo}）`
     : (done >= planned && planned ? `${done}/${planned} ${t('statusDone')}` : `${done}/${planned} ${t('runQueued')}`));
   overviewValue('pProgress', totalMonths ? `${progress.toFixed(1)}%  ${doneMonths}/${totalMonths}${LANG==='en'?' mo':'月'}  ${done}/${planned}${LANG==='en'?' runs':'轮'}` : '–');
   const allCalls = totals.calls_all_runs ?? 0;
-  overviewValue('pTokens', allCalls ? fmtTok(allCalls * (EST.tok_in_per_call + EST.tok_out_per_call)) : '–');
+  overviewValue('pTokens', allCalls
+    ? `${fmtTok(allCalls * (EST.tok_in_per_call + EST.tok_out_per_call))} · ${t('callsWord',{n:allCalls.toLocaleString()})}` : '–');
   const budget = costOfCalls(allCalls);
   overviewValue('pCost', allCalls ? `≈ $${budget.usd.toFixed(0)} / ¥${budget.cny.toFixed(0)}` : '–');
 }
@@ -1032,44 +1095,44 @@ function renderBatchTrajectory(comp){
   const interventionPlugin={id:'interventionBand',beforeDraw(chart){const {ctx,chartArea,scales}=chart;if(!chartArea||!scales.x)return;const x1=scales.x.getPixelForValue(6.5),x2=scales.x.getPixelForValue(18.5);ctx.save();ctx.fillStyle='rgba(120,120,120,.12)';ctx.fillRect(x1,chartArea.top,x2-x1,chartArea.bottom-chartArea.top);ctx.restore();}};
   const trajectoryValues=datasets.flatMap(d=>d.data.map(p=>p.y)).filter(Number.isFinite);
   const trajectoryMax=Math.min(1,Math.max(.4,Math.ceil((Math.max(...trajectoryValues,0)+.05)*10)/10));
-  mkChart('batchTraj',{type:'line',data:{datasets},plugins:[interventionPlugin],options:{...baseOpts(),plugins:{...baseOpts().plugins,legend:{labels:{filter:item=>item.text.endsWith('mean')}}},scales:{x:{type:'linear',min:0,max:24,title:{display:true,text:'模拟月份'},grid:{display:false}},y:{min:0,max:trajectoryMax,title:{display:true,text:'孤立率'},ticks:{callback:v=>(v*100).toFixed(0)+'%'}}}}});
+  mkChart('batchTraj',{type:'line',data:{datasets},plugins:[interventionPlugin],options:{...baseOpts(),plugins:{...baseOpts().plugins,legend:{labels:{filter:item=>item.text.endsWith('mean')}}},scales:{x:{type:'linear',min:0,max:24,title:{display:true,text:t('axMonth')},grid:{display:false}},y:{min:0,max:trajectoryMax,title:{display:true,text:t('axIso')},ticks:{callback:v=>(v*100).toFixed(0)+'%'}}}}});
   const offsets={none:-.18,casework:-.06,timebank:.06,platform:.18};
   const scatter=conds.flatMap(c=>{const rows=comp.conditions?.[c]?.seeds||[];return rows.length?[{label:c,data:rows.map(r=>({x:r.seed+offsets[c],y:r.iso_iv,seed:r.seed})),borderColor:colors[c],backgroundColor:colors[c],pointStyle:['circle','rect','triangle','rectRot'][conds.indexOf(c)],pointRadius:6,pointHoverRadius:9}]:[];});
-  mkChart('batchScatter',{type:'scatter',data:{datasets:scatter},options:{...baseOpts(),plugins:{...baseOpts().plugins,tooltip:{callbacks:{title:items=>'seed '+items[0].raw.seed}}},scales:{x:{min:.5,max:3.5,ticks:{stepSize:1,callback:v=>Number.isInteger(v)?v:''},title:{display:true,text:'seed（条件横向错位以防重叠）'}},y:{min:0,max:.5,title:{display:true,text:'干预期平均孤立率'},ticks:{callback:v=>(v*100).toFixed(0)+'%'}}}}});
+  mkChart('batchScatter',{type:'scatter',data:{datasets:scatter},options:{...baseOpts(),plugins:{...baseOpts().plugins,tooltip:{callbacks:{title:items=>'seed '+items[0].raw.seed}}},scales:{x:{min:.5,max:3.5,ticks:{stepSize:1,callback:v=>Number.isInteger(v)?v:''},title:{display:true,text:t('axSeed')}},y:{min:0,max:.5,title:{display:true,text:t('axIvIso')},ticks:{callback:v=>(v*100).toFixed(0)+'%'}}}}});
 }
 
 function renderMechanism(m){
-  if(!m){ $('mechTiming').innerHTML='<p class="note">机制扫描尚未运行。</p>'; $('mechLoop').innerHTML='<p class="note">闭环尚未运行。</p>'; const e=$('mechCost'); if(e)e.innerHTML='<p class="note">尚无成本/诊断数据。</p>'; return; }
-  const t=m.timing;
-  if(t){
+  if(!m){ $('mechTiming').innerHTML='<p class="note">'+t('noMech')+'</p>'; $('mechLoop').innerHTML='<p class="note">'+t('noLoop')+'</p>'; const e=$('mechCost'); if(e)e.innerHTML='<p class="note">'+t('noCost')+'</p>'; return; }
+  const tm=m.timing;
+  if(tm){
     const pc=v=>(v*100).toFixed(1)+'%';
-    const rows=t.rows.map(r=>'<tr><td>'+r.name+'</td><td>'+r.window[0]+'–'+r.window[1]+'</td><td>'+pc(r.overall)+' ±'+(r.sd*100).toFixed(1)+'</td><td>'+pc(r.iv)+'</td><td>'+(r.rebound>=0?'+':'')+(r.rebound*100).toFixed(1)+'pp</td><td>'+r.post_window+'</td></tr>').join('');
-    const dc=Object.entries(t.delay_cost).map(([k,v])=>'<tr><td>'+k+'</td><td>'+(v.slope_per_month>=0?'+':'')+(v.slope_per_month*100).toFixed(2)+'pp/月</td></tr>').join('');
-    $('mechTiming').innerHTML='<div class="table-scroll"><table><thead><tr><th>配置</th><th>窗口</th><th>全时程孤立率</th><th>干预期</th><th>反弹</th><th>后窗月数</th></tr></thead><tbody>'+rows+'</tbody></table></div>'
-      +'<p class="note">none 基线全时程 '+pc(t.baseline_overall)+'。延迟成本（启动每推迟 1 月）：</p><table><tbody>'+dc+'</tbody></table>'
-      +'<ul class="note" style="padding-left:18px">'+t.findings.map(f=>'<li>'+f+'</li>').join('')+'</ul>';
+    const rows=tm.rows.map(r=>'<tr><td>'+r.name+'</td><td>'+r.window[0]+'–'+r.window[1]+'</td><td>'+pc(r.overall)+' ±'+(r.sd*100).toFixed(1)+'</td><td>'+pc(r.iv)+'</td><td>'+(r.rebound>=0?'+':'')+(r.rebound*100).toFixed(1)+'pp</td><td>'+r.post_window+'</td></tr>').join('');
+    const dc=Object.entries(tm.delay_cost).map(([k,v])=>'<tr><td>'+k+'</td><td>'+(v.slope_per_month>=0?'+':'')+(v.slope_per_month*100).toFixed(2)+t('ppPerMonth')+'</td></tr>').join('');
+    $('mechTiming').innerHTML='<div class="table-scroll"><table><thead><tr><th>'+t('thCfg')+'</th><th>'+t('thWindow')+'</th><th>'+t('thIsoAll')+'</th><th>'+t('thIv')+'</th><th>'+t('thReb')+'</th><th>'+t('thPostM')+'</th></tr></thead><tbody>'+rows+'</tbody></table></div>'
+      +'<p class="note">'+t('delayNote',{v:pc(tm.baseline_overall)})+'</p><table><tbody>'+dc+'</tbody></table>'
+      +'<ul class="note" style="padding-left:18px">'+tm.findings.map(f=>'<li>'+f+'</li>').join('')+'</ul>';
   }
   const h=m.harness_loop;
   if(h){
     const its=h.iterations.map(r=>'<tr><td>'+r.iter+'</td><td>'+r.condition+' start='+r.iv_start+' dur='+r.duration+'</td><td>'+(r.overall*100).toFixed(2)+'%</td><td class="note">'+(r.rationale||'')+'</td></tr>').join('');
-    $('mechLoop').innerHTML='<div class="table-scroll"><table><thead><tr><th>轮</th><th>候选</th><th>全时程孤立率</th><th>设计师理由</th></tr></thead><tbody>'+its+'</tbody></table></div>'
-      +'<p class="note">设计师 '+h.designer_model+'；约束 '+h.constraint+'。'+h.finding+'</p>';
+    $('mechLoop').innerHTML='<div class="table-scroll"><table><thead><tr><th>'+t('thRound')+'</th><th>'+t('thCand')+'</th><th>'+t('thIsoAll')+'</th><th>'+t('thWhy')+'</th></tr></thead><tbody>'+its+'</tbody></table></div>'
+      +'<p class="note">'+t('loopFoot',{m:h.designer_model,c:h.constraint})+h.finding+'</p>';
   }
   const co=m.cost, si=m.silence_diagnosis;
   const el=$('mechCost');
   if(el){
     let html='';
     if(co){
-      const t=co.totals;
-      html+='<table><thead><tr><th>类别</th><th>LLM 调用</th><th>估算成本</th></tr></thead><tbody>'
-        +['valid','invalid','pending'].map(k=>'<tr><td>'+({valid:'有效 run',invalid:'无效沉没',pending:'进行中'})[k]+'</td><td>'+t[k].llm_calls.toLocaleString()+'</td><td>$'+t[k].est_cost_usd.toFixed(2)+'</td></tr>').join('')
-        +'</tbody></table><p class="note">累计估算 $'+co.grand_total_usd+'，沉没占比 '+(co.waste_share*100).toFixed(1)+'%（含归档的 .invalid-* 目录，共 '+co.n_runs_counted+' 个 run 目录）。</p>';
+      const tt=co.totals;
+      html+='<table><thead><tr><th>'+t('thCat')+'</th><th>'+t('thCalls')+'</th><th>'+t('thEstCost')+'</th></tr></thead><tbody>'
+        +['valid','invalid','pending'].map(k=>'<tr><td>'+({valid:t('catValid'),invalid:t('catInvalid'),pending:t('catPending')})[k]+'</td><td>'+tt[k].llm_calls.toLocaleString()+'</td><td>$'+tt[k].est_cost_usd.toFixed(2)+'</td></tr>').join('')
+        +'</tbody></table><p class="note">'+t('costFoot',{a:co.grand_total_usd,b:(co.waste_share*100).toFixed(1),n:co.n_runs_counted})+'</p>';
     }
     if(si){
-      html+='<p class="note"><b>无效 run 根因：</b></p><ul class="note" style="padding-left:18px">'
-        +Object.entries(si.modes).map(([k,v])=>'<li><b>'+(k==='infra_gateway'?'网关故障风暴':'行为性静默')+'</b>（'+v.runs.join('、')+'）：'+v.mitigation+'</li>').join('')+'</ul>';
+      html+='<p class="note"><b>'+t('rootCause')+'</b></p><ul class="note" style="padding-left:18px">'
+        +Object.entries(si.modes).map(([k,v])=>'<li><b>'+(k==='infra_gateway'?t('modeGateway'):t('modeSilence'))+'</b>（'+v.runs.join('、')+'）：'+v.mitigation+'</li>').join('')+'</ul>';
     }
-    el.innerHTML=html||'<p class="note">尚无成本/诊断数据。</p>';
+    el.innerHTML=html||'<p class="note">'+t('noCost')+'</p>';
   }
 }
 
@@ -1080,16 +1143,16 @@ async function loadConclusions(){
   const c = await r.json();
   const comp = c.batch_comparison;
   const cal = c.calibration||{};
-  $('calib').innerHTML = Object.values(cal).length ? '<table><thead><tr><th>指标</th><th>模拟</th><th>调查靶标</th><th>差值</th><th>检查</th></tr></thead><tbody>'+Object.values(cal).map(v=>{
+  $('calib').innerHTML = Object.values(cal).length ? '<table><thead><tr><th>'+t('thMetric')+'</th><th>'+t('thSim')+'</th><th>'+t('thTarget')+'</th><th>'+t('thDiff')+'</th><th>'+t('thCheck')+'</th></tr></thead><tbody>'+Object.values(cal).map(v=>{
     const d=v.sim-v.target, ok=Math.abs(d)<=.10;
-    return '<tr><td>'+v.label+'<div class="note">'+v.source+'</div></td><td>'+((v.sim||0)*100).toFixed(1)+'%</td><td>'+((v.target||0)*100).toFixed(0)+'%</td><td>'+(d>=0?'+':'')+(d*100).toFixed(1)+'pp</td><td class="'+(ok?'hit':'miss')+'">'+(ok?'✓ 通过':'✗ 超出')+'</td></tr>';
-  }).join('')+'</tbody></table>' : '<p class="note">暂无校准数据</p>';
+    return '<tr><td>'+v.label+'<div class="note">'+v.source+'</div></td><td>'+((v.sim||0)*100).toFixed(1)+'%</td><td>'+((v.target||0)*100).toFixed(0)+'%</td><td>'+(d>=0?'+':'')+(d*100).toFixed(1)+'pp</td><td class="'+(ok?'hit':'miss')+'">'+(ok?t('calibPass'):t('calibMiss'))+'</td></tr>';
+  }).join('')+'</tbody></table>' : '<p class="note">'+t('noCalib')+'</p>';
   renderMechanism(c.mechanism);
   if(!comp || !comp.conditions){
-    $('batchEvidence').textContent='正式批次汇总尚未生成；仅有规则层冒烟结果，不能作为正式批次结论。';
-    $('ivTable').innerHTML='<p class="note">正式批次结果待生成。</p>';
-    $('effectTable').innerHTML='<p class="note">暂无可用于论文的配对证据。</p>';
-    $('qualityTable').innerHTML='<p class="note">暂无批次质量汇总。</p>';
+    $('batchEvidence').textContent=t('evidenceSmoke');
+    $('ivTable').innerHTML='<p class="note">'+t('noBatch')+'</p>';
+    $('effectTable').innerHTML='<p class="note">'+t('noEffect')+'</p>';
+    $('qualityTable').innerHTML='<p class="note">'+t('noQuality')+'</p>';
     return;
   }
   renderBatchTrajectory(comp);
@@ -1097,14 +1160,14 @@ async function loadConclusions(){
   const fmt=(v)=>v&&v.mean!=null?v.mean.toFixed(3)+' ± '+(v.sd==null?'—':v.sd.toFixed(3)):'—';
   const seeds=(v)=>(v.seeds||[]).map(x=>x.seed).join(', ')||'—';
   const n=(v)=>v&&v.n!=null?v.n:0;
-  const labels={none:'基线',casework:'个案管理',timebank:'时间银行',platform:'数字平台'};
+  const labels={none:tCond('none'),casework:tCond('casework'),timebank:tCond('timebank'),platform:tCond('platform')};
   const invalidCount=(comp.invalid_runs||[]).length, pendingCount=(comp.pending_runs||[]).length;
-  $('batchEvidence').textContent='有效 run '+comp.valid_runs+' 条；无效 '+invalidCount+' 条；运行中或未完成 '+pendingCount+' 条。干预期为第 7–18 月，撤出后为第 19–24 月。';
-  $('ivTable').innerHTML='<div class="table-scroll"><table><thead><tr><th>条件</th><th>有效 n</th><th>干预期孤立率</th><th>撤出后孤立率</th><th>干预期孤独感</th><th>撤出后孤独感</th><th>有效 seed</th></tr></thead><tbody>'+conds.map(k=>{const v=comp.conditions[k]||{};return '<tr><td>'+labels[k]+'</td><td>'+n(v.iso_iv)+'</td><td>'+fmt(v.iso_iv)+'</td><td>'+fmt(v.iso_post)+'</td><td>'+fmt(v.lon_iv)+'</td><td>'+fmt(v.lon_post)+'</td><td>'+seeds(v)+'</td></tr>';}).join('')+'</tbody></table></div><p class="note">均值 ± seed-level 标准差。月份和 agent-month 不作为独立实验重复。</p>';
+  $('batchEvidence').textContent=t('evidenceLine',{v:comp.valid_runs,i:invalidCount,p:pendingCount});
+  $('ivTable').innerHTML='<div class="table-scroll"><table><thead><tr><th>'+t('thCond')+'</th><th>'+t('thValidN')+'</th><th>'+t('thIsoIv')+'</th><th>'+t('thIsoPost')+'</th><th>'+t('thLonIv')+'</th><th>'+t('thLonPost')+'</th><th>'+t('thValidSeeds')+'</th></tr></thead><tbody>'+conds.map(k=>{const v=comp.conditions[k]||{};return '<tr><td>'+labels[k]+'</td><td>'+n(v.iso_iv)+'</td><td>'+fmt(v.iso_iv)+'</td><td>'+fmt(v.iso_post)+'</td><td>'+fmt(v.lon_iv)+'</td><td>'+fmt(v.lon_post)+'</td><td>'+seeds(v)+'</td></tr>';}).join('')+'</tbody></table></div><p class="note">'+t('ivFoot')+'</p>';
   const paired=comp.paired_contrasts_vs_none||{};
-  $('effectTable').innerHTML='<div class="table-scroll"><table><thead><tr><th>条件</th><th>有效配对 n</th><th>孤立率反弹<br>撤出后 − 干预期</th><th>反弹相对基线<br>同 seed 配对差值</th><th>干预期孤立率<br>相对基线</th><th>撤出后孤立率<br>相对基线</th></tr></thead><tbody>'+conds.filter(k=>k!=='none').map(k=>{const v=comp.conditions[k]||{}, p=paired[k]||{};const rebound=v.iso_rebound?.mean;const fs=x=>x&&x.mean_difference!=null?(x.mean_difference>=0?'+':'')+x.mean_difference.toFixed(3):'—';const pn=p.iso_rebound?.n||0;return '<tr><td>'+labels[k]+'</td><td>'+pn+'</td><td>'+(rebound==null?'—':(rebound>=0?'+':'')+rebound.toFixed(3))+'</td><td>'+fs(p.iso_rebound)+'</td><td>'+fs(p.iso_iv)+'</td><td>'+fs(p.iso_post)+'</td></tr>';}).join('')+'</tbody></table></div><p class="note">反弹先在每个 run 内计算，再与同 seed 的 none 反弹配对。正值表示撤出后孤立率上升。配对 n 不足时仅作探索性描述。</p>';
+  $('effectTable').innerHTML='<div class="table-scroll"><table><thead><tr><th>'+t('thCond')+'</th><th>'+t('thPairedN')+'</th><th>'+t('thRebound')+'</th><th>'+t('thRebVsNone')+'</th><th>'+t('thIvVsNone')+'</th><th>'+t('thPostVsNone')+'</th></tr></thead><tbody>'+conds.filter(k=>k!=='none').map(k=>{const v=comp.conditions[k]||{}, p=paired[k]||{};const rebound=v.iso_rebound?.mean;const fs=x=>x&&x.mean_difference!=null?(x.mean_difference>=0?'+':'')+x.mean_difference.toFixed(3):'—';const pn=p.iso_rebound?.n||0;return '<tr><td>'+labels[k]+'</td><td>'+pn+'</td><td>'+(rebound==null?'—':(rebound>=0?'+':'')+rebound.toFixed(3))+'</td><td>'+fs(p.iso_rebound)+'</td><td>'+fs(p.iso_iv)+'</td><td>'+fs(p.iso_post)+'</td></tr>';}).join('')+'</tbody></table></div><p class="note">'+t('effectFoot')+'</p>';
   const byCond=conds.map(k=>{const v=comp.conditions[k]||{};return '<tr><td>'+labels[k]+'</td><td>'+(v.seeds||[]).length+'</td><td>'+((v.seeds||[]).map(x=>x.seed).join(', ')||'—')+'</td></tr>';}).join('');
-  $('qualityTable').innerHTML='<div class="table-scroll"><table><thead><tr><th>质量项目</th><th>当前值</th><th>解释</th></tr></thead><tbody><tr><td>有效正式 run</td><td>'+comp.valid_runs+'</td><td>进入条件统计</td></tr><tr><td>无效 run</td><td>'+invalidCount+'</td><td>排除，不进入正式比较</td></tr><tr><td>运行中或未完成</td><td>'+pendingCount+'</td><td>等待完成后再判定</td></tr>'+byCond+'</tbody></table></div><p class="note">当前有效 seed 不足以确认 H4。不能据此报告显著性、因果性或四条件稳定排序。</p>';
+  $('qualityTable').innerHTML='<div class="table-scroll"><table><thead><tr><th>'+t('thQItem')+'</th><th>'+t('thQVal')+'</th><th>'+t('thQExpl')+'</th></tr></thead><tbody><tr><td>'+t('qValid')+'</td><td>'+comp.valid_runs+'</td><td>'+t('qValidExpl')+'</td></tr><tr><td>'+t('qInvalid')+'</td><td>'+invalidCount+'</td><td>'+t('qInvalidExpl')+'</td></tr><tr><td>'+t('qPending')+'</td><td>'+pendingCount+'</td><td>'+t('qPendingExpl')+'</td></tr>'+byCond+'</tbody></table></div><p class="note">'+t('qFoot')+'</p>';
 }
 
 // ---- Q&A ----
@@ -1131,7 +1194,7 @@ async function loadRuns(){
   const r = await fetch('/api/runs'); if(!r.ok) return;
   const runs = await r.json();
   $('runsBody').innerHTML = runs.map(x=>{
-    const st = x.running?`<span class="pill run">${t('statusRunShort')}</span>`:(x.valid===false?`<span class="pill" style="color:var(--critical)">无效</span>`:(x.valid===true?`<span class="pill done">有效</span>`:(x.done?`<span class="pill done">${t('statusDoneShort')}</span>`:`<span class="pill idle">${t('statusIdleShort')}</span>`)));
+    const st = x.running?`<span class="pill run">${t('statusRunShort')}</span>`:(x.valid===false?`<span class="pill" style="color:var(--critical)">${t('pillInvalid')}</span>`:(x.valid===true?`<span class="pill done">${t('pillValid')}</span>`:(x.done?`<span class="pill done">${t('statusDoneShort')}</span>`:`<span class="pill idle">${t('statusIdleShort')}</span>`)));
     return `<tr data-run="${x.name}" class="${x.name===selectedRun?'sel':''}">
       <td>${x.name}</td><td>${tCond(x.condition)||x.condition||'–'}</td><td>${x.seed??'–'}</td>
       <td>${x.months_done}${x.months_total?'/'+x.months_total:''}</td><td>${st}</td>
@@ -1164,9 +1227,7 @@ async function loadPanelConfig(){
       $('btnStart').hidden = true; $('btnStop').hidden = true;
       const banner = document.createElement('p');
       banner.className = 'note';
-      banner.textContent = LANG==='en'
-        ? 'Read-only display instance — simulations run on the local machine, this page only mirrors synced run data.'
-        : '只读展示实例——模拟在本地机器运行，此页面仅镜像已同步的 run 数据。';
+      banner.textContent = t('roMirror');
       const msg = $('startMsg');
       if(msg) msg.replaceWith(banner);
     }

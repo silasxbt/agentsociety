@@ -326,6 +326,17 @@ def batch_totals() -> dict:
                 current_run = d.name
                 current_month = m[-1].get("month", 0) if m else 0
                 break
+    current_steps = None
+    total_steps = None
+    if current_run:
+        sf = TMP / "batch" / current_run / "SOCIETY_STEP.json"
+        if sf.is_file():
+            try:
+                sd = json.loads(sf.read_text(encoding="utf-8"))
+                current_steps = sd.get("completed_step_count")
+                total_steps = planned_months + 9  # 25 tick + 8 问卷/初始化步，与主批次 33 步一致
+            except (json.JSONDecodeError, OSError):
+                pass
     eta_ts = None
     elapsed_s = None
     started_at = plan.get("started_at")
@@ -347,6 +358,8 @@ def batch_totals() -> dict:
         "batch_runs_done": runs_done,
         "current_run": current_run,
         "current_month": current_month,
+        "current_steps": current_steps,
+        "current_total_steps": total_steps,
         "elapsed_s": elapsed_s,
         "eta_ts": eta_ts,
         "started_at": started_at,
