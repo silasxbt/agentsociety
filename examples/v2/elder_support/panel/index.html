@@ -47,13 +47,13 @@ button.primary{background:var(--s1);border-color:var(--s1);color:#fff}
 button.danger{background:var(--critical);border-color:var(--critical);color:#fff}
 button.ghost{background:transparent}
 button:disabled{opacity:.45;cursor:not-allowed}
-nav{display:flex;gap:22px;padding:12px 20px 2px}
+nav{display:flex;gap:22px;padding:12px 20px 2px;max-width:1280px;margin:0 auto;align-items:flex-end}
 nav button{border:none;border-radius:0;background:none;color:var(--ink2);font-weight:600;padding:0 0 4px;font-size:13px;cursor:pointer}
 nav button.on{color:var(--ink);border-bottom:2px solid var(--s1)}
 nav .langbtn{margin-left:auto;border:1px solid var(--border);border-radius:8px;padding:3px 12px;
-  font-size:12px;color:var(--ink2);background:var(--surface);align-self:flex-start}
+  font-size:12px;color:var(--ink2);background:var(--surface);align-self:center;margin-bottom:2px}
 nav .langbtn:hover{color:var(--ink);border-color:var(--s1)}
-main{padding:12px 20px 60px;max-width:1280px}
+main{padding:12px 20px 60px;max-width:1280px;margin:0 auto}
 .card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:14px}
 .card h3{margin:0 0 10px;font-size:13px;color:var(--ink2);font-weight:600;text-transform:none}
 .cardhead{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
@@ -789,8 +789,8 @@ for(const id of ['fMonths','fFocal']){
 }
 
 // ---- Tab 切换 ----
-document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{
-  document.querySelectorAll('nav button').forEach(x=>x.classList.toggle('on', x===b));
+document.querySelectorAll('nav button[data-tab]').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('nav button[data-tab]').forEach(x=>x.classList.toggle('on', x===b));
   for(const tb of ['live','conclusions','history','qa'])
     $('tab-'+tb).hidden = (b.dataset.tab!==tb);
   if(b.dataset.tab==='conclusions'){ loadConclusions(); }
