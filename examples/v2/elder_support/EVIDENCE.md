@@ -1,9 +1,9 @@
 # 证据与进展台账（自动生成，勿手改）
 
-生成时间：2026-09-05T14:01:56.454386+00:00。来源：本文件由 tools/collect_evidence.py 聚合，每节标注原始文件；重跑脚本即更新。
+生成时间：2026-09-10T02:59:13.273980+00:00。来源：本文件由 tools/collect_evidence.py 聚合，每节标注原始文件；重跑脚本即更新。
 
 ## 1. 正式批次（主结果，LLM 行为层）
-- 有效 7 / 无效 4 / 进行中 1（目标 12 有效）
+- 有效 11 / 无效 1 / 进行中 0（目标 12 有效）
 - 结论冻结前不报告显著性、因果或稳定排序；来源 tmp/batch/comparison.json
 
 ## 2. 介入时机与剂量（规则层机制扫描，20 种子）
@@ -20,8 +20,8 @@
 - 来源 tests/harness_loop_result.json、tests/harness_loop_log.jsonl
 
 ## 4. 真实成本说明（含失败的钱）
-- 累计估算 $727.42：有效 run $331.29 / 无效沉没 $381.85 / 进行中 $14.28；沉没占比 52.5%
-- 口径：调用数为 trace 实测（llm.completion span，共 17 个 run 目录含归档）；token/调用与单价为文档化假设，见 tests/cost_report.json assumptions
+- 累计估算 $943.7：有效 run $528.69 / 无效沉没 $405.95 / 进行中 $9.06；沉没占比 43.0%
+- 口径：调用数为 trace 实测（llm.completion span，共 22 个 run 目录含归档）；token/调用与单价为文档化假设，见 tests/cost_report.json assumptions
 - 叙事要点：多智能体 LLM 实验的真实成本必须计入质量门槛淘汰的 run；本项目沉没成本主要来自网关 502 风暴与行为性静默两类失效（见下节）
 
 ## 5. 静默失效诊断（无效 run 根因）
@@ -31,9 +31,13 @@
 
 ## 6. 图表资产（tools/make_figures.py 自动生成，配套同名 CSV）
 - figures/fig1_trajectory_isolation.png
+- figures/fig1_trajectory_isolation_en.png
 - figures/fig2_trajectory_loneliness.png
+- figures/fig2_trajectory_loneliness_en.png
 - figures/fig3_scatter_iv_isolation.png
+- figures/fig3_scatter_iv_isolation_en.png
 - figures/fig4_paired_rebound.png
+- figures/fig4_paired_rebound_en.png
 - 冻结前均标注（未冻结）；批次收口后重跑脚本即为终版
 
 ## 7. 实践叙事口径（用于论文讨论节）

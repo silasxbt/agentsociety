@@ -1,7 +1,9 @@
 condition,seed,iso_iv,run
 none,1,0.25833333333333336,none_s1
+none,2,0.3,none_s2
 none,3,0.325,none_s3
 casework,1,0.08750000000000001,casework_s1
+casework,2,0.075,casework_s2
 casework,3,0.07500000000000001,casework_s3
 timebank,1,0.2708333333333333,timebank_s1
 timebank,2,0.2708333333333333,timebank_s2

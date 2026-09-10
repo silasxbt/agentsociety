@@ -1,13 +1,17 @@
 metric,condition,seed,diff_vs_none
 iso_iv,casework,1,-0.170833
+iso_iv,casework,2,-0.225
 iso_iv,casework,3,-0.25
 iso_iv,timebank,1,0.0125
+iso_iv,timebank,2,-0.029167
 iso_iv,timebank,3,-0.125
 iso_iv,platform,1,-0.0375
 iso_iv,platform,3,-0.075
 iso_rebound,casework,1,0.1875
+iso_rebound,casework,2,0.258333
 iso_rebound,casework,3,0.208333
 iso_rebound,timebank,1,0.0125
+iso_rebound,timebank,2,0.029167
 iso_rebound,timebank,3,0.05
 iso_rebound,platform,1,0.045833
 iso_rebound,platform,3,0.05
