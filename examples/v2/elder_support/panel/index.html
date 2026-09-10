@@ -95,9 +95,8 @@ tr[data-run]{cursor:pointer}
 .tile .k{font-size:12px;color:var(--ink2)}
 .tile .sub{font-size:11px;color:var(--muted)}
 .charts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
-#tab-conclusions .charts{grid-template-columns:repeat(2,minmax(0,1fr))}
 @media (max-width:900px){.charts{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media (max-width:600px){.charts,#tab-conclusions .charts{grid-template-columns:1fr}}
+@media (max-width:600px){.charts{grid-template-columns:1fr}}
 .chartbox{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:10px;height:210px;position:relative;min-width:0;overflow:hidden}
 .chartbox h3{margin:0 0 6px;font-size:13px;color:var(--ink2)}
 .chartbox canvas{display:block;width:100%!important;max-width:100%;max-height:164px}
@@ -147,12 +146,14 @@ tr[data-run]{cursor:pointer}
 .conclusion-tiles .tile .v{font-size:20px;margin:0}
 .conclusion-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:10px}
 #tab-conclusions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;align-items:stretch}
+#tab-conclusions .chartbox{height:220px;margin:0}
+#tab-conclusions .chartbox canvas{max-height:174px}
 #tab-conclusions[hidden]{display:none}
-#tab-conclusions .charts{grid-column:1/-1;margin-top:0!important}
+#tab-conclusions .charts{display:contents}
 .conclusion-card{height:220px;display:flex;flex-direction:column;min-width:0;margin:0;padding:10px 12px}
 .conclusion-card h3{margin:0 0 6px;font-size:12px}
 .conclusion-card .note{font-size:11px;margin:0 0 6px;line-height:1.45}
-.conclusion-card.intro{grid-column:1/-1;height:auto}
+.conclusion-card.intro{height:220px}
 .conclusion-scroll table{font-size:11px}
 @media (max-width:1000px){#tab-conclusions{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media (max-width:640px){#tab-conclusions{grid-template-columns:1fr}}
@@ -531,6 +532,7 @@ function baseOpts(){
   return {
     responsive:true,
     maintainAspectRatio:false,
+    animation:false,
     interaction:{mode:'nearest',intersect:false},
     plugins:{
       legend:{labels:{color:ink,usePointStyle:true,boxWidth:10}},
@@ -780,7 +782,7 @@ for(const id of ['fMonths','fFocal']){
 // ---- Tab 切换 ----
 document.querySelectorAll('nav button[data-tab]').forEach(b=>b.onclick=()=>{
   document.querySelectorAll('nav button[data-tab]').forEach(x=>x.classList.toggle('on', x===b));
-  for(const tb of ['live','conclusions','history','qa'])
+  for(const tb of ['live','conclusions','qa'])
     $('tab-'+tb).hidden = (b.dataset.tab!==tb);
   if(b.dataset.tab==='conclusions'){ loadConclusions(); }
   if(b.dataset.tab==='qa') loadQa();
@@ -1126,7 +1128,11 @@ async function loadConclusions(){
   const q = selectedRun ? ('?run='+encodeURIComponent(selectedRun)) : '';
   const r = await fetch('/api/conclusions'+q);
   if(!r.ok) return;
-  const c = await r.json();
+  const raw = await r.text();
+  const fp = LANG + '|' + q + '|' + raw;
+  if(loadConclusions._fp === fp) return;
+  loadConclusions._fp = fp;
+  const c = JSON.parse(raw);
   const comp = c.batch_comparison;
   const cal = c.calibration||{};
   $('calib').innerHTML = Object.values(cal).length ? '<table><thead><tr><th>'+t('thMetric')+'</th><th>'+t('thSim')+'</th><th>'+t('thTarget')+'</th><th>'+t('thDiff')+'</th><th>'+t('thCheck')+'</th></tr></thead><tbody>'+Object.values(cal).map(v=>{
