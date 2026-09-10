@@ -60,3 +60,14 @@ tmp/model_compare/<model-slug>/<condition>_s1/
 和网关限流影响正式数据。启动命令：
   AGENTSOCIETY_LLM_API_KEY=... ./run_model_compare.sh gpt-6-astra
   AGENTSOCIETY_LLM_API_KEY=... ./run_model_compare.sh claude-fable-5-1
+
+## 2026-09-10 14:30 UTC 启动尝试记录
+- **astra 臂**：14:05 UTC 本机启动，Ray 起来后 env_router 的 coder 调用连续 524（tokenflux
+  网关约 100 s 超时）；独立探测 ~1.5k token 提示 + `reasoning_effort=low` 同样 524/127 s，
+  `none` 返回 400（不支持，与上文一致）。判定为 tokenflux 上游拥堵（VM 上主批次 sol 臂同期
+  也慢到 ~5 min/回合）。已停止并清空 `tmp/model_compare/gpt-6-astra/`，改为守候进程
+  （`tmp/model_compare/astra.watch.log`）：每 10 min 用中等提示探测，60 s 内 200 即自动开跑。
+- **fable 臂**：yinlihupo 网关 `/messages` 仍 503 no_available_providers。守候进程
+  （`tmp/model_compare/fable.watch.log`）每 10 min 探测，200 即自动开跑。
+- 两臂均设 `AGENTSOCIETY_EMBEDDING_MODEL=`（空），主批次 trace 亦无 embedding 调用。
+- 密钥仅在守候进程环境中，未写入任何文件；日志已 grep 确认无密钥。
