@@ -123,11 +123,12 @@ tr[data-run]{cursor:pointer}
 .codex-box b{color:var(--ink)}
 .settings-actions{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
 .settings-actions button{font-size:12px;padding:6px 12px}
-.qa-list{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-@media (max-width:700px){.qa-list{grid-template-columns:1fr}}
-.qa-item{border:1px solid var(--border);border-radius:10px;padding:12px 14px;background:var(--page)}
-.qa-item .qa-q{font-weight:700;font-size:14px;margin:0 0 8px;color:var(--ink)}
-.qa-item .qa-a{margin:0;font-size:13px;color:var(--ink2);line-height:1.6}
+.qa-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+@media (max-width:1000px){.qa-list{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:640px){.qa-list{grid-template-columns:1fr}}
+.qa-item{border:1px solid var(--border);border-radius:10px;padding:10px 12px;background:var(--page);min-width:0}
+.qa-item .qa-q{font-weight:700;font-size:13px;margin:0 0 6px;color:var(--ink)}
+.qa-item .qa-a{margin:0;font-size:12px;color:var(--ink2);line-height:1.55}
 .qa-item .qa-n{font-size:11px;color:var(--muted);margin-bottom:6px}
 .logbox{font:11px/1.5 ui-monospace,Menlo,monospace;color:var(--ink2);white-space:pre-wrap;
   background:var(--page);border-radius:8px;padding:8px;max-height:320px;overflow:auto}
@@ -145,11 +146,16 @@ tr[data-run]{cursor:pointer}
 .conclusion-tiles .tile{padding:8px 10px}
 .conclusion-tiles .tile .v{font-size:20px;margin:0}
 .conclusion-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:10px}
-#tab-conclusions{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:stretch}
+#tab-conclusions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;align-items:stretch}
 #tab-conclusions[hidden]{display:none}
 #tab-conclusions .charts{grid-column:1/-1;margin-top:0!important}
-.conclusion-card{height:248px;display:flex;flex-direction:column;min-width:0;margin:0}
-@media (max-width:900px){#tab-conclusions{grid-template-columns:1fr}}
+.conclusion-card{height:220px;display:flex;flex-direction:column;min-width:0;margin:0;padding:10px 12px}
+.conclusion-card h3{margin:0 0 6px;font-size:12px}
+.conclusion-card .note{font-size:11px;margin:0 0 6px;line-height:1.45}
+.conclusion-card.intro{grid-column:1/-1;height:auto}
+.conclusion-scroll table{font-size:11px}
+@media (max-width:1000px){#tab-conclusions{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:640px){#tab-conclusions{grid-template-columns:1fr}}
 .conclusion-scroll{flex:1 1 auto;min-height:0;overflow:auto;padding-right:2px}
 @media (max-width:900px){
   .live-card,.rightcard{height:620px}
@@ -176,7 +182,6 @@ tr[data-run]{cursor:pointer}
 <nav>
   <button data-tab="live" class="on" data-i18n="navLive">运行台</button>
   <button data-tab="conclusions" data-i18n="navConcl">结论</button>
-  <button data-tab="history" data-i18n="navHistory">日志</button>
   <button data-tab="qa" data-i18n="navQa">介绍</button>
   <button id="btnLang" class="langbtn">EN</button>
 </nav>
@@ -262,12 +267,12 @@ tr[data-run]{cursor:pointer}
 </section>
 
 <section id="tab-conclusions" hidden>
-  <div class="card conclusion-card">
+  <div class="card conclusion-card intro">
     <h3 data-i18n="conclTitle">正式批次论文核心结果</h3>
     <p class="note" data-i18n="conclNote">只纳入通过 0–24 月完整性、决策覆盖、LLM 错误率和 DONE 门槛的 run。当前结果是描述性统计，不报告显著性或因果结论。</p>
     <p class="note" id="batchEvidence">–</p>
   </div>
-  <div class="charts" style="margin-top:10px">
+  <div class="charts">
     <div class="chartbox"><h3 data-i18n="chBatchTraj">主结局：跨条件月度孤立率</h3><canvas id="batchTraj"></canvas></div>
     <div class="chartbox"><h3 data-i18n="chBatchScatter">干预期主结局：seed-level 孤立率</h3><canvas id="batchScatter"></canvas></div>
   </div>
@@ -302,21 +307,6 @@ tr[data-run]{cursor:pointer}
     <h3 data-i18n="calibTitle2">模型校准检查，不是干预效果验证</h3>
     <p class="note" data-i18n="calibNote2">这是当前选中 run 的 n=20 末期截面检查，与 CLHLS 调查年份、样本和指标口径不同，只用于发现模型量级问题。</p>
     <div class="conclusion-scroll" id="calib">–</div>
-  </div>
-</section>
-
-<section id="tab-history" class="history-grid" hidden>
-  <div class="card history-card">
-    <h3 data-i18n="histTitle">全部模拟轮次（点击行切换查看对象）</h3>
-    <div class="history-scroll"><table>
-        <thead><tr><th data-i18n="thRun">轮次</th><th data-i18n="thCond">条件</th><th data-i18n="thSeed">种子</th><th data-i18n="thProg">进度</th><th data-i18n="thStatus">状态</th>
-          <th data-i18n="thFinalLon">末期孤独</th><th data-i18n="thFinalIso">末期孤立</th><th data-i18n="thFinalDeep">末期深孤</th></tr></thead>
-        <tbody id="runsBody"></tbody>
-      </table></div>
-  </div>
-  <div class="card history-card">
-    <h3 data-i18n="logTitle">运行日志（当前选中轮次 · 尾部）</h3>
-    <div id="logTail" class="logbox"></div>
   </div>
 </section>
 
@@ -528,7 +518,6 @@ function applyLang(){
   document.querySelectorAll('[data-i18n-ph]').forEach(el=>{ el.placeholder = t(el.dataset.i18nPh); });
   renderRunRecord(); renderParameterOverview(); renderAgents(); renderFeed(); updateCostEstimate();
   if(!$('tab-conclusions').hidden){ loadConclusions(); }
-  if(!$('tab-history').hidden) loadRuns();
   if(!$('tab-qa').hidden) loadQa();
   renderScaleCards();
 }
@@ -794,7 +783,6 @@ document.querySelectorAll('nav button[data-tab]').forEach(b=>b.onclick=()=>{
   for(const tb of ['live','conclusions','history','qa'])
     $('tab-'+tb).hidden = (b.dataset.tab!==tb);
   if(b.dataset.tab==='conclusions'){ loadConclusions(); }
-  if(b.dataset.tab==='history') loadRuns();
   if(b.dataset.tab==='qa') loadQa();
 });
 
@@ -856,10 +844,8 @@ async function poll(force){
     }
     renderRunRecord(); renderParameterOverview(); renderAgents(); renderFeed();
     if(!$('villageBox').hidden) drawVillage();
-    $('logTail').textContent = state.log_tail || '–';
     if(!$('tab-conclusions').hidden){ loadConclusions(); }
-    if(!$('tab-history').hidden) loadRuns();
-  }catch(e){ /* 服务器未就绪时静默 */ }
+    }catch(e){ /* 服务器未就绪时静默 */ }
   finally{
     if(btn){ btn.disabled = false; btn.classList.remove('spin'); }
   }
@@ -1193,6 +1179,7 @@ async function loadQa(){
 async function loadRuns(){
   const r = await fetch('/api/runs'); if(!r.ok) return;
   const runs = await r.json();
+  if(!$('runsBody')) return;
   $('runsBody').innerHTML = runs.map(x=>{
     const st = x.running?`<span class="pill run">${t('statusRunShort')}</span>`:(x.valid===false?`<span class="pill" style="color:var(--critical)">${t('pillInvalid')}</span>`:(x.valid===true?`<span class="pill done">${t('pillValid')}</span>`:(x.done?`<span class="pill done">${t('statusDoneShort')}</span>`:`<span class="pill idle">${t('statusIdleShort')}</span>`)));
     return `<tr data-run="${x.name}" class="${x.name===selectedRun?'sel':''}">
