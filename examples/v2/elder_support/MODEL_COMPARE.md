@@ -35,6 +35,26 @@ tmp/model_compare/<model-slug>/<condition>_s1/
 - 分析：每模型的 casework−none 配对差（iso_iv/iso_post/iso_rebound）与 sol 臂并排，
   单 seed，只做描述性比较，不做显著性/排名声称。
 
+## 2026-09-10 执行现状
+- **astra 臂**：tokenflux 网关探测 ✓（`gpt-6-astra` 在列且主账号可调用）。主批次
+  platform_s2 收口后立即启动（同网关避免争用）。
+- **fable 臂**：走 yinlihupo 网关（`https://model.api.yinlihupo.cn/v1`，Anthropic
+  原生格式，`AGENTSOCIETY_LLM_PROVIDER=anthropic`），思考强度
+  `AGENTSOCIETY_LLM_REASONING_EFFORT=medium`。**当前网关全部 Claude 模型实调用
+  503 no_available_providers（模型列表正常）**，等网关商恢复；脚本已加实调用
+  预检，上游不可用不开跑不花钱。
+- 分析脚本 `tools/model_compare_report.py` 已就绪（sol 臂试跑 ✓：Δiso_iv=-0.171、
+  Δiso_reb=+0.188，同向判据成立）。
+- 启动命令（密钥运行时注入，不落盘）：
+  ```zsh
+  # astra（tokenflux）
+  AGENTSOCIETY_LLM_API_KEY=... ./run_model_compare.sh gpt-6-astra
+  # fable（yinlihupo，Anthropic 格式 + 中等思考）
+  AGENTSOCIETY_LLM_API_KEY=... AGENTSOCIETY_LLM_API_BASE=https://model.api.yinlihupo.cn/v1 \
+    AGENTSOCIETY_LLM_PROVIDER=anthropic AGENTSOCIETY_LLM_REASONING_EFFORT=medium \
+    ./run_model_compare.sh claude-fable-5-1
+  ```
+
 ## 启动时机
 主批次（run_batch.sh, PID 54756）完全收口之后再启动，避免同机 Ray/CPU 争用
 和网关限流影响正式数据。启动命令：

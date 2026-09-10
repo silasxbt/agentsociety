@@ -32,6 +32,18 @@ if ! curl -fsS -H "Authorization: Bearer $AGENTSOCIETY_LLM_API_KEY" \
   echo "✗ 网关 $AGENTSOCIETY_LLM_API_BASE 上找不到模型 $MODEL，中止"; exit 1
 fi
 
+# 实调用探测：模型列表有 ≠ 上游可用（例：503 no_available_providers），先花几分钱确认再开跑
+if [ "${AGENTSOCIETY_LLM_PROVIDER:-openai}" = "anthropic" ]; then
+  CODE=$(curl -sS --max-time 90 -o /dev/null -w "%{http_code}" -X POST "$AGENTSOCIETY_LLM_API_BASE/messages" \
+    -H "x-api-key: $AGENTSOCIETY_LLM_API_KEY" -H "anthropic-version: 2023-06-01" -H "content-type: application/json" \
+    -d "{\"model\":\"$MODEL\",\"max_tokens\":16,\"messages\":[{\"role\":\"user\",\"content\":\"OK\"}]}")
+else
+  CODE=$(curl -sS --max-time 90 -o /dev/null -w "%{http_code}" -X POST "$AGENTSOCIETY_LLM_API_BASE/chat/completions" \
+    -H "Authorization: Bearer $AGENTSOCIETY_LLM_API_KEY" -H "content-type: application/json" \
+    -d "{\"model\":\"$MODEL\",\"max_tokens\":16,\"messages\":[{\"role\":\"user\",\"content\":\"OK\"}]}")
+fi
+[ "$CODE" = "200" ] || { echo "✗ $MODEL 实调用探测返回 HTTP $CODE（上游不可用），中止"; exit 1; }
+
 for cond in $CONDITIONS; do
   SRC=$EXP/tmp/batch/${cond}_s${SEED}
   [ -f "$SRC/init_config.json" ] || { echo "✗ 缺少主批次配置 $SRC"; exit 1; }
@@ -46,6 +58,7 @@ import hashlib,json,os,sys,time
 run,model,cond=sys.argv[1:4]
 h=lambda p:hashlib.sha256(open(p,'rb').read()).hexdigest()
 json.dump({"model":model,"api_base":os.environ["AGENTSOCIETY_LLM_API_BASE"],
+ "provider":os.environ.get("AGENTSOCIETY_LLM_PROVIDER","openai"),
  "condition":cond,"seed":1,"months":int(os.environ.get("MONTHS",24)),
  "reasoning_effort":os.environ.get("AGENTSOCIETY_LLM_REASONING_EFFORT"),
  "temperature":None,"timeout":os.environ["AGENTSOCIETY_LLM_REQUEST_TIMEOUT"],

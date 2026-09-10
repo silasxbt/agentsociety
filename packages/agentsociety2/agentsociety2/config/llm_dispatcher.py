@@ -305,11 +305,16 @@ def _build_router(base_url: str, api_key: str, model: str) -> Any:
     """
     from litellm import Router
 
+    # AGENTSOCIETY_LLM_PROVIDER selects the litellm provider prefix (wire
+    # format). "openai" (default) speaks /chat/completions against api_base;
+    # "anthropic" speaks the native /v1/messages format, which some gateways
+    # require for Claude-family models.
+    provider = os.getenv("AGENTSOCIETY_LLM_PROVIDER", "openai").strip() or "openai"
     model_list = [
         {
             "model_name": model,
             "litellm_params": {
-                "model": f"openai/{model}",
+                "model": f"{provider}/{model}",
                 "api_key": api_key,
                 "api_base": base_url,
             },
