@@ -1,5 +1,8 @@
 # AISS 2026 挑战赛提交材料清单
 
+> **提交渠道（2026-09-10 官网确认）**：研究报告、代码及 AgentSociety² 工作区压缩包统一发至官方邮箱 `agentsociety.fiblab2025@gmail.com`。
+> 注意 Gmail 附件上限 25MB：工作区压缩包（含 12 run 的 tmp/batch）预计超限，需网盘/GitHub Release 链接附于邮件正文。
+
 > 维护说明：本清单是提交打包的唯一依据。批次冻结（12 有效 run）后按「冻结后流程」重刷，再打包。
 > 代码已推 GitHub（silasxbt/agentsociety，2026-09-08 起团队协作用；推送前必须 grep 密钥）；提交打包仍做本地压缩产物。
 > 入库边界：tmp/ 运行产物、版权文献 PDF、LaTeX 中间文件不入公开仓库。
