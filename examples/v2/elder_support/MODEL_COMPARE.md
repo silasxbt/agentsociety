@@ -71,3 +71,18 @@ tmp/model_compare/<model-slug>/<condition>_s1/
   （`tmp/model_compare/fable.watch.log`）每 10 min 探测，200 即自动开跑。
 - 两臂均设 `AGENTSOCIETY_EMBEDDING_MODEL=`（空），主批次 trace 亦无 embedding 调用。
 - 密钥仅在守候进程环境中，未写入任何文件；日志已 grep 确认无密钥。
+
+## 2026-09-11 02:30 UTC 进展与处置
+- **本机 astra 臂两次实跑均失败**：拥堵缓解后本机启动，两条 run 均在 `EnvRouterActor.init`
+  阶段因 coder 调用 524/超时报 "Failed to generate observe/statistics code after retries"，
+  无 DONE（记录见 `tmp/model_compare/astra.launch*.log`）。同提示同时刻 gpt-5.6-sol 亦 524，
+  框架请求参数（messages + timeout=180）两模型一致，确认是 tokenflux 网关整体过载而非 astra 配置差异。
+- **astra 臂改到 VM（silasvps）执行**：VM→tokenflux 线路通畅。VM 版 `run_model_compare.sh`
+  仅改路径/去 caffeinate；首次启动 Ray 因 e2-small 内存不足报错，加
+  `AGENTSOCIETY_RAY_OBJECT_STORE_BYTES=200000000` 后重启，预检通过、世界描述生成成功，
+  已进入 none_s1 模拟（`tmp/model_compare/astra.vm.launch.log`，包装器按 DONE/INVALID 文件判停）。
+  密钥经 stdin 传入进程环境，未落盘；日志 grep 无密钥。
+- **fable 臂**：yinlihupo `/messages` 持续 503，本机守候进程继续探测；若 9/15 前未成，论文按单模型对比或列为局限。
+- **主批次冻结**：platform_s2 最终版（静默率 11.3% > 10%，LLM 错误率 0，静默集中在网关超时步）
+  判无效，决定不补跑，按 11 个有效 run 冻结；平台臂 n=2，论文实验设计节与局限节已注明剔除原因。
+  冻结判定改为"无待完成 run"（`gen_paper_numbers.py` / `make_figures.py`），草稿标记已撤。

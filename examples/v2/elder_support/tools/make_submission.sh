@@ -32,7 +32,8 @@ cp data_pipeline/out/calibration_targets.md data_pipeline/out/references_verifie
 cp tmp/batch/comparison.json "$STAGE/" 2>/dev/null || true
 
 # 3) 密钥红线：打包内容 grep 扫描（sk- 密钥 / .env / token）
-if grep -rEl "sk-[A-Za-z0-9]{16,}|AGENTSOCIETY_LLM_API_KEY=.+" "$STAGE" 2>/dev/null | grep -v SUBMISSION.md; then
+# 排除用法注释里的占位符（dummy / ... / sk-xxx / \$VAR），只拦真实密钥形态
+if grep -rEl "sk-[A-Za-z0-9_-]{16,}|AGENTSOCIETY_LLM_API_KEY=[^ \"'\$]{12,}" "$STAGE" 2>/dev/null | grep -v SUBMISSION.md; then
   echo "✗ 发现疑似密钥,终止打包（见上方文件列表）" >&2
   exit 1
 fi

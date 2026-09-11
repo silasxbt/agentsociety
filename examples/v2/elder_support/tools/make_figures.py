@@ -7,7 +7,7 @@
 - fig4 H4 配对差：撤出反弹相对同 seed none 的差值（点 = seed）
 
 原则：每张图都有同名 CSV（原始数据版本）；图上标注有效 run 数；
-有效 run < 12 时标题带（未冻结）。重跑脚本即全量重生成，勿手改输出。
+comparison.json 存在待完成 run 时标题带（未冻结）。重跑脚本即全量重生成，勿手改输出。
 
 双语：中文图用原文件名（供 main_zh.tex），英文图加 _en 后缀（供 main_en.tex）；
 CSV 数据无语言之分，只写一份。
@@ -88,7 +88,7 @@ def load() -> dict:
 
 def tag_of(comp: dict, t: dict) -> str:
     n = comp.get("valid_runs", 0)
-    return t["tag"].format(n=n) + (t["tag_draft"] if n < 12 else "")
+    return t["tag"].format(n=n) + (t["tag_draft"] if comp.get("pending_runs") else "")
 
 
 def suffix(lang: str) -> str:

@@ -54,10 +54,11 @@ def main() -> int:
          f"\\newcommand{{\\ValidRuns}}{{{comp['valid_runs']}}}",
          f"\\newcommand{{\\TargetRuns}}{{12}}"]
 
-    frozen = comp["valid_runs"] >= 12
+    # 冻结判定：无待完成 run（判无效的 run 已按门槛剔除并在论文中注明）。2026-09-11 决定按 11 个有效 run 冻结。
+    frozen = not comp.get("pending_runs")
     L.append("\\newcommand{\\DraftBadge}{%s}" % (
         "" if frozen else
-        f"\\textbf{{草稿数字：批次未冻结（有效 run {comp['valid_runs']}/12），"
+        f"\\textbf{{草稿数字：批次未冻结（有效 run {comp['valid_runs']}/{comp['valid_runs']+len(comp.get('pending_runs',[]))+len(comp.get('invalid_runs',[]))}），"
         "冻结后本文全部数字自动更新}"))
     L.append("\\newcommand{\\DraftBadgeEn}{%s}" % (
         "" if frozen else
