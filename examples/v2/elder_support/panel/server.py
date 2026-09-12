@@ -326,6 +326,17 @@ def batch_totals() -> dict:
                 current_run = d.name
                 current_month = m[-1].get("month", 0) if m else 0
                 break
+    # 模型对比臂（tmp/model_compare/<model>/<cond>_s1[.invalid-*]）的调用计入累计成本，不计入批次进度
+    calls_mc = 0
+    mc_root = TMP / "model_compare"
+    if mc_root.is_dir():
+        for md in sorted(mc_root.iterdir()):
+            if not md.is_dir():
+                continue
+            for d in md.iterdir():
+                if d.is_dir() and (d / "trace").is_dir():
+                    calls_mc += cached_call_stats(d)["calls"]
+    calls += calls_mc
     current_steps = None
     total_steps = None
     if current_run:
@@ -352,6 +363,7 @@ def batch_totals() -> dict:
                 eta_ts = time.time() + remaining / pace
     return {
         "calls_all_runs": calls,
+        "calls_model_compare": calls_mc,
         "batch_months_done": months_done,
         "batch_total_months": total_months,
         "batch_runs_planned": planned_runs,

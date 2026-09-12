@@ -460,8 +460,8 @@ const I18N = {
   thRound:['轮','Round'], thCand:['候选','Candidate'], thWhy:['设计师理由','Designer rationale'],
   loopFoot:['设计师 {m}；约束 {c}。','Designer {m}; constraint {c}. '],
   thCat:['类别','Category'], thCalls:['LLM 调用','LLM calls'], thEstCost:['估算成本','Est. cost'],
-  catValid:['有效 run','Valid runs'], catInvalid:['无效沉没','Invalid (sunk)'], catPending:['进行中','In progress'],
-  costFoot:['累计估算 ${a}，沉没占比 {b}%（含归档的 .invalid-* 目录，共 {n} 个 run 目录）。','Cumulative estimate ${a}; sunk share {b}% (incl. archived .invalid-* dirs, {n} run dirs counted).'],
+  catValid:['有效 run','Valid runs'], catInvalid:['无效沉没','Invalid (sunk)'], catPending:['进行中','In progress'], catModelCompare:['模型对比臂（gpt-6-astra，含其无效归档）','Model-compare arm (gpt-6-astra, incl. its invalid archive)'],
+  costFoot:['累计估算 ${a}，主批次沉没占比 {b}%（含归档的 .invalid-* 目录与模型对比臂，共 {n} 个 run 目录；每小时自动刷新）。','Cumulative estimate ${a}; main-batch sunk share {b}% (incl. archived .invalid-* dirs and the model-compare arm, {n} run dirs counted; refreshed hourly).'],
   rootCause:['无效 run 根因：','Root causes of invalid runs:'],
   modeGateway:['网关故障风暴','Gateway failure storm'], modeSilence:['行为性静默','Behavioral silence'],
   thMetric:['指标','Metric'], thSim:['模拟','Simulated'], thTarget:['调查靶标','Survey target'], thDiff:['差值','Diff'], thCheck:['检查','Check'],
@@ -1113,7 +1113,7 @@ function renderMechanism(m){
     if(co){
       const tt=co.totals;
       html+='<table><thead><tr><th>'+t('thCat')+'</th><th>'+t('thCalls')+'</th><th>'+t('thEstCost')+'</th></tr></thead><tbody>'
-        +['valid','invalid','pending'].map(k=>'<tr><td>'+({valid:t('catValid'),invalid:t('catInvalid'),pending:t('catPending')})[k]+'</td><td>'+tt[k].llm_calls.toLocaleString()+'</td><td>$'+tt[k].est_cost_usd.toFixed(2)+'</td></tr>').join('')
+        +['valid','invalid','pending','model_compare'].filter(k=>tt[k]&&(k!=='model_compare'||tt[k].llm_calls>0)).map(k=>'<tr><td>'+({valid:t('catValid'),invalid:t('catInvalid'),pending:t('catPending'),model_compare:t('catModelCompare')})[k]+'</td><td>'+tt[k].llm_calls.toLocaleString()+'</td><td>$'+tt[k].est_cost_usd.toFixed(2)+'</td></tr>').join('')
         +'</tbody></table><p class="note">'+t('costFoot',{a:co.grand_total_usd,b:(co.waste_share*100).toFixed(1),n:co.n_runs_counted})+'</p>';
     }
     if(si){

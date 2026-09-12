@@ -57,10 +57,25 @@ def main() -> int:
         r = run_stats(d)
         if r:
             rows.append(r)
-    by = {"valid": 0.0, "invalid": 0.0, "pending": 0.0}
-    calls = {"valid": 0, "invalid": 0, "pending": 0}
+    # 模型对比臂（tmp/model_compare/<model>/<cond>_s1[.invalid-*]）单独成桶，含其无效归档的沉没部分
+    mc = EXP / "tmp" / "model_compare"
+    if mc.is_dir():
+        for md in sorted(mc.iterdir()):
+            if not md.is_dir():
+                continue
+            for d in sorted(md.iterdir()):
+                if not d.is_dir():
+                    continue
+                r = run_stats(d)
+                if r:
+                    r["run"] = f"mc:{md.name}/{d.name}"
+                    r["model_compare"] = True
+                    rows.append(r)
+    by = {"valid": 0.0, "invalid": 0.0, "pending": 0.0, "model_compare": 0.0}
+    calls = {"valid": 0, "invalid": 0, "pending": 0, "model_compare": 0}
     for r in rows:
-        key = "invalid" if ".invalid-" in r["run"] else r["status"]
+        key = "model_compare" if r.get("model_compare") else (
+            "invalid" if ".invalid-" in r["run"] else r["status"])
         r["bucket"] = key
         by[key] += r["est_cost_usd"]
         calls[key] += r["llm_calls"]
@@ -74,7 +89,9 @@ def main() -> int:
         "totals": {k: {"est_cost_usd": round(by[k], 2), "llm_calls": calls[k]}
                    for k in by},
         "grand_total_usd": round(sum(by.values()), 2),
-        "waste_share": round(by["invalid"] / max(sum(by.values()), 1e-9), 3),
+        # 沉没占比按主批次口径（不含模型对比臂），与论文一致
+        "waste_share": round(by["invalid"] / max(by["valid"] + by["invalid"] + by["pending"], 1e-9), 3),
+        "n_runs_counted": len(rows),
     }
     p = EXP / "tests" / "cost_report.json"
     p.write_text(json.dumps(out, ensure_ascii=False, indent=2), encoding="utf-8")
@@ -82,6 +99,7 @@ def main() -> int:
     for r in rows:
         print(f"{r['run']:<42}{r['bucket']:<10}{r['llm_calls']:>7}{r['llm_errors']:>6}"
               f"{r['est_cost_usd']:>8.2f}")
+    print(f"\n模型对比臂 ${by['model_compare']:.2f}（{calls['model_compare']} 次调用）")
     print(f"\n合计 ${out['grand_total_usd']}（有效 ${by['valid']:.2f} / "
           f"无效沉没 ${by['invalid']:.2f} / 进行中 ${by['pending']:.2f}；"
           f"沉没占比 {out['waste_share']*100:.1f}%）")
