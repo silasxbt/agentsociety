@@ -177,6 +177,12 @@ tr[data-run]{cursor:pointer}
 .modal{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px 18px;max-width:340px;width:90%}
 .modal h3{margin:0 0 8px}
 .modal .close{float:right}
+.info{display:inline-flex;align-items:center;justify-content:center;width:14px;height:14px;margin-left:6px;border-radius:50%;border:1px solid var(--ink3,#9aa);color:var(--ink3,#9aa);font-size:10px;font-weight:600;line-height:1;cursor:help;vertical-align:1px;position:relative;font-style:normal}
+.info:hover{color:var(--accent,#2A78D6);border-color:var(--accent,#2A78D6)}
+.info::after{content:attr(data-tip);position:absolute;left:50%;top:calc(100% + 8px);transform:translateX(-50%);width:min(300px,80vw);padding:8px 10px;background:var(--ink,#222);color:#fff;font-size:11.5px;font-weight:400;line-height:1.5;border-radius:6px;white-space:normal;text-align:left;box-shadow:0 4px 14px rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:opacity .12s;z-index:50}
+.info:hover::after{opacity:1}
+.conclusion-card h3,.chartbox h3{display:flex;align-items:center}
+#tab-conclusions .card:nth-child(-n+3) .info::after,#tab-conclusions .chartbox .info::after{left:0;transform:none}
 </style>
 </head>
 <body>
@@ -208,7 +214,7 @@ tr[data-run]{cursor:pointer}
           <div class="param"><span class="k" data-i18n="paramRun">当前轮次</span><span class="v" id="pRun">–</span></div>
           <div class="param wide"><span class="k" data-i18n="paramProgress">总进度</span><span class="v" id="pProgress">–</span></div>
           <div class="param"><span class="k" data-i18n="paramTokens">消耗 tokens</span><span class="v" id="pTokens">–</span></div>
-          <div class="param"><span class="k" data-i18n="paramCost">费用</span><span class="v" id="pCost">–</span></div>
+          <div class="param"><span class="k" data-i18n="paramCost">累计费用（含作废与模型对比）</span><span class="v" id="pCost">–</span></div>
         </div>
         <div class="param-grid">
           <div class="param"><span class="k" data-i18n="paramScale">当前规模</span><span class="v" id="pScale">–</span></div>
@@ -296,11 +302,6 @@ tr[data-run]{cursor:pointer}
     <div class="conclusion-scroll" id="mechLoop">–</div>
   </div>
   <div class="card conclusion-card">
-    <h3 data-i18n="costTitle">真实成本与失效诊断</h3>
-    <p class="note" data-i18n="costNote">调用数为 trace 实测；token/单价为文档化假设。真实成本计入被质量门槛淘汰 run 的沉没部分。</p>
-    <div class="conclusion-scroll" id="mechCost">–</div>
-  </div>
-  <div class="card conclusion-card">
     <h3 data-i18n="qualityTitle">数据质量与证据边界</h3>
     <div class="conclusion-scroll" id="qualityTable">–</div>
   </div>
@@ -344,7 +345,7 @@ const I18N = {
   paramSeed:['种子','Seed'], paramElders:['老人人数','Elders'], paramFocal:['焦点数','Focal count'],
   paramIntervention:['干预月','Intervention months'],
   scaleDetail:['规模说明','Scale details'], runRecordTitle:['运行记录','Run record'],
-  paramStatus:['状态','Status'], paramRun:['当前轮次','Current run'], paramProgress:['总进度','Total progress'], paramTokens:['消耗 tokens','Tokens used'], paramCost:['费用','Cost'],
+  paramStatus:['状态','Status'], paramRun:['当前轮次','Current run'], paramProgress:['总进度','Total progress'], paramTokens:['消耗 tokens','Tokens used'], paramCost:['累计费用（含作废与模型对比）','Total cost (incl. invalid & model-compare)'],
   btnRefresh:['刷新进度','Refresh progress'],
   scaleDetailText:['{scale}（{badge}）：目标配置为 {agents} 位老人、{focal} 个焦点、{months} 月、{seeds} 个种子、{reasoning}推理。{description}','{scale} ({badge}): target configuration is {agents} elders, {focal} focal agents, {months} months, {seeds} seeds, and {reasoning} reasoning. {description}'],
   noIntervention:['无干预','No intervention'],
@@ -436,6 +437,15 @@ const I18N = {
   personaIsolated:['已深度孤立','deep isolation'],
   // ---- 结论页 ----
   conclTitle:['正式批次论文核心结果','Formal batch: headline paper results'],
+  conclTitleTip:['整页的阅读说明。下面的数字来自 11 次正式模拟（计划 12 次，1 次因老人“发呆”太多被判无效）。每次模拟：20 个虚拟老人过 24 个月，第 7–18 月有人来帮忙，之后帮忙的人撤走。','How to read this page. Numbers come from 11 formal runs (12 planned; 1 ruled invalid because elders went silent too often). Each run: 20 virtual elders over 24 months, help arrives in months 7–18, then is withdrawn.'],
+  chBatchTrajTip:['横轴是月份，纵轴是“多少比例的老人处于孤立状态”。四条线是四种情况：没人管、社工一对一、老人互助时间银行、平台配志愿者。看线什么时候往下掉（帮忙起效）、撤走后又弹回多少。','X is month, Y is the share of elders who are isolated. Four lines: no help, social-worker casework, peer timebank, platform-matched volunteers. Watch when the line drops (help works) and how much it bounces back after withdrawal.'],
+  chBatchScatterTip:['每个点是一次模拟在“有人帮忙那 12 个月”里的平均孤立率。同一种帮法跑了 3 次（换随机种子），点挤在一起说明结果稳，散开说明运气成分大。','Each dot is one run\'s average isolation rate during the 12 help months. Each condition ran 3 times with different random seeds: tight dots mean stable results, scattered dots mean luck matters.'],
+  ivTitleTip:['把图变成数字：每种帮法平均让多少比例的老人孤立、跑了几次有效模拟。这是论文最主要的一张表。核心发现：社工一对一在帮忙期间效果最好。','The chart as numbers: for each kind of help, the average isolation share and how many valid runs. The paper\'s main table. Key finding: casework works best while help is present.'],
+  effectTitleTip:['“反弹”= 帮忙的人走后，孤立率比帮忙期间涨回多少。“配对差值”= 同一随机种子下“有人帮”减“没人帮”，像同一个班分两组对照，更公平。结论：社工撤走后反弹最猛，时间银行几乎不反弹，因为老人之间互帮的关系留下了。','“Rebound” = how much isolation climbs back after help leaves. “Paired difference” = helped minus unhelped under the same random seed, like splitting one class into two groups for a fair comparison. Casework rebounds hardest; the timebank barely rebounds because peer ties remain.'],
+  mechTitleTip:['用不带大模型的简化规则模型跑了很多遍，回答“早帮还是晚帮”“帮多少够”。“延迟成本”= 每晚一个月开始帮，两年平均孤立率大约多涨多少个百分点，用来说服决策者早行动。','A simpler rules-only model run many times to answer “help early or late?” and “how much is enough?”. “Delay cost” = roughly how many percentage points the 2-year average isolation rises for each month help is postponed.'],
+  loopTitleTip:['程序自己“设计实验→跑→打分→改方案→再跑”的记录：每轮改了什么、分数怎么变。目的是证明流程可以自动迭代，而不是人手工调出好看结果。','A log of the program designing an experiment, running it, scoring it, revising and re-running: what changed each round and how the score moved. Shows the pipeline iterates on its own rather than being hand-tuned for nice results.'],
+  qualityTitleTip:['给每条结论贴“可信度标签”：哪些由 3 次重复得出、哪些只有 2 次、哪些只是探索性的，提醒读者别过度解读。','A reliability label for each conclusion: which rest on 3 repeats, which on only 2, which are exploratory, so readers do not over-interpret.'],
+  calibTitle2Tip:['在没有任何干预时，虚拟老人里“经常感到孤独”的比例是否和中国真实老年人调查（CLHLS）差不多。这只检查模拟“像不像真人”，不代表干预有效。','Whether, with no intervention, the share of virtual elders who “often feel lonely” matches the real Chinese elder survey (CLHLS). It only checks realism, not whether help works.'],
   conclNote:['只纳入通过 0–24 月完整性、决策覆盖、LLM 错误率和 DONE 门槛的 run。当前结果是描述性统计，不报告显著性或因果结论。','Only runs passing the 0–24 month completeness, decision-coverage, LLM error-rate and DONE gates are included. Results are descriptive; no significance or causal claims.'],
   chBatchTraj:['主结局：跨条件月度孤立率','Primary outcome: monthly isolation rate by condition'],
   chBatchScatter:['干预期主结局：seed-level 孤立率','Primary outcome during intervention: seed-level isolation'],
@@ -516,6 +526,12 @@ function applyLang(){
   const rf = $('btnRefresh');
   if(rf){ rf.title = t('btnRefresh'); rf.setAttribute('aria-label', t('btnRefresh')); }
   document.querySelectorAll('[data-i18n]').forEach(el=>{ el.textContent = t(el.dataset.i18n); });
+  document.querySelectorAll('#tab-conclusions h3[data-i18n]').forEach(h=>{
+    const tip = I18N[h.dataset.i18n+'Tip']; if(!tip) return;
+    const i = document.createElement('i'); i.className='info'; i.textContent='i';
+    i.setAttribute('data-tip', t(h.dataset.i18n+'Tip')); i.setAttribute('aria-label', t(h.dataset.i18n+'Tip'));
+    h.appendChild(i);
+  });
   document.querySelectorAll('[data-i18n-ph]').forEach(el=>{ el.placeholder = t(el.dataset.i18nPh); });
   renderRunRecord(); renderParameterOverview(); renderAgents(); renderFeed(); updateCostEstimate();
   if(!$('tab-conclusions').hidden){ loadConclusions(); }

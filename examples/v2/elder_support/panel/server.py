@@ -336,7 +336,14 @@ def batch_totals() -> dict:
             for d in md.iterdir():
                 if d.is_dir() and (d / "trace").is_dir():
                     calls_mc += cached_call_stats(d)["calls"]
-    calls += calls_mc
+    # 归档无效目录（*.invalid-*）的调用也计入累计成本：真实成本必须含沉没部分
+    calls_archived = 0
+    bdir = TMP / "batch"
+    if bdir.is_dir():
+        for d in bdir.iterdir():
+            if d.is_dir() and ".invalid-" in d.name and (d / "trace").is_dir():
+                calls_archived += cached_call_stats(d)["calls"]
+    calls += calls_mc + calls_archived
     current_steps = None
     total_steps = None
     if current_run:
@@ -364,6 +371,7 @@ def batch_totals() -> dict:
     return {
         "calls_all_runs": calls,
         "calls_model_compare": calls_mc,
+        "calls_archived_invalid": calls_archived,
         "batch_months_done": months_done,
         "batch_total_months": total_months,
         "batch_runs_planned": planned_runs,
