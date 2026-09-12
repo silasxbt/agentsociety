@@ -11,12 +11,13 @@
 
 | # | 材料 | 路径 | 状态 |
 |---|------|------|------|
-| 1 | 论文（中文，主稿） | `paper/main_zh.pdf` | ✅ 可编译，7 页；数字为草稿（未冻结） |
-| 2 | 论文（英文） | `paper/main_en.pdf` | ✅ 可编译，8 页，已逐页目检；图表用 `_en` 英文版 |
+| 1 | 论文（中文，主稿） | `paper/main_zh.pdf` | ✅ 8 页，数字已冻结（11 有效 run，2026-09-12） |
+| 2 | 论文（英文） | `paper/main_en.pdf` | ✅ 8 页，数字已冻结；图表用 `_en` 英文版 |
 | 3 | 论文源码 | `paper/main_zh.tex`、`paper/main_en.tex`、`paper/refs.bib`、`paper/numbers.tex` | ✅ numbers.tex 由脚本生成 |
 | 4 | 图表 + 数据 CSV | `figures/fig1–fig4.{png,csv}` + `fig*_en.png` | ✅ 中英双语（脚本可重生成，CSV 只一份） |
 | 5 | 证据台账 | `EVIDENCE.md` | ✅ 自动生成 |
-| 6 | 实时面板 | https://agentsociety.shangdian.me | ✅ 在线 |
+| 6 | 实时面板 | https://agentsociety.shangdian.me（同 agentsociety.silasxbt.com） | ✅ 在线，成本每小时自动刷新 |
+| 7 | 跨模型敏感性检验 | `MODEL_COMPARE.md`、`tests/model_compare_report.json`、论文 §sec:robust | ✅ sol vs gpt-6-astra，astra none 臂两次超线写为发现 |
 
 ## 二、可复现性包（随稿附件或链接）
 
@@ -57,11 +58,19 @@ python3 tools/collect_evidence.py       # EVIDENCE.md + 面板 mechanism.json
 - [ ] 不提区块链；不引用已否决的编造文献
 - [ ] 任何密钥 / 令牌不入包（打包前 grep 检查）
 
-## 五、待办
+## 五、产物（2026-09-12）
+
+- 提交包 `tmp/submission_aiss2026_20260912.zip`（2.9 MB）：论文双语 PDF/源码、图表、可复现脚本与数据、对比材料。
+- 工作区压缩包 `tmp/workspace_aiss2026_20260912.tar.gz`（21 MB）：`tmp/batch` 全部 11 有效 + 归档失效 run，`tmp/model_compare` astra 两臂三 run；已扫描无密钥。
+- 两者合计约 24 MB，贴近 Gmail 25 MB 上限：建议分两封邮件发送，或工作区包走网盘/GitHub Release 链接。
+
+## 六、待办
 
 - [x] 英文版编译通过并逐页目检（图表已换英文版）
 - [x] 正文补焦点老人叙事个案（§5.3，casework\_s1 · 18 号，宏驱动；timebank 侧无有效 run 个案已如实说明）
 - [x] 作者信息（已填：惠栋帅、王才厚、雷明仁，中英双版）
-- [ ] 批次冻结 → 冻结后流程
-- [ ] §5.3 行为签名脚注换精确数值（冻结后）
+- [x] 批次冻结（11 有效 run，platform seed2 判无效）→ 冻结后流程已执行（2026-09-12）
+- [x] §5.3 行为签名脚注换精确数值
 - [ ] 若竞赛后续公布官方模板 / 页数限制，按其重排
+- [ ] 人工逐页目检终版双语 PDF（尤其新增 §sec:robust 与 tab:robust 排版）
+- [ ] 发送邮件至 agentsociety.fiblab2025@gmail.com（正文附面板与 GitHub 链接）

@@ -21,12 +21,12 @@ mkdir -p "$STAGE/paper" "$STAGE/figures" "$STAGE/tools" "$STAGE/tests" "$STAGE/d
 cp paper/main_zh.pdf paper/main_en.pdf paper/main_zh.tex paper/main_en.tex \
    paper/refs.bib paper/numbers.tex paper/SUBMISSION.md "$STAGE/paper/"
 cp figures/*.png figures/*.csv "$STAGE/figures/" 2>/dev/null || true
-cp EVIDENCE.md README.md run_batch.sh "$STAGE/"
-cp tools/compare_conditions.py tools/make_figures.py tools/gen_paper_numbers.py \
+cp EVIDENCE.md README.md MODEL_COMPARE.md run_batch.sh run_model_compare.sh "$STAGE/"
+cp tools/model_compare_report.py tools/compare_conditions.py tools/make_figures.py tools/gen_paper_numbers.py \
    tools/collect_evidence.py tools/cost_report.py tools/harness_loop.py \
    tools/extract_cases.py "$STAGE/tools/" 2>/dev/null || true
 cp tests/scan_timing.py tests/scan_timing_result.json tests/harness_loop_log.jsonl \
-   tests/cost_report.json tests/silence_diagnosis.json "$STAGE/tests/" 2>/dev/null || true
+   tests/cost_report.json tests/silence_diagnosis.json tests/model_compare_report.json "$STAGE/tests/" 2>/dev/null || true
 cp data_pipeline/out/calibration_targets.md data_pipeline/out/references_verified.md \
    "$STAGE/data_pipeline/out/" 2>/dev/null || true
 cp tmp/batch/comparison.json "$STAGE/" 2>/dev/null || true
