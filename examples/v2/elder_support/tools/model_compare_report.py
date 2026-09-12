@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""三模型敏感性对比报告（MODEL_COMPARE.md 的分析步骤）。
+"""双模型（gpt-5.6-sol vs gpt-6-astra）敏感性对比报告（MODEL_COMPARE.md 的分析步骤）。
 
 sol 臂读主批次 tmp/batch/{none,casework}_s1；新模型臂读
 tmp/model_compare/<slug>/{none,casework}_s1（须有 DONE 且无 INVALID）。
@@ -13,6 +13,9 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+import sys
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from compare_conditions import validate  # 复用主批次静默率/效度判定
 
 ROOT = Path(__file__).resolve().parent.parent
 IV_START, IV_END = 7, 18
@@ -39,7 +42,11 @@ def arm_stats(run_dir: Path) -> dict | None:
         return None
     iso_iv = avg(rows, "isolation_rate", IV_START, IV_END)
     iso_post = avg(rows, "isolation_rate", 19, MONTHS)
+    v = validate(run_dir)
     return {
+        "silence_rate": v["silence_rate"],
+        "valid": v["valid"],
+        "invalid_reasons": v["reasons"],
         "run": str(run_dir.relative_to(ROOT)),
         "months": len(rows),
         "iso_iv": iso_iv,
@@ -56,8 +63,6 @@ def collect_model(label: str, base: Path, *, require_done: bool) -> dict | None:
     for cond in CONDITIONS:
         d = base / f"{cond}_s1"
         if require_done and not (d / "DONE").is_file():
-            return None
-        if (d / "INVALID").is_file():
             return None
         s = arm_stats(d)
         if not s:
@@ -93,7 +98,7 @@ def main() -> None:
 
     out = {
         "windows": {"intervention": [IV_START, IV_END], "post": [19, MONTHS]},
-        "note": "单 seed 描述性比较；判读标准=三模型下 casework 是否同向呈现「干预期压低 + 撤出后反弹」",
+        "note": "单 seed 描述性比较；判读标准=两模型下 casework 是否同向呈现「干预期压低 + 撤出后反弹」；silence_rate 为焦点老人无决策 agent-月占比（门槛 10%）",
         "models": models,
     }
     dest = ROOT / "tests" / "model_compare_report.json"
@@ -106,11 +111,13 @@ def main() -> None:
     for m in models:
         p = m["paired_casework_minus_none"]
         same = "✓" if p.get("iso_iv", 0) < 0 and p.get("iso_rebound", 0) > 0 else "✗"
+        sil = " / ".join(f"{c}:{m['arms'][c]['silence_rate']:.1%}{'' if m['arms'][c]['valid'] else '(INVALID)'}" for c in CONDITIONS)
         print(
             f"{m['label']:<28}{p.get('iso_iv', float('nan')):>10.4f}"
             f"{p.get('iso_post', float('nan')):>11.4f}"
             f"{p.get('iso_rebound', float('nan')):>10.4f}  {same}"
         )
+        print(f"  静默率 {sil}")
     print("\n同向判据：Δiso_iv < 0（干预期 casework 压低孤立）且 Δiso_reb > 0（撤出后反弹更大）。")
 
 
