@@ -177,12 +177,18 @@ tr[data-run]{cursor:pointer}
 .modal{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px 18px;max-width:340px;width:90%}
 .modal h3{margin:0 0 8px}
 .modal .close{float:right}
-.info{display:inline-flex;align-items:center;justify-content:center;width:14px;height:14px;margin-left:6px;border-radius:50%;border:1px solid var(--ink3,#9aa);color:var(--ink3,#9aa);font-size:10px;font-weight:600;line-height:1;cursor:help;vertical-align:1px;position:relative;font-style:normal}
-.info:hover{color:var(--accent,#2A78D6);border-color:var(--accent,#2A78D6)}
-.info::after{content:attr(data-tip);position:absolute;left:50%;top:calc(100% + 8px);transform:translateX(-50%);width:min(300px,80vw);padding:8px 10px;background:var(--ink,#222);color:#fff;font-size:11.5px;font-weight:400;line-height:1.5;border-radius:6px;white-space:normal;text-align:left;box-shadow:0 4px 14px rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:opacity .12s;z-index:50}
-.info:hover::after{opacity:1}
-.conclusion-card h3,.chartbox h3{display:flex;align-items:center}
-#tab-conclusions .card:nth-child(-n+3) .info::after,#tab-conclusions .chartbox .info::after{left:0;transform:none}
+.info{display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;margin-left:7px;border-radius:50%;border:1px solid var(--muted);color:var(--muted);background:var(--surface);font-size:10px;font-weight:700;font-style:normal;line-height:1;cursor:help;position:relative;flex:0 0 auto}
+.info:hover,.info:focus-visible{color:var(--s1);border-color:var(--s1);outline:none}
+.info .tip{position:fixed;left:0;top:0;transform:translateY(-2px);width:min(320px,calc(100vw - 32px));padding:9px 12px;background:var(--surface);color:var(--ink2);border:1px solid var(--border);border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.18);font-size:12px;font-weight:400;line-height:1.55;text-align:left;white-space:normal;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .12s,transform .12s;z-index:60}
+.info .tip::before{content:"";position:absolute;left:var(--arrow-x,50%);top:-5px;width:8px;height:8px;transform:translateX(-50%) rotate(45deg);background:var(--surface);border-left:1px solid var(--border);border-top:1px solid var(--border)}
+.info:hover .tip,.info:focus-visible .tip,.info.show .tip{opacity:1;visibility:visible;transform:translateY(0)}
+.info.tip-up .tip{transform:translateY(2px)}
+.info.tip-up:hover .tip,.info.tip-up:focus-visible .tip,.info.tip-up.show .tip{transform:translateY(0)}
+.info.tip-up .tip::before{top:auto;bottom:-5px;transform:translateX(-50%) rotate(225deg)}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .info .tip{box-shadow:0 8px 24px rgba(0,0,0,.6)} }
+:root[data-theme="dark"] .info .tip{box-shadow:0 8px 24px rgba(0,0,0,.6)}
+.conclusion-card h3,.chartbox h3{display:flex;align-items:center;flex-wrap:wrap;gap:0}
+@media (hover:none){ .info .tip{transition:none} }
 </style>
 </head>
 <body>
@@ -520,6 +526,20 @@ function t(key, vars){
 function tCond(k){ return (CONDS[k]||[k,k])[LANG==='en'?1:0]; }
 function tAct(k){ return (ACTS[k]||[k,k])[LANG==='en'?1:0]; }
 function tOut(k){ return (OUT[k]||[k,k])[LANG==='en'?1:0]; }
+function placeTip(i, tip){
+  // 固定定位：不受卡片 overflow:hidden 裁切；水平夹在视口内，箭头始终指向图标；下方不够则翻到上方
+  const pad=12, gap=8; const ir=i.getBoundingClientRect();
+  tip.style.left='0px'; tip.style.top='0px';
+  const w=tip.offsetWidth, h=tip.offsetHeight;
+  let left=ir.left+ir.width/2-w/2;
+  left=Math.max(pad, Math.min(left, innerWidth-pad-w));
+  const up = ir.bottom+gap+h > innerHeight-pad && ir.top-gap-h > pad;
+  i.classList.toggle('tip-up', up);
+  const top = up ? ir.top-gap-h : ir.bottom+gap;
+  tip.style.left=left+'px'; tip.style.top=top+'px';
+  tip.style.setProperty('--arrow-x', (ir.left+ir.width/2-left)+'px');
+}
+document.addEventListener('click', ()=>document.querySelectorAll('.info.show').forEach(x=>x.classList.remove('show')));
 function applyLang(){
   document.documentElement.lang = LANG==='en' ? 'en' : 'zh-CN';
   $('btnLang').textContent = LANG==='en' ? '中文' : 'EN';
@@ -527,10 +547,14 @@ function applyLang(){
   if(rf){ rf.title = t('btnRefresh'); rf.setAttribute('aria-label', t('btnRefresh')); }
   document.querySelectorAll('[data-i18n]').forEach(el=>{ el.textContent = t(el.dataset.i18n); });
   document.querySelectorAll('#tab-conclusions h3[data-i18n]').forEach(h=>{
-    const tip = I18N[h.dataset.i18n+'Tip']; if(!tip) return;
-    const i = document.createElement('i'); i.className='info'; i.textContent='i';
-    i.setAttribute('data-tip', t(h.dataset.i18n+'Tip')); i.setAttribute('aria-label', t(h.dataset.i18n+'Tip'));
-    h.appendChild(i);
+    if(!I18N[h.dataset.i18n+'Tip']) return;
+    const txt = t(h.dataset.i18n+'Tip');
+    const i = document.createElement('i'); i.className='info'; i.tabIndex=0; i.setAttribute('role','note');
+    i.setAttribute('aria-label', txt);
+    const tip = document.createElement('span'); tip.className='tip'; tip.textContent=txt;
+    i.append('i', tip); h.appendChild(i);
+    i.addEventListener('mouseenter', ()=>placeTip(i, tip)); i.addEventListener('focus', ()=>placeTip(i, tip));
+    i.addEventListener('click', e=>{ e.stopPropagation(); i.classList.toggle('show'); placeTip(i, tip); });
   });
   document.querySelectorAll('[data-i18n-ph]').forEach(el=>{ el.placeholder = t(el.dataset.i18nPh); });
   renderRunRecord(); renderParameterOverview(); renderAgents(); renderFeed(); updateCostEstimate();
