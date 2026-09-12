@@ -150,6 +150,8 @@ def main() -> int:
     L.append(f"\\newcommand{{\\CostTotal}}{{{cost['grand_total_usd']:.0f}}}")
     L.append(f"\\newcommand{{\\CostValid}}{{{t['valid']['est_cost_usd']:.0f}}}")
     L.append(f"\\newcommand{{\\CostWasted}}{{{t['invalid']['est_cost_usd']:.0f}}}")
+    mc = t.get("model_compare", {"est_cost_usd": 0.0})
+    L.append(f"\\newcommand{{\\CostModelCompare}}{{{mc['est_cost_usd']:.0f}}}")
     L.append(f"\\newcommand{{\\WasteShare}}{{{cost['waste_share']*100:.0f}\\%}}")
     tot_calls = sum(t[k]["llm_calls"] for k in t)
     L.append(f"\\newcommand{{\\TotalCalls}}{{{tot_calls:,}}}")

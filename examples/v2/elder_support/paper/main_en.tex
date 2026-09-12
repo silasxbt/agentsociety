@@ -179,11 +179,36 @@ Every run failing the validity gates (Section~\ref{sec:prereg}) was archived and
 The formal batch uses a single model (gpt-5.6-sol) with uniform sampling settings; reasoning-effort level was not recorded by the run script and is disclosed as ``not recorded'', to be supplemented with a small-sample contrast. Cross-model robustness (a gpt-6-astra contrast batch: the none and casework runs at seed~1) is treated as a sensitivity check outside the main results; see Section~\ref{sec:robust}.
 
 \subsection{Cross-model sensitivity check}\label{sec:robust}
-%% ASTRA-PENDING: fill from tools/model\_compare\_report.py once the gpt-6-astra none\_s1 rerun completes
 We swap the focal elders' driving model for gpt-6-astra, keeping every other setting (profiles, seed, intervention parameters, horizon) identical to the seed-1 main-batch runs, rerun the none and casework conditions, and ask whether the casework$-$none in-window isolation gap and the direction of the post-withdrawal rebound agree with the main model. Single seed, two conditions: a descriptive directional check with no significance claim. Results and silence rates are in Table~\ref{tab:robust}.
 
+\textbf{Same direction.} Under both models casework relative to none shows ``lower isolation in-window $+$ larger rebound after withdrawal'': the paired gap is $-17.1$~pp in-window and $+18.8$~pp in rebound for the main model, versus $-25.0$~pp and $+25.0$~pp for gpt-6-astra, whose two arms return to the identical post-withdrawal level (30.0\% each), i.e.\ the casework effect vanishes completely once the worker leaves---consistent with the ``injected node'' reading above.
+
+\textbf{Behavioural silence is a model trait, not a random fault.} Two independent gpt-6-astra runs of the none arm (same seed) produced silence rates of 10.7\% (16/150 agent-months) and 11.3\% (17/150), both crossing the 10\% validity gate and ruled invalid by rule; LLM error rates were 0.17\% and 0, and the silent months were spread across several elders rather than clustered in gateway-timeout steps, unlike the infrastructure-type failure of platform seed~2. All 11 sol runs in the main batch stay at $\le 10\%$ (none seed~1: 4.0\%), while the same astra model's casework arm is silent only 2.0\% of the time---a persistently visiting external actor appears to ``pull'' decisions out of astra elders, whereas left alone this model more often issues no action at all. We report this as a robustness finding in its own right: (i) the gate was calibrated on the main model and may be systematically strict for more ``taciturn'' models, which the limitations section acknowledges; (ii) the astra none-arm isolation rates in the table are directional only and enter no headline result; (iii) a third rerun was deliberately declined to avoid ``run until it passes'' selective reporting.
+
+\begin{table}[t]
+\centering\small
+\caption{Cross-model sensitivity check (seed~1, single run). Isolation rates are window means (\%); rebound $=$ post $-$ in-window (pp); silence rate is the share of focal-elder agent-months with no decision (gate 10\%).}
+\label{tab:robust}
+\begin{tabular}{llcccc}
+\toprule
+Model & Condition & Silence & In-window & Post & Rebound \\
+\midrule
+gpt-5.6-sol & none     & 4.0\% & 25.8 & 25.0 & $-0.8$ \\
+            & casework & 8.7\% & 8.8  & 26.7 & $+17.9$ \\
+gpt-6-astra & none     & 11.3\%$^\dagger$ & 29.6 & 30.0 & $+0.4$ \\
+            & casework & 2.0\% & 4.6  & 30.0 & $+25.4$ \\
+\midrule
+\multicolumn{2}{l}{Paired casework$-$none: sol}   & & $-17.1$ & $+1.7$ & $+18.8$ \\
+\multicolumn{2}{l}{Paired casework$-$none: astra} & & $-25.0$ & $0.0$ & $+25.0$ \\
+\bottomrule
+\end{tabular}
+
+\smallskip
+{\footnotesize $^\dagger$ Exceeds the 10\% gate and is ruled invalid; the first attempt (10.7\%, 16/150) crossed it as well. Behavioural metrics are directional only.}
+\end{table}
+
 \section{True Cost Accounting}
-Cost reporting for multi-agent LLM experiments must include runs eliminated by quality gates. This project accumulated \TotalCalls\ LLM calls (measured from traces, archived invalid runs included), with an estimated total cost of \$\CostTotal: \$\CostValid\ on valid runs and \$\CostWasted\ sunk on invalid ones (a \WasteShare\ share). Token usage is a documented assumption (traces do not record per-call usage) and unit prices follow public pricing; the full accounting basis is released with the data files. Here the layered design pays off concretely: the rules-layer scans (\TimingSeeds\ seeds $\times$ 45 configurations) and the harness loop cost zero API dollars; running the same scans through the LLM layer would exceed the main batch's cost by an order of magnitude.
+Cost reporting for multi-agent LLM experiments must include runs eliminated by quality gates. This project accumulated \TotalCalls\ LLM calls (measured from traces, archived invalid runs included), with an estimated total cost of \$\CostTotal: \$\CostValid\ on valid main-batch runs, \$\CostWasted\ sunk on invalid ones (a \WasteShare\ share of the main batch), plus \$\CostModelCompare\ for the cross-model contrast arms (Section~\ref{sec:robust}). Token usage is a documented assumption (traces do not record per-call usage) and unit prices follow public pricing; the full accounting basis is released with the data files. Here the layered design pays off concretely: the rules-layer scans (\TimingSeeds\ seeds $\times$ 45 configurations) and the harness loop cost zero API dollars; running the same scans through the LLM layer would exceed the main batch's cost by an order of magnitude.
 
 \section{Discussion and Policy Implications}
 \textbf{(1) Waiting time is itself an intervention design variable.} The mechanism-layer estimates show immediate onset and a delay cost accruing linearly by the month (about \DelayCostCasework pp/month). For practice: compressing the administrative cycle from identification to case opening yields gains of the same order as intensifying the intervention.
@@ -197,7 +222,7 @@ Cost reporting for multi-agent LLM experiments must include runs eliminated by q
 All of the above are model-mechanism conclusions intended to generate testable policy hypotheses; \textbf{we claim no causal effects in real populations}.
 
 \section{Limitations and Ethics}
-\textbf{Limitations.} (1) $n=3$ seeds ($n=\NPlatform$ for the platform arm) support only descriptive contrasts and directional judgements, not significance or stable rankings; (2) the tie-decay mechanism has a 46\% survival floor and is slower than the empirical shape in the literature; (3) the behavioural validity of LLM focal elders depends on the model itself, and behavioural silence is hard to separate from a real elder's ``legitimate inaction''; (4) calibration sources differ in definitions (survey waves; living-alone subsample vs.\ full sample); (5) the post-withdrawal observation window is only six months; (6) the Ristolainen RCT's subgroup effect suffers from non-comparable baselines\citep{ristolainen2020effects}, so casework parameters lean primarily on the Masi meta-analysis.
+\textbf{Limitations.} (1) $n=3$ seeds ($n=\NPlatform$ for the platform arm) support only descriptive contrasts and directional judgements, not significance or stable rankings; (2) the tie-decay mechanism has a 46\% survival floor and is slower than the empirical shape in the literature; (3) the behavioural validity of LLM focal elders depends on the model itself, and behavioural silence is hard to separate from a real elder's ``legitimate inaction'', and the 10\% silence gate was calibrated on the main model gpt-5.6-sol and may be systematically strict for models more inclined to inaction (gpt-6-astra's none arm: 10.7--11.3\% in two attempts; see Section~\ref{sec:robust}); (4) calibration sources differ in definitions (survey waves; living-alone subsample vs.\ full sample); (5) the post-withdrawal observation window is only six months; (6) the Ristolainen RCT's subgroup effect suffers from non-comparable baselines\citep{ristolainen2020effects}, so casework parameters lean primarily on the Masi meta-analysis.
 
 \textbf{Ethics.} All agents are simulated entities; no real individuals are involved. Survey data enter only as aggregate distributions from public microdata. The LLM-generated ``elders' rationales'' are mechanistic probes, not real elders' voices, and the paper avoids quoting them anthropomorphically. Because simulation conclusions could be misused as direct grounds for resource allocation, we repeatedly stress their hypothesis-generating character.
 

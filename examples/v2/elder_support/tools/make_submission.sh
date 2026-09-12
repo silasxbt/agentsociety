@@ -45,5 +45,5 @@ fi
 # 4) 压缩
 rm -f "$OUT"
 (cd "$STAGE" && zip -rq - .) > "$OUT"
-echo "✓ 已生成 $OUT（$(du -h "$OUT" | cut -f1)）"
+echo "✓ 已生成 ${OUT}（$(du -h "$OUT" | cut -f1)）"
 unzip -l "$OUT" | tail -3

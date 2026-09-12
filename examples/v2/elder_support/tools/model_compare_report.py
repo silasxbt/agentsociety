@@ -62,7 +62,8 @@ def collect_model(label: str, base: Path, *, require_done: bool) -> dict | None:
     arms = {}
     for cond in CONDITIONS:
         d = base / f"{cond}_s1"
-        if require_done and not (d / "DONE").is_file():
+        # 「已结束」= DONE 或 INVALID（INVALID 的臂保留：静默率本身是稳健性发现）
+        if require_done and not ((d / "DONE").is_file() or (d / "INVALID").is_file()):
             return None
         s = arm_stats(d)
         if not s:

@@ -170,11 +170,36 @@
 正式批次使用单一模型（gpt-5.6-sol）与统一采样设置；思考强度未被运行脚本记录，如实标注``未记录''，后续以小样本对照补充。跨模型稳健性（gpt-6-astra 对照批次，seed~1 的 none 与 casework 两条 run）列为敏感性检验，不在主结果内，结果见第~\ref{sec:robust}~节。
 
 \subsection{跨模型敏感性检验}\label{sec:robust}
-%% ASTRA-PENDING：gpt-6-astra none\_s1 补跑完成后由 tools/model\_compare\_report.py 结果填充本节数值
 以 gpt-6-astra 替换焦点老人的驱动模型，其余配置（画像、种子、干预参数、步数）与主批次 seed~1 完全一致，重跑 none 与 casework 两条 run，比较 casework$-$none 的干预期孤立率差与撤出反弹方向是否与主模型一致。单 seed、双条件，仅作描述性方向判断，不做显著性声称。结果与静默率对照见表~\ref{tab:robust}。
 
+\textbf{方向一致。}两模型下 casework 相对 none 均呈``干预期压低 $+$ 撤出后反弹更大''：主模型配对差为干预期 $-17.1$~pp、反弹 $+18.8$~pp；gpt-6-astra 为干预期 $-25.0$~pp、反弹 $+25.0$~pp，且撤出期两臂孤立率回到同一水平（均为 30.0\%），即 casework 的效果在撤出后完全消失，与前文``注入型节点''解释一致。
+
+\textbf{行为型静默是模型特征而非偶然故障。}gpt-6-astra 的 none 臂两次独立运行（同一 seed）静默率分别为 10.7\%（16/150 agent-月）与 11.3\%（17/150），均越过 10\% 效度门槛并按规则判无效；两次运行的 LLM 错误率分别为 0.17\% 与 0，静默分散在多位老人的多个月份而非集中于网关超时步，与 platform seed~2 的基础设施型失效不同。主批次 11 条 sol run 静默率全部 $\le 10\%$（none seed~1 为 4.0\%），而同一模型的 casework 臂静默率仅 2.0\%——外部行动者持续来访似乎``拉动''了 astra 焦点老人产出决策，无人干预时该模型更倾向于不给出任何行动。我们将此本身作为稳健性发现报告：（i）门槛按主模型设定，对更``沉默''的模型可能系统性偏严，局限节对此作出说明；（ii）表中 astra none 臂的孤立率仅供方向参考，不进入任何主结果；（iii）第三次重跑被明确放弃，以避免``跑到通过为止''的选择性报告。
+
+\begin{table}[t]
+\centering\small
+\caption{跨模型敏感性检验（seed~1，单 run）。孤立率为窗口均值（\%），反弹 $=$ 撤出期 $-$ 干预期（pp）；静默率为焦点老人无决策 agent-月占比（门槛 10\%）。}
+\label{tab:robust}
+\begin{tabular}{llcccc}
+\toprule
+模型 & 条件 & 静默率 & 干预期 & 撤出期 & 反弹 \\
+\midrule
+gpt-5.6-sol & none     & 4.0\% & 25.8 & 25.0 & $-0.8$ \\
+            & casework & 8.7\% & 8.8  & 26.7 & $+17.9$ \\
+gpt-6-astra & none     & 11.3\%$^\dagger$ & 29.6 & 30.0 & $+0.4$ \\
+            & casework & 2.0\% & 4.6  & 30.0 & $+25.4$ \\
+\midrule
+\multicolumn{2}{l}{配对差 casework$-$none：sol}   & & $-17.1$ & $+1.7$ & $+18.8$ \\
+\multicolumn{2}{l}{配对差 casework$-$none：astra} & & $-25.0$ & $0.0$ & $+25.0$ \\
+\bottomrule
+\end{tabular}
+
+\smallskip
+{\footnotesize $^\dagger$ 超过 10\% 门槛判无效；首次运行为 10.7\%（16/150），同样越线，行为指标仅供方向参考。}
+\end{table}
+
 \section{真实成本核算}
-多智能体 LLM 实验的成本报告必须计入被质量门槛淘汰的 run。本项目累计 LLM 调用 \TotalCalls\ 次（trace 实测，含归档失效 run），估算总成本 \$\CostTotal：有效 run \$\CostValid、无效沉没 \$\CostWasted（占 \WasteShare）。token 用量为文档化假设（trace 未记录逐调用用量）、单价按公开定价，口径随数据文件公开。分层设计的意义在此具体化：规则层扫描（\TimingSeeds\ 种子 $\times$ 45 配置）与 harness 闭环全部零 API 成本；若以 LLM 层完成同等扫描，成本将超出主批次一个数量级。
+多智能体 LLM 实验的成本报告必须计入被质量门槛淘汰的 run。本项目累计 LLM 调用 \TotalCalls\ 次（trace 实测，含归档失效 run），估算总成本 \$\CostTotal：主批次有效 run \$\CostValid、无效沉没 \$\CostWasted（占主批次 \WasteShare），另有跨模型对比臂 \$\CostModelCompare（第~\ref{sec:robust}~节）。token 用量为文档化假设（trace 未记录逐调用用量）、单价按公开定价，口径随数据文件公开。分层设计的意义在此具体化：规则层扫描（\TimingSeeds\ 种子 $\times$ 45 配置）与 harness 闭环全部零 API 成本；若以 LLM 层完成同等扫描，成本将超出主批次一个数量级。
 
 \section{讨论与政策含义}
 \textbf{（一）轮候时间本身是干预设计变量。}机制层估计表明干预即时起效、延迟成本按月线性累积（约 \DelayCostCasework pp/月）。对实务的含义：压缩从识别到开案的行政周期，其收益与提高干预强度同阶。
@@ -188,7 +213,7 @@
 以上均为模型机制结论，用于生成可检验的政策假设，\textbf{不宣称真实人群的因果效应}。
 
 \section{局限与伦理}
-\textbf{局限。}（1）$n=3$ 种子（平台臂 $n=\NPlatform$）只支持描述性对比与方向判断，不支持显著性与稳定排序；（2）关系衰减机制存在 46\% 存活率地板，慢于文献实证形态；（3）LLM 焦点老人的行为效度依赖模型本身，行为型静默与真实老人的``合法不行动''难以区分；（4）校准数据存在口径差（调查波次、独居子样本 vs 全体）；（5）撤出观察窗仅 6 个月；（6）Ristolainen RCT 的亚组效应存在基线不可比问题\citep{ristolainen2020effects}，个案管理参数依据以 Masi 荟萃为主。
+\textbf{局限。}（1）$n=3$ 种子（平台臂 $n=\NPlatform$）只支持描述性对比与方向判断，不支持显著性与稳定排序；（2）关系衰减机制存在 46\% 存活率地板，慢于文献实证形态；（3）LLM 焦点老人的行为效度依赖模型本身，行为型静默与真实老人的``合法不行动''难以区分，且 10\% 静默门槛按主模型 gpt-5.6-sol 设定，对更倾向``不行动''的模型（gpt-6-astra none 臂两次为 10.7--11.3\%）可能系统性偏严，见第~\ref{sec:robust}~节；（4）校准数据存在口径差（调查波次、独居子样本 vs 全体）；（5）撤出观察窗仅 6 个月；（6）Ristolainen RCT 的亚组效应存在基线不可比问题\citep{ristolainen2020effects}，个案管理参数依据以 Masi 荟萃为主。
 
 \textbf{伦理。}全部智能体为模拟实体，不涉及真实个人；调查数据仅使用公开微观数据的聚合分布；LLM 生成的``老人理由''是机制探针而非真实老人话语，论文避免将其拟人化引用。模拟结论若被直接当作资源分配依据存在误用风险，故本文反复强调其假设生成属性。
 

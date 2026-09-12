@@ -96,3 +96,12 @@ tmp/model_compare/<model-slug>/<condition>_s1/
 - **决定**：none_s1 在 VM 补跑一次。若再次超线，则不再重跑，把"gpt-6-astra 驱动的焦点老人行为型静默
   显著高于 gpt-5.6-sol（主批次 11 run 静默率均 ≤10%）"本身写成稳健性小节的发现，并在局限中注明门槛张力。
 - **fable 臂取消**：本机守候进程已停止，对比只做 sol vs astra 两模型。
+
+## 2026-09-12 21:30 — astra none_s1 补跑结果与最终处置
+- 补跑（VM，同 seed 1）结束：静默率 11.3%（17/150 agent-月），再次越过 10% 门槛判 INVALID；LLM 错误率 0。
+  静默主要在 agent1 第 6–17 月连续无决策、agent4 三个月，非网关超时型。首轮 10.7% 归档保留。
+- 按既定规则不再第三次重跑。两次结果均写入论文 §sec:robust 与 tab:robust（中英），局限节第 (3) 条注明门槛张力。
+- 方向判读：sol 配对差 Δiv −17.1 pp / Δreb +18.8 pp；astra Δiv −25.0 pp / Δreb +25.0 pp，两模型同向；
+  astra casework 臂静默率仅 2.0%，与 none 臂形成"外部行动者拉动决策"的对照。
+- `tools/model_compare_report.py` 改为：run 结束 = DONE 或 INVALID，INVALID 臂保留并标注。
+- 本地 `tmp/model_compare/gpt-6-astra/` 已从 VM 拉回（不含 *.log），VM 侧保留原件。
