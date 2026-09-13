@@ -1,0 +1,2759 @@
+{
+  "preregistered": {
+    "primary_metric": "overall_isolation_rate (months 1-24 mean)",
+    "hypotheses": [
+      "T1 早启动优于晚启动（全时程孤立率）",
+      "T2 更长时长降低干预期/期末孤立率，反弹不必然减小"
+    ],
+    "seeds": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "starts": [
+      3,
+      5,
+      7,
+      9,
+      12
+    ],
+    "durations": [
+      6,
+      12,
+      18
+    ],
+    "decay": 0.06,
+    "n_elders": 20,
+    "months": 24
+  },
+  "caveats": [
+    "规则层（无 LLM），绝对水平不可与正式批次直接比较，仅比较方向与量级",
+    "启动越晚撤出后观察窗越短，反弹比较须连同 post_window_len 报告",
+    "dur18 无撤出后窗口，反弹为 NaN"
+  ],
+  "baseline": {
+    "none": {
+      "overall_isolation_rate": {
+        "mean": 0.15,
+        "sd": 0.0437,
+        "n": 20
+      },
+      "iv_isolation_rate": {
+        "mean": 0.1485,
+        "sd": 0.0451,
+        "n": 20
+      },
+      "post_isolation_rate": {
+        "mean": 0.145,
+        "sd": 0.0427,
+        "n": 20
+      },
+      "rebound_isolation_rate": {
+        "mean": -0.0035,
+        "sd": 0.0199,
+        "n": 20
+      },
+      "final_isolation_rate": {
+        "mean": 0.1525,
+        "sd": 0.0573,
+        "n": 20
+      },
+      "overall_deep_isolation_rate": {
+        "mean": 0.0578,
+        "sd": 0.0326,
+        "n": 20
+      },
+      "iv_deep_isolation_rate": {
+        "mean": 0.0656,
+        "sd": 0.0373,
+        "n": 20
+      },
+      "post_deep_isolation_rate": {
+        "mean": 0.0625,
+        "sd": 0.0416,
+        "n": 20
+      },
+      "rebound_deep_isolation_rate": {
+        "mean": -0.0031,
+        "sd": 0.0225,
+        "n": 20
+      },
+      "final_deep_isolation_rate": {
+        "mean": 0.06,
+        "sd": 0.0528,
+        "n": 20
+      },
+      "overall_avg_loneliness": {
+        "mean": 0.3588,
+        "sd": 0.0289,
+        "n": 20
+      },
+      "iv_avg_loneliness": {
+        "mean": 0.3533,
+        "sd": 0.0303,
+        "n": 20
+      },
+      "post_avg_loneliness": {
+        "mean": 0.3776,
+        "sd": 0.029,
+        "n": 20
+      },
+      "rebound_avg_loneliness": {
+        "mean": 0.0242,
+        "sd": 0.0093,
+        "n": 20
+      },
+      "final_avg_loneliness": {
+        "mean": 0.3848,
+        "sd": 0.0319,
+        "n": 20
+      },
+      "overall_avg_active_ties": {
+        "mean": 3.7042,
+        "sd": 0.3116,
+        "n": 20
+      },
+      "iv_avg_active_ties": {
+        "mean": 3.7029,
+        "sd": 0.311,
+        "n": 20
+      },
+      "post_avg_active_ties": {
+        "mean": 3.54,
+        "sd": 0.3226,
+        "n": 20
+      },
+      "rebound_avg_active_ties": {
+        "mean": -0.1629,
+        "sd": 0.0684,
+        "n": 20
+      },
+      "final_avg_active_ties": {
+        "mean": 3.4875,
+        "sd": 0.3252,
+        "n": 20
+      }
+    }
+  },
+  "timing_scan": {
+    "start3_casework": {
+      "iv_window": [
+        3,
+        14
+      ],
+      "post_window_len": 10,
+      "overall_isolation_rate": {
+        "mean": 0.0772,
+        "sd": 0.0229,
+        "n": 20
+      },
+      "iv_isolation_rate": {
+        "mean": 0.0302,
+        "sd": 0.0125,
+        "n": 20
+      },
+      "post_isolation_rate": {
+        "mean": 0.1143,
+        "sd": 0.0366,
+        "n": 20
+      },
+      "rebound_isolation_rate": {
+        "mean": 0.084,
+        "sd": 0.0314,
+        "n": 20
+      },
+      "final_isolation_rate": {
+        "mean": 0.1025,
+        "sd": 0.0595,
+        "n": 20
+      },
+      "overall_deep_isolation_rate": {
+        "mean": 0.0117,
+        "sd": 0.0101,
+        "n": 20
+      },
+      "iv_deep_isolation_rate": {
+        "mean": 0.0015,
+        "sd": 0.0028,
+        "n": 20
+      },
+      "post_deep_isolation_rate": {
+        "mean": 0.0263,
+        "sd": 0.023,
+        "n": 20
+      },
+      "rebound_deep_isolation_rate": {
+        "mean": 0.0248,
+        "sd": 0.0225,
+        "n": 20
+      },
+      "final_deep_isolation_rate": {
+        "mean": 0.0275,
+        "sd": 0.0343,
+        "n": 20
+      },
+      "overall_avg_loneliness": {
+        "mean": 0.2679,
+        "sd": 0.0257,
+        "n": 20
+      },
+      "iv_avg_loneliness": {
+        "mean": 0.2278,
+        "sd": 0.0247,
+        "n": 20
+      },
+      "post_avg_loneliness": {
+        "mean": 0.2971,
+        "sd": 0.0287,
+        "n": 20
+      },
+      "rebound_avg_loneliness": {
+        "mean": 0.0693,
+        "sd": 0.0096,
+        "n": 20
+      },
+      "final_avg_loneliness": {
+        "mean": 0.3176,
+        "sd": 0.0266,
+        "n": 20
+      },
+      "overall_avg_active_ties": {
+        "mean": 5.3384,
+        "sd": 0.3011,
+        "n": 20
+      },
+      "iv_avg_active_ties": {
+        "mean": 5.4452,
+        "sd": 0.2931,
+        "n": 20
+      },
+      "post_avg_active_ties": {
+        "mean": 5.4988,
+        "sd": 0.315,
+        "n": 20
+      },
+      "rebound_avg_active_ties": {
+        "mean": 0.0535,
+        "sd": 0.0822,
+        "n": 20
+      },
+      "final_avg_active_ties": {
+        "mean": 5.41,
+        "sd": 0.3007,
+        "n": 20
+      }
+    },
+    "start3_timebank": {
+      "iv_window": [
+        3,
+        14
+      ],
+      "post_window_len": 10,
+      "overall_isolation_rate": {
+        "mean": 0.0876,
+        "sd": 0.0286,
+        "n": 20
+      },
+      "iv_isolation_rate": {
+        "mean": 0.0723,
+        "sd": 0.0306,
+        "n": 20
+      },
+      "post_isolation_rate": {
+        "mean": 0.0887,
+        "sd": 0.0278,
+        "n": 20
+      },
+      "rebound_isolation_rate": {
+        "mean": 0.0165,
+        "sd": 0.0219,
+        "n": 20
+      },
+      "final_isolation_rate": {
+        "mean": 0.0975,
+        "sd": 0.055,
+        "n": 20
+      },
+      "overall_deep_isolation_rate": {
+        "mean": 0.0146,
+        "sd": 0.0158,
+        "n": 20
+      },
+      "iv_deep_isolation_rate": {
+        "mean": 0.0135,
+        "sd": 0.02,
+        "n": 20
+      },
+      "post_deep_isolation_rate": {
+        "mean": 0.0187,
+        "sd": 0.0169,
+        "n": 20
+      },
+      "rebound_deep_isolation_rate": {
+        "mean": 0.0052,
+        "sd": 0.0145,
+        "n": 20
+      },
+      "final_deep_isolation_rate": {
+        "mean": 0.0175,
+        "sd": 0.0245,
+        "n": 20
+      },
+      "overall_avg_loneliness": {
+        "mean": 0.2838,
+        "sd": 0.0267,
+        "n": 20
+      },
+      "iv_avg_loneliness": {
+        "mean": 0.2621,
+        "sd": 0.0258,
+        "n": 20
+      },
+      "post_avg_loneliness": {
+        "mean": 0.2939,
+        "sd": 0.0294,
+        "n": 20
+      },
+      "rebound_avg_loneliness": {
+        "mean": 0.0318,
+        "sd": 0.0096,
+        "n": 20
+      },
+      "final_avg_loneliness": {
+        "mean": 0.3102,
+        "sd": 0.0321,
+        "n": 20
+      },
+      "overall_avg_active_ties": {
+        "mean": 4.7997,
+        "sd": 0.3011,
+        "n": 20
+      },
+      "iv_avg_active_ties": {
+        "mean": 4.9206,
+        "sd": 0.2972,
+        "n": 20
+      },
+      "post_avg_active_ties": {
+        "mean": 4.8352,
+        "sd": 0.3231,
+        "n": 20
+      },
+      "rebound_avg_active_ties": {
+        "mean": -0.0854,
+        "sd": 0.0994,
+        "n": 20
+      },
+      "final_avg_active_ties": {
+        "mean": 4.7425,
+        "sd": 0.3229,
+        "n": 20
+      }
+    },
+    "start3_platform": {
+      "iv_window": [
+        3,
+        14
+      ],
+      "post_window_len": 10,
+      "overall_isolation_rate": {
+        "mean": 0.1413,
+        "sd": 0.0433,
+        "n": 20
+      },
+      "iv_isolation_rate": {
+        "mean": 0.136,
+        "sd": 0.0447,
+        "n": 20
+      },
+      "post_isolation_rate": {
+        "mean": 0.141,
+        "sd": 0.0476,
+        "n": 20
+      },
+      "rebound_isolation_rate": {
+        "mean": 0.005,
+        "sd": 0.0317,
+        "n": 20
+      },
+      "final_isolation_rate": {
+        "mean": 0.1675,
+        "sd": 0.0545,
+        "n": 20
+      },
+      "overall_deep_isolation_rate": {
+        "mean": 0.032,
+        "sd": 0.0223,
+        "n": 20
+      },
+      "iv_deep_isolation_rate": {
+        "mean": 0.0269,
+        "sd": 0.0211,
+        "n": 20
+      },
+      "post_deep_isolation_rate": {
+        "mean": 0.0445,
+        "sd": 0.0349,
+        "n": 20
+      },
+      "rebound_deep_isolation_rate": {
+        "mean": 0.0176,
+        "sd": 0.0286,
+        "n": 20
+      },
+      "final_deep_isolation_rate": {
+        "mean": 0.0475,
+        "sd": 0.0413,
+        "n": 20
+      },
+      "overall_avg_loneliness": {
+        "mean": 0.3268,
+        "sd": 0.0276,
+        "n": 20
+      },
+      "iv_avg_loneliness": {
+        "mean": 0.3208,
+        "sd": 0.0299,
+        "n": 20
+      },
+      "post_avg_loneliness": {
+        "mean": 0.3267,
+        "sd": 0.0276,
+        "n": 20
+      },
+      "rebound_avg_loneliness": {
+        "mean": 0.0059,
+        "sd": 0.0127,
+        "n": 20
+      },
+      "final_avg_loneliness": {
+        "mean": 0.3428,
+        "sd": 0.0304,
+        "n": 20
+      },
+      "overall_avg_active_ties": {
+        "mean": 4.5839,
+        "sd": 0.3108,
+        "n": 20
+      },
+      "iv_avg_active_ties": {
+        "mean": 4.5073,
+        "sd": 0.3133,
+        "n": 20
+      },
+      "post_avg_active_ties": {
+        "mean": 4.8133,
+        "sd": 0.3309,
+        "n": 20
+      },
+      "rebound_avg_active_ties": {
+        "mean": 0.306,
+        "sd": 0.1236,
+        "n": 20
+      },
+      "final_avg_active_ties": {
+        "mean": 4.7225,
+        "sd": 0.3148,
+        "n": 20
+      }
+    },
+    "start5_casework": {
+      "iv_window": [
+        5,
+        16
+      ],
+      "post_window_len": 8,
+      "overall_isolation_rate": {
+        "mean": 0.0785,
+        "sd": 0.0233,
+        "n": 20
+      },
+      "iv_isolation_rate": {
+        "mean": 0.0271,
+        "sd": 0.0111,
+        "n": 20
+      },
+      "post_isolation_rate": {
+        "mean": 0.1153,
+        "sd": 0.0441,
+        "n": 20
+      },
+      "rebound_isolation_rate": {
+        "mean": 0.0882,
+        "sd": 0.042,
+        "n": 20
+      },
+      "final_isolation_rate": {
+        "mean": 0.1075,
+        "sd": 0.052,
+        "n": 20
+      },
+      "overall_deep_isolation_rate": {
+        "mean": 0.0127,
+        "sd": 0.0102,
+        "n": 20
+      },
+      "iv_deep_isolation_rate": {
+        "mean": 0.001,
+        "sd": 0.0023,
+        "n": 20
+      },
+      "post_deep_isolation_rate": {
+        "mean": 0.0238,
+        "sd": 0.0232,
+        "n": 20
+      },
+      "rebound_deep_isolation_rate": {
+        "mean": 0.0227,
+        "sd": 0.0228,
+        "n": 20
+      },
+      "final_deep_isolation_rate": {
+        "mean": 0.03,
+        "sd": 0.041,
+        "n": 20
+      },
+      "overall_avg_loneliness": {
+        "mean": 0.2695,
+        "sd": 0.0243,
+        "n": 20
+      },
+      "iv_avg_loneliness": {
+        "mean": 0.2261,
+        "sd": 0.0227,
+        "n": 20
+      },
+      "post_avg_loneliness": {
+        "mean": 0.2919,
+        "sd": 0.0289,
+        "n": 20
+      },
+      "rebound_avg_loneliness": {
+        "mean": 0.0658,
+        "sd": 0.0129,
+        "n": 20
+      },
+      "final_avg_loneliness": {
+        "mean": 0.3074,
+        "sd": 0.0344,
+        "n": 20
+      },
+      "overall_avg_active_ties": {
+        "mean": 5.1758,
+        "sd": 0.2815,
+        "n": 20
+      },
+      "iv_avg_active_ties": {
+        "mean": 5.3994,
+        "sd": 0.2791,
+        "n": 20
+      },
+      "post_avg_active_ties": {
+        "mean": 5.4863,
+        "sd": 0.279,
+        "n": 20
+      },
+      "rebound_avg_active_ties": {
+        "mean": 0.0869,
+        "sd": 0.0803,
+        "n": 20
+      },
+      "final_avg_active_ties": {
+        "mean": 5.43,
+        "sd": 0.276,
+        "n": 20
+      }
+    },
+    "start5_timebank": {
+      "iv_window": [
+        5,
+        16
+      ],
+      "post_window_len": 8,
+      "overall_isolation_rate": {
+        "mean": 0.0896,
+        "sd": 0.0249,
+        "n": 20
+      },
+      "iv_isolation_rate": {
+        "mean": 0.0665,
+        "sd": 0.0237,
+        "n": 20
+      },
+      "post_isolation_rate": {
+        "mean": 0.0894,
+        "sd": 0.0261,
+        "n": 20
+      },
+      "rebound_isolation_rate": {
+        "mean": 0.0229,
+        "sd": 0.0193,
+        "n": 20
+      },
+      "final_isolation_rate": {
+        "mean": 0.1,
+        "sd": 0.0538,
+        "n": 20
+      },
+      "overall_deep_isolation_rate": {
+        "mean": 0.0148,
+        "sd": 0.0131,
+        "n": 20
+      },
+      "iv_deep_isolation_rate": {
+        "mean": 0.0102,
+        "sd": 0.0154,
+        "n": 20
+      },
+      "post_deep_isolation_rate": {
+        "mean": 0.0163,
+        "sd": 0.0169,
+        "n": 20
+      },
+      "rebound_deep_isolation_rate": {
+        "mean": 0.006,
+        "sd": 0.0166,
+        "n": 20
+      },
+      "final_deep_isolation_rate": {
+        "mean": 0.02,
+        "sd": 0.0251,
+        "n": 20
+      },
+      "overall_avg_loneliness": {
+        "mean": 0.2901,
+        "sd": 0.0267,
+        "n": 20
+      },
+      "iv_avg_loneliness": {
+        "mean": 0.266,
+        "sd": 0.0283,
+        "n": 20
+      },
+      "post_avg_loneliness": {
+        "mean": 0.2937,
+        "sd": 0.0272,
+        "n": 20
+      },
+      "rebound_avg_loneliness": {
+        "mean": 0.0276,
+        "sd": 0.0113,
+        "n": 20
+      },
+      "final_avg_loneliness": {
+        "mean": 0.3057,
+        "sd": 0.0244,
+        "n": 20
+      },
+      "overall_avg_active_ties": {
+        "mean": 4.7646,
+        "sd": 0.316,
+        "n": 20
+      },
+      "iv_avg_active_ties": {
+        "mean": 4.9571,
+        "sd": 0.3037,
+        "n": 20
+      },
+      "post_avg_active_ties": {
+        "mean": 4.9159,
+        "sd": 0.3654,
+        "n": 20
+      },
+      "rebound_avg_active_ties": {
+        "mean": -0.0411,
+        "sd": 0.1371,
+        "n": 20
+      },
+      "final_avg_active_ties": {
+        "mean": 4.845,
+        "sd": 0.3627,
+        "n": 20
+      }
+    },
+    "start5_platform": {
+      "iv_window": [
+        5,
+        16
+      ],
+      "post_window_len": 8,
+      "overall_isolation_rate": {
+        "mean": 0.1368,
+        "sd": 0.0386,
+        "n": 20
+      },
+      "iv_isolation_rate": {
+        "mean": 0.1313,
+        "sd": 0.0376,
+        "n": 20
+      },
+      "post_isolation_rate": {
+        "mean": 0.1338,
+        "sd": 0.0458,
+        "n": 20
+      },
+      "rebound_isolation_rate": {
+        "mean": 0.0025,
+        "sd": 0.0242,
+        "n": 20
+      },
+      "final_isolation_rate": {
+        "mean": 0.1475,
+        "sd": 0.0769,
+        "n": 20
+      },
+      "overall_deep_isolation_rate": {
+        "mean": 0.0304,
+        "sd": 0.0203,
+        "n": 20
+      },
+      "iv_deep_isolation_rate": {
+        "mean": 0.0235,
+        "sd": 0.0171,
+        "n": 20
+      },
+      "post_deep_isolation_rate": {
+        "mean": 0.0431,
+        "sd": 0.0347,
+        "n": 20
+      },
+      "rebound_deep_isolation_rate": {
+        "mean": 0.0196,
+        "sd": 0.0254,
+        "n": 20
+      },
+      "final_deep_isolation_rate": {
+        "mean": 0.055,
+        "sd": 0.0426,
+        "n": 20
+      },
+      "overall_avg_loneliness": {
+        "mean": 0.3303,
+        "sd": 0.0266,
+        "n": 20
+      },
+      "iv_avg_loneliness": {
+        "mean": 0.3233,
+        "sd": 0.0277,
+        "n": 20
+      },
+      "post_avg_loneliness": {
+        "mean": 0.3284,
+        "sd": 0.0285,
+        "n": 20
+      },
+      "rebound_avg_loneliness": {
+        "mean": 0.0051,
+        "sd": 0.0116,
+        "n": 20
+      },
+      "final_avg_loneliness": {
+        "mean": 0.3377,
+        "sd": 0.0303,
+        "n": 20
+      },
+      "overall_avg_active_ties": {
+        "mean": 4.5081,
+        "sd": 0.2816,
+        "n": 20
+      },
+      "iv_avg_active_ties": {
+        "mean": 4.4775,
+        "sd": 0.2865,
+        "n": 20
+      },
+      "post_avg_active_ties": {
+        "mean": 4.8659,
+        "sd": 0.3141,
+        "n": 20
+      },
+      "rebound_avg_active_ties": {
+        "mean": 0.3884,
+        "sd": 0.1462,
+        "n": 20
+      },
+      "final_avg_active_ties": {
+        "mean": 4.81,
+        "sd": 0.3275,
+        "n": 20
+      }
+    },
+    "start7_casework": {
+      "iv_window": [
+        7,
+        18
+      ],
+      "post_window_len": 6,
+      "overall_isolation_rate": {
+        "mean": 0.084,
+        "sd": 0.0259,
+        "n": 20
+      },
+      "iv_isolation_rate": {
+        "mean": 0.029,
+        "sd": 0.0133,
+        "n": 20
+      },
+      "post_isolation_rate": {
+        "mean": 0.12,
+        "sd": 0.04,
+        "n": 20
+      },
+      "rebound_isolation_rate": {
+        "mean": 0.091,
+        "sd": 0.0346,
+        "n": 20
+      },
+      "final_isolation_rate": {
+        "mean": 0.1,
+        "sd": 0.0538,
+        "n": 20
+      },
+      "overall_deep_isolation_rate": {
+        "mean": 0.016,
+        "sd": 0.0095,
+        "n": 20
+      },
+      "iv_deep_isolation_rate": {
+        "mean": 0.0004,
+        "sd": 0.0013,
+        "n": 20
+      },
+      "post_deep_isolation_rate": {
+        "mean": 0.0258,
+        "sd": 0.0198,
+        "n": 20
+      },
+      "rebound_deep_isolation_rate": {
+        "mean": 0.0254,
+        "sd": 0.0197,
+        "n": 20
+      },
+      "final_deep_isolation_rate": {
+        "mean": 0.0375,
+        "sd": 0.0393,
+        "n": 20
+      },
+      "overall_avg_loneliness": {
+        "mean": 0.2771,
+        "sd": 0.0263,
+        "n": 20
+      },
+      "iv_avg_loneliness": {
+        "mean": 0.2319,
+        "sd": 0.0254,
+        "n": 20
+      },
+      "post_avg_loneliness": {
+        "mean": 0.2935,
+        "sd": 0.03,
+        "n": 20
+      },
+      "rebound_avg_loneliness": {
+        "mean": 0.0616,
+        "sd": 0.0109,
+        "n": 20
+      },
+      "final_avg_loneliness": {
+        "mean": 0.3119,
+        "sd": 0.0321,
+        "n": 20
+      },
+      "overall_avg_active_ties": {
+        "mean": 5.0082,
+        "sd": 0.3276,
+        "n": 20
+      },
+      "iv_avg_active_ties": {
+        "mean": 5.3442,
+        "sd": 0.3219,
+        "n": 20
+      },
+      "post_avg_active_ties": {
+        "mean": 5.4737,
+        "sd": 0.367,
+        "n": 20
+      },
+      "rebound_avg_active_ties": {
+        "mean": 0.1296,
+        "sd": 0.0889,
+        "n": 20
+      },
+      "final_avg_active_ties": {
+        "mean": 5.4375,
+        "sd": 0.3866,
+        "n": 20
+      }
+    },
+    "start7_timebank": {
+      "iv_window": [
+        7,
+        18
+      ],
+      "post_window_len": 6,
+      "overall_isolation_rate": {
+        "mean": 0.0938,
+        "sd": 0.0288,
+        "n": 20
+      },
+      "iv_isolation_rate": {
+        "mean": 0.066,
+        "sd": 0.0277,
+        "n": 20
+      },
+      "post_isolation_rate": {
+        "mean": 0.085,
+        "sd": 0.0303,
+        "n": 20
+      },
+      "rebound_isolation_rate": {
+        "mean": 0.019,
+        "sd": 0.0292,
+        "n": 20
+      },
+      "final_isolation_rate": {
+        "mean": 0.1025,
+        "sd": 0.0752,
+        "n": 20
+      },
+      "overall_deep_isolation_rate": {
+        "mean": 0.0154,
+        "sd": 0.0079,
+        "n": 20
+      },
+      "iv_deep_isolation_rate": {
+        "mean": 0.0063,
+        "sd": 0.0064,
+        "n": 20
+      },
+      "post_deep_isolation_rate": {
+        "mean": 0.0117,
+        "sd": 0.0095,
+        "n": 20
+      },
+      "rebound_deep_isolation_rate": {
+        "mean": 0.0054,
+        "sd": 0.0116,
+        "n": 20
+      },
+      "final_deep_isolation_rate": {
+        "mean": 0.015,
+        "sd": 0.0235,
+        "n": 20
+      },
+      "overall_avg_loneliness": {
+        "mean": 0.2946,
+        "sd": 0.0276,
+        "n": 20
+      },
+      "iv_avg_loneliness": {
+        "mean": 0.267,
+        "sd": 0.0288,
+        "n": 20
+      },
+      "post_avg_loneliness": {
+        "mean": 0.2932,
+        "sd": 0.0297,
+        "n": 20
+      },
+      "rebound_avg_loneliness": {
+        "mean": 0.0263,
+        "sd": 0.0123,
+        "n": 20
+      },
+      "final_avg_loneliness": {
+        "mean": 0.3058,
+        "sd": 0.0327,
+        "n": 20
+      },
+      "overall_avg_active_ties": {
+        "mean": 4.6305,
+        "sd": 0.3136,
+        "n": 20
+      },
+      "iv_avg_active_ties": {
+        "mean": 4.8954,
+        "sd": 0.3193,
+        "n": 20
+      },
+      "post_avg_active_ties": {
+        "mean": 4.8604,
+        "sd": 0.3473,
+        "n": 20
+      },
+      "rebound_avg_active_ties": {
+        "mean": -0.035,
+        "sd": 0.0887,
+        "n": 20
+      },
+      "final_avg_active_ties": {
+        "mean": 4.8275,
+        "sd": 0.3432,
+        "n": 20
+      }
+    },
+    "start7_platform": {
+      "iv_window": [
+        7,
+        18
+      ],
+      "post_window_len": 6,
+      "overall_isolation_rate": {
+        "mean": 0.1389,
+        "sd": 0.043,
+        "n": 20
+      },
+      "iv_isolation_rate": {
+        "mean": 0.1331,
+        "sd": 0.0422,
+        "n": 20
+      },
+      "post_isolation_rate": {
+        "mean": 0.1313,
+        "sd": 0.0496,
+        "n": 20
+      },
+      "rebound_isolation_rate": {
+        "mean": -0.0019,
+        "sd": 0.0247,
+        "n": 20
+      },
+      "final_isolation_rate": {
+        "mean": 0.1325,
+        "sd": 0.073,
+        "n": 20
+      },
+      "overall_deep_isolation_rate": {
+        "mean": 0.034,
+        "sd": 0.0226,
+        "n": 20
+      },
+      "iv_deep_isolation_rate": {
+        "mean": 0.0308,
+        "sd": 0.0235,
+        "n": 20
+      },
+      "post_deep_isolation_rate": {
+        "mean": 0.0367,
+        "sd": 0.0297,
+        "n": 20
+      },
+      "rebound_deep_isolation_rate": {
+        "mean": 0.0058,
+        "sd": 0.0195,
+        "n": 20
+      },
+      "final_deep_isolation_rate": {
+        "mean": 0.025,
+        "sd": 0.0414,
+        "n": 20
+      },
+      "overall_avg_loneliness": {
+        "mean": 0.3346,
+        "sd": 0.0293,
+        "n": 20
+      },
+      "iv_avg_loneliness": {
+        "mean": 0.3282,
+        "sd": 0.0302,
+        "n": 20
+      },
+      "post_avg_loneliness": {
+        "mean": 0.3311,
+        "sd": 0.0332,
+        "n": 20
+      },
+      "rebound_avg_loneliness": {
+        "mean": 0.0029,
+        "sd": 0.0132,
+        "n": 20
+      },
+      "final_avg_loneliness": {
+        "mean": 0.3327,
+        "sd": 0.0364,
+        "n": 20
+      },
+      "overall_avg_active_ties": {
+        "mean": 4.3961,
+        "sd": 0.3324,
+        "n": 20
+      },
+      "iv_avg_active_ties": {
+        "mean": 4.4248,
+        "sd": 0.3477,
+        "n": 20
+      },
+      "post_avg_active_ties": {
+        "mean": 4.8642,
+        "sd": 0.3942,
+        "n": 20
+      },
+      "rebound_avg_active_ties": {
+        "mean": 0.4394,
+        "sd": 0.162,
+        "n": 20
+      },
+      "final_avg_active_ties": {
+        "mean": 4.825,
+        "sd": 0.3998,
+        "n": 20
+      }
+    },
+    "start9_casework": {
+      "iv_window": [
+        9,
+        20
+      ],
+      "post_window_len": 4,
+      "overall_isolation_rate": {
+        "mean": 0.086,
+        "sd": 0.0251,
+        "n": 20
+      },
+      "iv_isolation_rate": {
+        "mean": 0.0271,
+        "sd": 0.0126,
+        "n": 20
+      },
+      "post_isolation_rate": {
+        "mean": 0.1225,
+        "sd": 0.0436,
+        "n": 20
+      },
+      "rebound_isolation_rate": {
+        "mean": 0.0954,
+        "sd": 0.042,
+        "n": 20
+      },
+      "final_isolation_rate": {
+        "mean": 0.125,
+        "sd": 0.0414,
+        "n": 20
+      },
+      "overall_deep_isolation_rate": {
+        "mean": 0.0185,
+        "sd": 0.0116,
+        "n": 20
+      },
+      "iv_deep_isolation_rate": {
+        "mean": 0.0013,
+        "sd": 0.0031,
+        "n": 20
+      },
+      "post_deep_isolation_rate": {
+        "mean": 0.0194,
+        "sd": 0.0205,
+        "n": 20
+      },
+      "rebound_deep_isolation_rate": {
+        "mean": 0.0181,
+        "sd": 0.0206,
+        "n": 20
+      },
+      "final_deep_isolation_rate": {
+        "mean": 0.03,
+        "sd": 0.034,
+        "n": 20
+      },
+      "overall_avg_loneliness": {
+        "mean": 0.2831,
+        "sd": 0.0266,
+        "n": 20
+      },
+      "iv_avg_loneliness": {
+        "mean": 0.2357,
+        "sd": 0.0249,
+        "n": 20
+      },
+      "post_avg_loneliness": {
+        "mean": 0.2933,
+        "sd": 0.0326,
+        "n": 20
+      },
+      "rebound_avg_loneliness": {
+        "mean": 0.0575,
+        "sd": 0.0121,
+        "n": 20
+      },
+      "final_avg_loneliness": {
+        "mean": 0.3075,
+        "sd": 0.0323,
+        "n": 20
+      },
+      "overall_avg_active_ties": {
+        "mean": 4.8264,
+        "sd": 0.3057,
+        "n": 20
+      },
+      "iv_avg_active_ties": {
+        "mean": 5.2877,
+        "sd": 0.3015,
+        "n": 20
+      },
+      "post_avg_active_ties": {
+        "mean": 5.3956,
+        "sd": 0.322,
+        "n": 20
+      },
+      "rebound_avg_active_ties": {
+        "mean": 0.1079,
+        "sd": 0.0644,
+        "n": 20
+      },
+      "final_avg_active_ties": {
+        "mean": 5.37,
+        "sd": 0.3258,
+        "n": 20
+      }
+    },
+    "start9_timebank": {
+      "iv_window": [
+        9,
+        20
+      ],
+      "post_window_len": 4,
+      "overall_isolation_rate": {
+        "mean": 0.0967,
+        "sd": 0.0274,
+        "n": 20
+      },
+      "iv_isolation_rate": {
+        "mean": 0.0592,
+        "sd": 0.0191,
+        "n": 20
+      },
+      "post_isolation_rate": {
+        "mean": 0.09,
+        "sd": 0.0341,
+        "n": 20
+      },
+      "rebound_isolation_rate": {
+        "mean": 0.0308,
+        "sd": 0.0279,
+        "n": 20
+      },
+      "final_isolation_rate": {
+        "mean": 0.085,
+        "sd": 0.0651,
+        "n": 20
+      },
+      "overall_deep_isolation_rate": {
+        "mean": 0.0199,
+        "sd": 0.013,
+        "n": 20
+      },
+      "iv_deep_isolation_rate": {
+        "mean": 0.0067,
+        "sd": 0.0091,
+        "n": 20
+      },
+      "post_deep_isolation_rate": {
+        "mean": 0.0113,
+        "sd": 0.0146,
+        "n": 20
+      },
+      "rebound_deep_isolation_rate": {
+        "mean": 0.0046,
+        "sd": 0.0136,
+        "n": 20
+      },
+      "final_deep_isolation_rate": {
+        "mean": 0.0125,
+        "sd": 0.0275,
+        "n": 20
+      },
+      "overall_avg_loneliness": {
+        "mean": 0.301,
+        "sd": 0.0288,
+        "n": 20
+      },
+      "iv_avg_loneliness": {
+        "mean": 0.2707,
+        "sd": 0.0297,
+        "n": 20
+      },
+      "post_avg_loneliness": {
+        "mean": 0.2962,
+        "sd": 0.032,
+        "n": 20
+      },
+      "rebound_avg_loneliness": {
+        "mean": 0.0255,
+        "sd": 0.0123,
+        "n": 20
+      },
+      "final_avg_loneliness": {
+        "mean": 0.3042,
+        "sd": 0.0292,
+        "n": 20
+      },
+      "overall_avg_active_ties": {
+        "mean": 4.5299,
+        "sd": 0.3449,
+        "n": 20
+      },
+      "iv_avg_active_ties": {
+        "mean": 4.8806,
+        "sd": 0.364,
+        "n": 20
+      },
+      "post_avg_active_ties": {
+        "mean": 4.8381,
+        "sd": 0.4261,
+        "n": 20
+      },
+      "rebound_avg_active_ties": {
+        "mean": -0.0425,
+        "sd": 0.1073,
+        "n": 20
+      },
+      "final_avg_active_ties": {
+        "mean": 4.815,
+        "sd": 0.4305,
+        "n": 20
+      }
+    },
+    "start9_platform": {
+      "iv_window": [
+        9,
+        20
+      ],
+      "post_window_len": 4,
+      "overall_isolation_rate": {
+        "mean": 0.1416,
+        "sd": 0.0405,
+        "n": 20
+      },
+      "iv_isolation_rate": {
+        "mean": 0.1317,
+        "sd": 0.0402,
+        "n": 20
+      },
+      "post_isolation_rate": {
+        "mean": 0.1419,
+        "sd": 0.0489,
+        "n": 20
+      },
+      "rebound_isolation_rate": {
+        "mean": 0.0102,
+        "sd": 0.0356,
+        "n": 20
+      },
+      "final_isolation_rate": {
+        "mean": 0.145,
+        "sd": 0.0724,
+        "n": 20
+      },
+      "overall_deep_isolation_rate": {
+        "mean": 0.0345,
+        "sd": 0.0204,
+        "n": 20
+      },
+      "iv_deep_isolation_rate": {
+        "mean": 0.0235,
+        "sd": 0.0149,
+        "n": 20
+      },
+      "post_deep_isolation_rate": {
+        "mean": 0.0481,
+        "sd": 0.0372,
+        "n": 20
+      },
+      "rebound_deep_isolation_rate": {
+        "mean": 0.0246,
+        "sd": 0.0285,
+        "n": 20
+      },
+      "final_deep_isolation_rate": {
+        "mean": 0.045,
+        "sd": 0.0426,
+        "n": 20
+      },
+      "overall_avg_loneliness": {
+        "mean": 0.3392,
+        "sd": 0.0276,
+        "n": 20
+      },
+      "iv_avg_loneliness": {
+        "mean": 0.3339,
+        "sd": 0.0285,
+        "n": 20
+      },
+      "post_avg_loneliness": {
+        "mean": 0.3359,
+        "sd": 0.0278,
+        "n": 20
+      },
+      "rebound_avg_loneliness": {
+        "mean": 0.002,
+        "sd": 0.0123,
+        "n": 20
+      },
+      "final_avg_loneliness": {
+        "mean": 0.3412,
+        "sd": 0.0263,
+        "n": 20
+      },
+      "overall_avg_active_ties": {
+        "mean": 4.2958,
+        "sd": 0.2485,
+        "n": 20
+      },
+      "iv_avg_active_ties": {
+        "mean": 4.4142,
+        "sd": 0.2448,
+        "n": 20
+      },
+      "post_avg_active_ties": {
+        "mean": 4.8331,
+        "sd": 0.2445,
+        "n": 20
+      },
+      "rebound_avg_active_ties": {
+        "mean": 0.419,
+        "sd": 0.1472,
+        "n": 20
+      },
+      "final_avg_active_ties": {
+        "mean": 4.8025,
+        "sd": 0.2414,
+        "n": 20
+      }
+    },
+    "start12_casework": {
+      "iv_window": [
+        12,
+        23
+      ],
+      "post_window_len": 1,
+      "overall_isolation_rate": {
+        "mean": 0.0896,
+        "sd": 0.0267,
+        "n": 20
+      },
+      "iv_isolation_rate": {
+        "mean": 0.0281,
+        "sd": 0.0122,
+        "n": 20
+      },
+      "post_isolation_rate": {
+        "mean": 0.1075,
+        "sd": 0.073,
+        "n": 20
+      },
+      "rebound_isolation_rate": {
+        "mean": 0.0794,
+        "sd": 0.0674,
+        "n": 20
+      },
+      "final_isolation_rate": {
+        "mean": 0.1075,
+        "sd": 0.073,
+        "n": 20
+      },
+      "overall_deep_isolation_rate": {
+        "mean": 0.0232,
+        "sd": 0.0143,
+        "n": 20
+      },
+      "iv_deep_isolation_rate": {
+        "mean": 0.0004,
+        "sd": 0.0013,
+        "n": 20
+      },
+      "post_deep_isolation_rate": {
+        "mean": 0.01,
+        "sd": 0.0205,
+        "n": 20
+      },
+      "rebound_deep_isolation_rate": {
+        "mean": 0.0096,
+        "sd": 0.0202,
+        "n": 20
+      },
+      "final_deep_isolation_rate": {
+        "mean": 0.01,
+        "sd": 0.0205,
+        "n": 20
+      },
+      "overall_avg_loneliness": {
+        "mean": 0.2934,
+        "sd": 0.0264,
+        "n": 20
+      },
+      "iv_avg_loneliness": {
+        "mean": 0.2438,
+        "sd": 0.0252,
+        "n": 20
+      },
+      "post_avg_loneliness": {
+        "mean": 0.2764,
+        "sd": 0.0303,
+        "n": 20
+      },
+      "rebound_avg_loneliness": {
+        "mean": 0.0327,
+        "sd": 0.0138,
+        "n": 20
+      },
+      "final_avg_loneliness": {
+        "mean": 0.2764,
+        "sd": 0.0303,
+        "n": 20
+      },
+      "overall_avg_active_ties": {
+        "mean": 4.6048,
+        "sd": 0.3082,
+        "n": 20
+      },
+      "iv_avg_active_ties": {
+        "mean": 5.2594,
+        "sd": 0.3111,
+        "n": 20
+      },
+      "post_avg_active_ties": {
+        "mean": 5.385,
+        "sd": 0.2961,
+        "n": 20
+      },
+      "rebound_avg_active_ties": {
+        "mean": 0.1256,
+        "sd": 0.0943,
+        "n": 20
+      },
+      "final_avg_active_ties": {
+        "mean": 5.385,
+        "sd": 0.2961,
+        "n": 20
+      }
+    },
+    "start12_timebank": {
+      "iv_window": [
+        12,
+        23
+      ],
+      "post_window_len": 1,
+      "overall_isolation_rate": {
+        "mean": 0.1041,
+        "sd": 0.0342,
+        "n": 20
+      },
+      "iv_isolation_rate": {
+        "mean": 0.0598,
+        "sd": 0.0264,
+        "n": 20
+      },
+      "post_isolation_rate": {
+        "mean": 0.075,
+        "sd": 0.0679,
+        "n": 20
+      },
+      "rebound_isolation_rate": {
+        "mean": 0.0152,
+        "sd": 0.057,
+        "n": 20
+      },
+      "final_isolation_rate": {
+        "mean": 0.075,
+        "sd": 0.0679,
+        "n": 20
+      },
+      "overall_deep_isolation_rate": {
+        "mean": 0.0258,
+        "sd": 0.0158,
+        "n": 20
+      },
+      "iv_deep_isolation_rate": {
+        "mean": 0.006,
+        "sd": 0.0057,
+        "n": 20
+      },
+      "post_deep_isolation_rate": {
+        "mean": 0.005,
+        "sd": 0.0154,
+        "n": 20
+      },
+      "rebound_deep_isolation_rate": {
+        "mean": -0.001,
+        "sd": 0.0156,
+        "n": 20
+      },
+      "final_deep_isolation_rate": {
+        "mean": 0.005,
+        "sd": 0.0154,
+        "n": 20
+      },
+      "overall_avg_loneliness": {
+        "mean": 0.3116,
+        "sd": 0.0306,
+        "n": 20
+      },
+      "iv_avg_loneliness": {
+        "mean": 0.2788,
+        "sd": 0.0343,
+        "n": 20
+      },
+      "post_avg_loneliness": {
+        "mean": 0.2943,
+        "sd": 0.039,
+        "n": 20
+      },
+      "rebound_avg_loneliness": {
+        "mean": 0.0155,
+        "sd": 0.015,
+        "n": 20
+      },
+      "final_avg_loneliness": {
+        "mean": 0.2943,
+        "sd": 0.039,
+        "n": 20
+      },
+      "overall_avg_active_ties": {
+        "mean": 4.3461,
+        "sd": 0.3434,
+        "n": 20
+      },
+      "iv_avg_active_ties": {
+        "mean": 4.7952,
+        "sd": 0.3877,
+        "n": 20
+      },
+      "post_avg_active_ties": {
+        "mean": 4.7475,
+        "sd": 0.4232,
+        "n": 20
+      },
+      "rebound_avg_active_ties": {
+        "mean": -0.0477,
+        "sd": 0.1077,
+        "n": 20
+      },
+      "final_avg_active_ties": {
+        "mean": 4.7475,
+        "sd": 0.4232,
+        "n": 20
+      }
+    },
+    "start12_platform": {
+      "iv_window": [
+        12,
+        23
+      ],
+      "post_window_len": 1,
+      "overall_isolation_rate": {
+        "mean": 0.1388,
+        "sd": 0.04,
+        "n": 20
+      },
+      "iv_isolation_rate": {
+        "mean": 0.1248,
+        "sd": 0.0397,
+        "n": 20
+      },
+      "post_isolation_rate": {
+        "mean": 0.1275,
+        "sd": 0.055,
+        "n": 20
+      },
+      "rebound_isolation_rate": {
+        "mean": 0.0027,
+        "sd": 0.048,
+        "n": 20
+      },
+      "final_isolation_rate": {
+        "mean": 0.1275,
+        "sd": 0.055,
+        "n": 20
+      },
+      "overall_deep_isolation_rate": {
+        "mean": 0.0374,
+        "sd": 0.0212,
+        "n": 20
+      },
+      "iv_deep_isolation_rate": {
+        "mean": 0.0271,
+        "sd": 0.0174,
+        "n": 20
+      },
+      "post_deep_isolation_rate": {
+        "mean": 0.03,
+        "sd": 0.0441,
+        "n": 20
+      },
+      "rebound_deep_isolation_rate": {
+        "mean": 0.0029,
+        "sd": 0.0393,
+        "n": 20
+      },
+      "final_deep_isolation_rate": {
+        "mean": 0.03,
+        "sd": 0.0441,
+        "n": 20
+      },
+      "overall_avg_loneliness": {
+        "mean": 0.3432,
+        "sd": 0.0284,
+        "n": 20
+      },
+      "iv_avg_loneliness": {
+        "mean": 0.3391,
+        "sd": 0.029,
+        "n": 20
+      },
+      "post_avg_loneliness": {
+        "mean": 0.3289,
+        "sd": 0.0308,
+        "n": 20
+      },
+      "rebound_avg_loneliness": {
+        "mean": -0.0102,
+        "sd": 0.015,
+        "n": 20
+      },
+      "final_avg_loneliness": {
+        "mean": 0.3289,
+        "sd": 0.0308,
+        "n": 20
+      },
+      "overall_avg_active_ties": {
+        "mean": 4.1358,
+        "sd": 0.3119,
+        "n": 20
+      },
+      "iv_avg_active_ties": {
+        "mean": 4.3694,
+        "sd": 0.3295,
+        "n": 20
+      },
+      "post_avg_active_ties": {
+        "mean": 4.81,
+        "sd": 0.368,
+        "n": 20
+      },
+      "rebound_avg_active_ties": {
+        "mean": 0.4406,
+        "sd": 0.1261,
+        "n": 20
+      },
+      "final_avg_active_ties": {
+        "mean": 4.81,
+        "sd": 0.368,
+        "n": 20
+      }
+    }
+  },
+  "duration_scan": {
+    "dur6_casework": {
+      "iv_window": [
+        7,
+        12
+      ],
+      "post_window_len": 12,
+      "overall_isolation_rate": {
+        "mean": 0.108,
+        "sd": 0.0333,
+        "n": 20
+      },
+      "iv_isolation_rate": {
+        "mean": 0.0288,
+        "sd": 0.0161,
+        "n": 20
+      },
+      "post_isolation_rate": {
+        "mean": 0.1227,
+        "sd": 0.0375,
+        "n": 20
+      },
+      "rebound_isolation_rate": {
+        "mean": 0.094,
+        "sd": 0.0274,
+        "n": 20
+      },
+      "final_isolation_rate": {
+        "mean": 0.1225,
+        "sd": 0.055,
+        "n": 20
+      },
+      "overall_deep_isolation_rate": {
+        "mean": 0.0266,
+        "sd": 0.0164,
+        "n": 20
+      },
+      "iv_deep_isolation_rate": {
+        "mean": 0.0004,
+        "sd": 0.0019,
+        "n": 20
+      },
+      "post_deep_isolation_rate": {
+        "mean": 0.0342,
+        "sd": 0.024,
+        "n": 20
+      },
+      "rebound_deep_isolation_rate": {
+        "mean": 0.0338,
+        "sd": 0.0238,
+        "n": 20
+      },
+      "final_deep_isolation_rate": {
+        "mean": 0.05,
+        "sd": 0.0459,
+        "n": 20
+      },
+      "overall_avg_loneliness": {
+        "mean": 0.298,
+        "sd": 0.0256,
+        "n": 20
+      },
+      "iv_avg_loneliness": {
+        "mean": 0.242,
+        "sd": 0.0275,
+        "n": 20
+      },
+      "post_avg_loneliness": {
+        "mean": 0.2995,
+        "sd": 0.0251,
+        "n": 20
+      },
+      "rebound_avg_loneliness": {
+        "mean": 0.0575,
+        "sd": 0.0074,
+        "n": 20
+      },
+      "final_avg_loneliness": {
+        "mean": 0.3137,
+        "sd": 0.0272,
+        "n": 20
+      },
+      "overall_avg_active_ties": {
+        "mean": 4.9264,
+        "sd": 0.3192,
+        "n": 20
+      },
+      "iv_avg_active_ties": {
+        "mean": 5.1796,
+        "sd": 0.3156,
+        "n": 20
+      },
+      "post_avg_active_ties": {
+        "mean": 5.3275,
+        "sd": 0.3343,
+        "n": 20
+      },
+      "rebound_avg_active_ties": {
+        "mean": 0.1479,
+        "sd": 0.1055,
+        "n": 20
+      },
+      "final_avg_active_ties": {
+        "mean": 5.2125,
+        "sd": 0.3546,
+        "n": 20
+      }
+    },
+    "dur6_timebank": {
+      "iv_window": [
+        7,
+        12
+      ],
+      "post_window_len": 12,
+      "overall_isolation_rate": {
+        "mean": 0.1028,
+        "sd": 0.0325,
+        "n": 20
+      },
+      "iv_isolation_rate": {
+        "mean": 0.0688,
+        "sd": 0.034,
+        "n": 20
+      },
+      "post_isolation_rate": {
+        "mean": 0.0923,
+        "sd": 0.0339,
+        "n": 20
+      },
+      "rebound_isolation_rate": {
+        "mean": 0.0235,
+        "sd": 0.0328,
+        "n": 20
+      },
+      "final_isolation_rate": {
+        "mean": 0.0775,
+        "sd": 0.0499,
+        "n": 20
+      },
+      "overall_deep_isolation_rate": {
+        "mean": 0.0185,
+        "sd": 0.0105,
+        "n": 20
+      },
+      "iv_deep_isolation_rate": {
+        "mean": 0.01,
+        "sd": 0.01,
+        "n": 20
+      },
+      "post_deep_isolation_rate": {
+        "mean": 0.0133,
+        "sd": 0.0114,
+        "n": 20
+      },
+      "rebound_deep_isolation_rate": {
+        "mean": 0.0033,
+        "sd": 0.0127,
+        "n": 20
+      },
+      "final_deep_isolation_rate": {
+        "mean": 0.01,
+        "sd": 0.0205,
+        "n": 20
+      },
+      "overall_avg_loneliness": {
+        "mean": 0.3048,
+        "sd": 0.0257,
+        "n": 20
+      },
+      "iv_avg_loneliness": {
+        "mean": 0.2715,
+        "sd": 0.0298,
+        "n": 20
+      },
+      "post_avg_loneliness": {
+        "mean": 0.2983,
+        "sd": 0.0243,
+        "n": 20
+      },
+      "rebound_avg_loneliness": {
+        "mean": 0.0267,
+        "sd": 0.0113,
+        "n": 20
+      },
+      "final_avg_loneliness": {
+        "mean": 0.3096,
+        "sd": 0.0309,
+        "n": 20
+      },
+      "overall_avg_active_ties": {
+        "mean": 4.5943,
+        "sd": 0.2968,
+        "n": 20
+      },
+      "iv_avg_active_ties": {
+        "mean": 4.8854,
+        "sd": 0.3037,
+        "n": 20
+      },
+      "post_avg_active_ties": {
+        "mean": 4.8104,
+        "sd": 0.3053,
+        "n": 20
+      },
+      "rebound_avg_active_ties": {
+        "mean": -0.075,
+        "sd": 0.0429,
+        "n": 20
+      },
+      "final_avg_active_ties": {
+        "mean": 4.72,
+        "sd": 0.3185,
+        "n": 20
+      }
+    },
+    "dur6_platform": {
+      "iv_window": [
+        7,
+        12
+      ],
+      "post_window_len": 12,
+      "overall_isolation_rate": {
+        "mean": 0.143,
+        "sd": 0.0411,
+        "n": 20
+      },
+      "iv_isolation_rate": {
+        "mean": 0.135,
+        "sd": 0.0397,
+        "n": 20
+      },
+      "post_isolation_rate": {
+        "mean": 0.1396,
+        "sd": 0.0441,
+        "n": 20
+      },
+      "rebound_isolation_rate": {
+        "mean": 0.0046,
+        "sd": 0.0271,
+        "n": 20
+      },
+      "final_isolation_rate": {
+        "mean": 0.145,
+        "sd": 0.0686,
+        "n": 20
+      },
+      "overall_deep_isolation_rate": {
+        "mean": 0.0427,
+        "sd": 0.0295,
+        "n": 20
+      },
+      "iv_deep_isolation_rate": {
+        "mean": 0.0363,
+        "sd": 0.0319,
+        "n": 20
+      },
+      "post_deep_isolation_rate": {
+        "mean": 0.0485,
+        "sd": 0.0373,
+        "n": 20
+      },
+      "rebound_deep_isolation_rate": {
+        "mean": 0.0123,
+        "sd": 0.0236,
+        "n": 20
+      },
+      "final_deep_isolation_rate": {
+        "mean": 0.055,
+        "sd": 0.0394,
+        "n": 20
+      },
+      "overall_avg_loneliness": {
+        "mean": 0.3418,
+        "sd": 0.0285,
+        "n": 20
+      },
+      "iv_avg_loneliness": {
+        "mean": 0.3309,
+        "sd": 0.0313,
+        "n": 20
+      },
+      "post_avg_loneliness": {
+        "mean": 0.3426,
+        "sd": 0.0288,
+        "n": 20
+      },
+      "rebound_avg_loneliness": {
+        "mean": 0.0117,
+        "sd": 0.0101,
+        "n": 20
+      },
+      "final_avg_loneliness": {
+        "mean": 0.359,
+        "sd": 0.0328,
+        "n": 20
+      },
+      "overall_avg_active_ties": {
+        "mean": 4.1278,
+        "sd": 0.3275,
+        "n": 20
+      },
+      "iv_avg_active_ties": {
+        "mean": 4.1654,
+        "sd": 0.352,
+        "n": 20
+      },
+      "post_avg_active_ties": {
+        "mean": 4.2375,
+        "sd": 0.3453,
+        "n": 20
+      },
+      "rebound_avg_active_ties": {
+        "mean": 0.0721,
+        "sd": 0.1027,
+        "n": 20
+      },
+      "final_avg_active_ties": {
+        "mean": 4.13,
+        "sd": 0.3373,
+        "n": 20
+      }
+    },
+    "dur12_casework": {
+      "iv_window": [
+        7,
+        18
+      ],
+      "post_window_len": 6,
+      "overall_isolation_rate": {
+        "mean": 0.084,
+        "sd": 0.0259,
+        "n": 20
+      },
+      "iv_isolation_rate": {
+        "mean": 0.029,
+        "sd": 0.0133,
+        "n": 20
+      },
+      "post_isolation_rate": {
+        "mean": 0.12,
+        "sd": 0.04,
+        "n": 20
+      },
+      "rebound_isolation_rate": {
+        "mean": 0.091,
+        "sd": 0.0346,
+        "n": 20
+      },
+      "final_isolation_rate": {
+        "mean": 0.1,
+        "sd": 0.0538,
+        "n": 20
+      },
+      "overall_deep_isolation_rate": {
+        "mean": 0.016,
+        "sd": 0.0095,
+        "n": 20
+      },
+      "iv_deep_isolation_rate": {
+        "mean": 0.0004,
+        "sd": 0.0013,
+        "n": 20
+      },
+      "post_deep_isolation_rate": {
+        "mean": 0.0258,
+        "sd": 0.0198,
+        "n": 20
+      },
+      "rebound_deep_isolation_rate": {
+        "mean": 0.0254,
+        "sd": 0.0197,
+        "n": 20
+      },
+      "final_deep_isolation_rate": {
+        "mean": 0.0375,
+        "sd": 0.0393,
+        "n": 20
+      },
+      "overall_avg_loneliness": {
+        "mean": 0.2771,
+        "sd": 0.0263,
+        "n": 20
+      },
+      "iv_avg_loneliness": {
+        "mean": 0.2319,
+        "sd": 0.0254,
+        "n": 20
+      },
+      "post_avg_loneliness": {
+        "mean": 0.2935,
+        "sd": 0.03,
+        "n": 20
+      },
+      "rebound_avg_loneliness": {
+        "mean": 0.0616,
+        "sd": 0.0109,
+        "n": 20
+      },
+      "final_avg_loneliness": {
+        "mean": 0.3119,
+        "sd": 0.0321,
+        "n": 20
+      },
+      "overall_avg_active_ties": {
+        "mean": 5.0082,
+        "sd": 0.3276,
+        "n": 20
+      },
+      "iv_avg_active_ties": {
+        "mean": 5.3442,
+        "sd": 0.3219,
+        "n": 20
+      },
+      "post_avg_active_ties": {
+        "mean": 5.4737,
+        "sd": 0.367,
+        "n": 20
+      },
+      "rebound_avg_active_ties": {
+        "mean": 0.1296,
+        "sd": 0.0889,
+        "n": 20
+      },
+      "final_avg_active_ties": {
+        "mean": 5.4375,
+        "sd": 0.3866,
+        "n": 20
+      }
+    },
+    "dur12_timebank": {
+      "iv_window": [
+        7,
+        18
+      ],
+      "post_window_len": 6,
+      "overall_isolation_rate": {
+        "mean": 0.0938,
+        "sd": 0.0288,
+        "n": 20
+      },
+      "iv_isolation_rate": {
+        "mean": 0.066,
+        "sd": 0.0277,
+        "n": 20
+      },
+      "post_isolation_rate": {
+        "mean": 0.085,
+        "sd": 0.0303,
+        "n": 20
+      },
+      "rebound_isolation_rate": {
+        "mean": 0.019,
+        "sd": 0.0292,
+        "n": 20
+      },
+      "final_isolation_rate": {
+        "mean": 0.1025,
+        "sd": 0.0752,
+        "n": 20
+      },
+      "overall_deep_isolation_rate": {
+        "mean": 0.0154,
+        "sd": 0.0079,
+        "n": 20
+      },
+      "iv_deep_isolation_rate": {
+        "mean": 0.0063,
+        "sd": 0.0064,
+        "n": 20
+      },
+      "post_deep_isolation_rate": {
+        "mean": 0.0117,
+        "sd": 0.0095,
+        "n": 20
+      },
+      "rebound_deep_isolation_rate": {
+        "mean": 0.0054,
+        "sd": 0.0116,
+        "n": 20
+      },
+      "final_deep_isolation_rate": {
+        "mean": 0.015,
+        "sd": 0.0235,
+        "n": 20
+      },
+      "overall_avg_loneliness": {
+        "mean": 0.2946,
+        "sd": 0.0276,
+        "n": 20
+      },
+      "iv_avg_loneliness": {
+        "mean": 0.267,
+        "sd": 0.0288,
+        "n": 20
+      },
+      "post_avg_loneliness": {
+        "mean": 0.2932,
+        "sd": 0.0297,
+        "n": 20
+      },
+      "rebound_avg_loneliness": {
+        "mean": 0.0263,
+        "sd": 0.0123,
+        "n": 20
+      },
+      "final_avg_loneliness": {
+        "mean": 0.3058,
+        "sd": 0.0327,
+        "n": 20
+      },
+      "overall_avg_active_ties": {
+        "mean": 4.6305,
+        "sd": 0.3136,
+        "n": 20
+      },
+      "iv_avg_active_ties": {
+        "mean": 4.8954,
+        "sd": 0.3193,
+        "n": 20
+      },
+      "post_avg_active_ties": {
+        "mean": 4.8604,
+        "sd": 0.3473,
+        "n": 20
+      },
+      "rebound_avg_active_ties": {
+        "mean": -0.035,
+        "sd": 0.0887,
+        "n": 20
+      },
+      "final_avg_active_ties": {
+        "mean": 4.8275,
+        "sd": 0.3432,
+        "n": 20
+      }
+    },
+    "dur12_platform": {
+      "iv_window": [
+        7,
+        18
+      ],
+      "post_window_len": 6,
+      "overall_isolation_rate": {
+        "mean": 0.1389,
+        "sd": 0.043,
+        "n": 20
+      },
+      "iv_isolation_rate": {
+        "mean": 0.1331,
+        "sd": 0.0422,
+        "n": 20
+      },
+      "post_isolation_rate": {
+        "mean": 0.1313,
+        "sd": 0.0496,
+        "n": 20
+      },
+      "rebound_isolation_rate": {
+        "mean": -0.0019,
+        "sd": 0.0247,
+        "n": 20
+      },
+      "final_isolation_rate": {
+        "mean": 0.1325,
+        "sd": 0.073,
+        "n": 20
+      },
+      "overall_deep_isolation_rate": {
+        "mean": 0.034,
+        "sd": 0.0226,
+        "n": 20
+      },
+      "iv_deep_isolation_rate": {
+        "mean": 0.0308,
+        "sd": 0.0235,
+        "n": 20
+      },
+      "post_deep_isolation_rate": {
+        "mean": 0.0367,
+        "sd": 0.0297,
+        "n": 20
+      },
+      "rebound_deep_isolation_rate": {
+        "mean": 0.0058,
+        "sd": 0.0195,
+        "n": 20
+      },
+      "final_deep_isolation_rate": {
+        "mean": 0.025,
+        "sd": 0.0414,
+        "n": 20
+      },
+      "overall_avg_loneliness": {
+        "mean": 0.3346,
+        "sd": 0.0293,
+        "n": 20
+      },
+      "iv_avg_loneliness": {
+        "mean": 0.3282,
+        "sd": 0.0302,
+        "n": 20
+      },
+      "post_avg_loneliness": {
+        "mean": 0.3311,
+        "sd": 0.0332,
+        "n": 20
+      },
+      "rebound_avg_loneliness": {
+        "mean": 0.0029,
+        "sd": 0.0132,
+        "n": 20
+      },
+      "final_avg_loneliness": {
+        "mean": 0.3327,
+        "sd": 0.0364,
+        "n": 20
+      },
+      "overall_avg_active_ties": {
+        "mean": 4.3961,
+        "sd": 0.3324,
+        "n": 20
+      },
+      "iv_avg_active_ties": {
+        "mean": 4.4248,
+        "sd": 0.3477,
+        "n": 20
+      },
+      "post_avg_active_ties": {
+        "mean": 4.8642,
+        "sd": 0.3942,
+        "n": 20
+      },
+      "rebound_avg_active_ties": {
+        "mean": 0.4394,
+        "sd": 0.162,
+        "n": 20
+      },
+      "final_avg_active_ties": {
+        "mean": 4.825,
+        "sd": 0.3998,
+        "n": 20
+      }
+    },
+    "dur18_casework": {
+      "iv_window": [
+        7,
+        24
+      ],
+      "post_window_len": 0,
+      "overall_isolation_rate": {
+        "mean": 0.0616,
+        "sd": 0.0199,
+        "n": 20
+      },
+      "iv_isolation_rate": {
+        "mean": 0.0294,
+        "sd": 0.0122,
+        "n": 20
+      },
+      "post_isolation_rate": {
+        "mean": NaN,
+        "sd": NaN,
+        "n": 0
+      },
+      "rebound_isolation_rate": {
+        "mean": NaN,
+        "sd": NaN,
+        "n": 0
+      },
+      "final_isolation_rate": {
+        "mean": 0.035,
+        "sd": 0.0366,
+        "n": 20
+      },
+      "overall_deep_isolation_rate": {
+        "mean": 0.0096,
+        "sd": 0.0054,
+        "n": 20
+      },
+      "iv_deep_isolation_rate": {
+        "mean": 0.0003,
+        "sd": 0.0009,
+        "n": 20
+      },
+      "post_deep_isolation_rate": {
+        "mean": NaN,
+        "sd": NaN,
+        "n": 0
+      },
+      "rebound_deep_isolation_rate": {
+        "mean": NaN,
+        "sd": NaN,
+        "n": 0
+      },
+      "final_deep_isolation_rate": {
+        "mean": 0.0,
+        "sd": 0.0,
+        "n": 20
+      },
+      "overall_avg_loneliness": {
+        "mean": 0.2612,
+        "sd": 0.0257,
+        "n": 20
+      },
+      "iv_avg_loneliness": {
+        "mean": 0.2313,
+        "sd": 0.0257,
+        "n": 20
+      },
+      "post_avg_loneliness": {
+        "mean": NaN,
+        "sd": NaN,
+        "n": 0
+      },
+      "rebound_avg_loneliness": {
+        "mean": NaN,
+        "sd": NaN,
+        "n": 0
+      },
+      "final_avg_loneliness": {
+        "mean": 0.2347,
+        "sd": 0.029,
+        "n": 20
+      },
+      "overall_avg_active_ties": {
+        "mean": 5.0148,
+        "sd": 0.3265,
+        "n": 20
+      },
+      "iv_avg_active_ties": {
+        "mean": 5.3961,
+        "sd": 0.333,
+        "n": 20
+      },
+      "post_avg_active_ties": {
+        "mean": NaN,
+        "sd": NaN,
+        "n": 0
+      },
+      "rebound_avg_active_ties": {
+        "mean": NaN,
+        "sd": NaN,
+        "n": 0
+      },
+      "final_avg_active_ties": {
+        "mean": 5.4825,
+        "sd": 0.3588,
+        "n": 20
+      }
+    },
+    "dur18_timebank": {
+      "iv_window": [
+        7,
+        24
+      ],
+      "post_window_len": 0,
+      "overall_isolation_rate": {
+        "mean": 0.0873,
+        "sd": 0.0288,
+        "n": 20
+      },
+      "iv_isolation_rate": {
+        "mean": 0.0638,
+        "sd": 0.0251,
+        "n": 20
+      },
+      "post_isolation_rate": {
+        "mean": NaN,
+        "sd": NaN,
+        "n": 0
+      },
+      "rebound_isolation_rate": {
+        "mean": NaN,
+        "sd": NaN,
+        "n": 0
+      },
+      "final_isolation_rate": {
+        "mean": 0.05,
+        "sd": 0.0459,
+        "n": 20
+      },
+      "overall_deep_isolation_rate": {
+        "mean": 0.0126,
+        "sd": 0.0077,
+        "n": 20
+      },
+      "iv_deep_isolation_rate": {
+        "mean": 0.0043,
+        "sd": 0.0045,
+        "n": 20
+      },
+      "post_deep_isolation_rate": {
+        "mean": NaN,
+        "sd": NaN,
+        "n": 0
+      },
+      "rebound_deep_isolation_rate": {
+        "mean": NaN,
+        "sd": NaN,
+        "n": 0
+      },
+      "final_deep_isolation_rate": {
+        "mean": 0.0,
+        "sd": 0.0,
+        "n": 20
+      },
+      "overall_avg_loneliness": {
+        "mean": 0.2886,
+        "sd": 0.0282,
+        "n": 20
+      },
+      "iv_avg_loneliness": {
+        "mean": 0.2677,
+        "sd": 0.0293,
+        "n": 20
+      },
+      "post_avg_loneliness": {
+        "mean": NaN,
+        "sd": NaN,
+        "n": 0
+      },
+      "rebound_avg_loneliness": {
+        "mean": NaN,
+        "sd": NaN,
+        "n": 0
+      },
+      "final_avg_loneliness": {
+        "mean": 0.2678,
+        "sd": 0.0329,
+        "n": 20
+      },
+      "overall_avg_active_ties": {
+        "mean": 4.6406,
+        "sd": 0.3241,
+        "n": 20
+      },
+      "iv_avg_active_ties": {
+        "mean": 4.8972,
+        "sd": 0.3402,
+        "n": 20
+      },
+      "post_avg_active_ties": {
+        "mean": NaN,
+        "sd": NaN,
+        "n": 0
+      },
+      "rebound_avg_active_ties": {
+        "mean": NaN,
+        "sd": NaN,
+        "n": 0
+      },
+      "final_avg_active_ties": {
+        "mean": 4.885,
+        "sd": 0.432,
+        "n": 20
+      }
+    },
+    "dur18_platform": {
+      "iv_window": [
+        7,
+        24
+      ],
+      "post_window_len": 0,
+      "overall_isolation_rate": {
+        "mean": 0.1365,
+        "sd": 0.0415,
+        "n": 20
+      },
+      "iv_isolation_rate": {
+        "mean": 0.1293,
+        "sd": 0.041,
+        "n": 20
+      },
+      "post_isolation_rate": {
+        "mean": NaN,
+        "sd": NaN,
+        "n": 0
+      },
+      "rebound_isolation_rate": {
+        "mean": NaN,
+        "sd": NaN,
+        "n": 0
+      },
+      "final_isolation_rate": {
+        "mean": 0.135,
+        "sd": 0.0829,
+        "n": 20
+      },
+      "overall_deep_isolation_rate": {
+        "mean": 0.0297,
+        "sd": 0.0179,
+        "n": 20
+      },
+      "iv_deep_isolation_rate": {
+        "mean": 0.0271,
+        "sd": 0.0184,
+        "n": 20
+      },
+      "post_deep_isolation_rate": {
+        "mean": NaN,
+        "sd": NaN,
+        "n": 0
+      },
+      "rebound_deep_isolation_rate": {
+        "mean": NaN,
+        "sd": NaN,
+        "n": 0
+      },
+      "final_deep_isolation_rate": {
+        "mean": 0.0225,
+        "sd": 0.0343,
+        "n": 20
+      },
+      "overall_avg_loneliness": {
+        "mean": 0.3322,
+        "sd": 0.0287,
+        "n": 20
+      },
+      "iv_avg_loneliness": {
+        "mean": 0.3259,
+        "sd": 0.0297,
+        "n": 20
+      },
+      "post_avg_loneliness": {
+        "mean": NaN,
+        "sd": NaN,
+        "n": 0
+      },
+      "rebound_avg_loneliness": {
+        "mean": NaN,
+        "sd": NaN,
+        "n": 0
+      },
+      "final_avg_loneliness": {
+        "mean": 0.3225,
+        "sd": 0.0334,
+        "n": 20
+      },
+      "overall_avg_active_ties": {
+        "mean": 4.4736,
+        "sd": 0.3268,
+        "n": 20
+      },
+      "iv_avg_active_ties": {
+        "mean": 4.6746,
+        "sd": 0.3471,
+        "n": 20
+      },
+      "post_avg_active_ties": {
+        "mean": NaN,
+        "sd": NaN,
+        "n": 0
+      },
+      "rebound_avg_active_ties": {
+        "mean": NaN,
+        "sd": NaN,
+        "n": 0
+      },
+      "final_avg_active_ties": {
+        "mean": 5.365,
+        "sd": 0.3703,
+        "n": 20
+      }
+    }
+  },
+  "delay_cost": {
+    "casework": {
+      "slope_per_month": 0.00146,
+      "overall_by_start": {
+        "3": 0.0772,
+        "5": 0.0785,
+        "7": 0.084,
+        "9": 0.086,
+        "12": 0.0896
+      }
+    },
+    "timebank": {
+      "slope_per_month": 0.00184,
+      "overall_by_start": {
+        "3": 0.0876,
+        "5": 0.0896,
+        "7": 0.0938,
+        "9": 0.0967,
+        "12": 0.1041
+      }
+    },
+    "platform": {
+      "slope_per_month": -2e-05,
+      "overall_by_start": {
+        "3": 0.1413,
+        "5": 0.1368,
+        "7": 0.1389,
+        "9": 0.1416,
+        "12": 0.1388
+      }
+    }
+  }
+}

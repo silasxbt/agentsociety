@@ -129,7 +129,28 @@
 \subsection{H4：显式机制假设下复现的可持续性分化}
 撤出后个案管理孤立率反弹 \IsoRebCasework pp（同 seed 配对差 \PairRebCasework pp），干预期优势几乎清零；时间银行反弹 \IsoRebTimebank pp（图~\ref{fig:traj}、图~\ref{fig:paired}）。规则层 20 种子扫描给出同向形态（casework 反弹 \RulesRebCwLo\ 至 \RulesRebCwHi pp、timebank \RulesRebTb pp）。
 
-\textbf{必须说明：这不是涌现发现。}两条机制都写在环境规则里——个案管理的情感接触由社工每月来访直接触发，撤出即消失；时间银行结对撤出后以 post\_persist（中点 0.5）概率延续互动，代码注释明示``延续概率是 H4 的关键机制假设''。LLM 焦点老人与规则老人处在同一环境、共用同一指标定义，规则层与 LLM 层因此\emph{不是}两条独立证据，两层结果同向不构成跨层互证。H4 的准确表述是：\textbf{在显式编码的机制假设下，模拟复现了预期的可持续性分化，并给出了灵敏度范围}（post\_persist 0.3--0.7 扫描内方向不变；caseload 4--12 不改变反弹）。它的价值在于把``退出后依赖型支持消失、互惠型关系部分存续''这一实务直觉变成可参数化、可反驳的模型，而非证明它为真。最能检验该假设的补充实验是将 post\_persist 置零观察分化是否消失，本文未执行，列为后续工作。
+\textbf{必须说明：这不是涌现发现。}两条机制都写在环境规则里——个案管理的情感接触由社工每月来访直接触发，撤出即消失；时间银行结对撤出后以 post\_persist（中点 0.5）概率延续互动，代码注释明示``延续概率是 H4 的关键机制假设''。LLM 焦点老人与规则老人处在同一环境、共用同一指标定义，规则层与 LLM 层因此\emph{不是}两条独立证据，两层结果同向不构成跨层互证。H4 的准确表述是：\textbf{在显式编码的机制假设下，模拟复现了预期的可持续性分化，并给出了灵敏度范围}（caseload 4--12 不改变反弹；post\_persist 扫描见下）。它的价值在于把``退出后依赖型支持消失、互惠型关系部分存续''这一实务直觉变成可参数化、可反驳的模型，而非证明它为真。
+
+\textbf{post\_persist 置零对照（规则层，\PPSeeds\ 种子）。}为直接检验分化是否由该参数制造，我们在规则层扫描 post\_persist $\in\{0,0.3,0.5,0.7,1.0\}$（表~\ref{tab:pp}）。结果分两半：（1）\textbf{撤出后水平}——post\_persist $=0$ 时时间银行撤出期孤立率 \PPPostTbZero\%，与个案管理（\PPPostCw\%）完全相同，即\emph{一旦结对不延续，时间银行没有任何可持续性优势}；随 post\_persist 升至 0.5/0.7，撤出期降至 \PPPostTbMid\%/\PPPostTbHi\%，优势完全由该参数供给。（2）\textbf{反弹幅度}——即便 post\_persist $=0$，时间银行反弹（\PPRebTbZero pp）仍小于个案管理（\PPRebCw pp，\PPLtCwZero/\PPSeeds\ 种子），但这只是算术：时间银行干预期效果更弱（\PPIvTb\% 对 \PPIvCw\%），可反弹的空间更小，两者撤出后回到同一水平。因此\textbf{以``反弹幅度''比较可持续性会系统性偏向弱干预}，正确的比较量是撤出后水平或相对基线的残余效应；本文主表（表~\ref{tab:main}）同时给出两者。另一附带观察：两种干预撤出后水平（\PPPostCw\%）均低于从未干预（\PPPostNone\%），说明规则层中干预期建立的关系强度有缓慢衰减的残余，这同样是 $\delta$ 的直接推论。
+
+\begin{table}[t]
+\centering\footnotesize\setlength{\tabcolsep}{4pt}
+\caption{规则层 post\_persist 扫描（\PPSeeds\ 种子，全部老人为规则层，绝对水平不与 LLM 批次比较）。孤立率为窗口均值（\%）；反弹 $=$ 撤出期 $-$ 干预期（pp）；末列为时间银行反弹小于同 seed 个案管理的种子数。}
+\label{tab:pp}
+\begin{tabular}{lcccc}
+\toprule
+配置 & 干预期 & 撤出期 & 反弹 & 反弹$<$个案 \\
+\midrule
+none & --- & \PPPostNone & --- & --- \\
+casework & \PPIvCw & \PPPostCw & \PPRebCw & --- \\
+timebank, pp$=0$   & \PPIvTb & \PPPostTbZero & \PPRebTbZero & \PPLtCwZero/\PPSeeds \\
+timebank, pp$=0.3$ & \PPIvTb & \PPPostTbLo   & \PPRebTbLo   & \PPLtCwLo/\PPSeeds \\
+timebank, pp$=0.5$ & \PPIvTb & \PPPostTbMid  & \PPRebTbMid  & \PPLtCwMid/\PPSeeds \\
+timebank, pp$=0.7$ & \PPIvTb & \PPPostTbHi   & \PPRebTbHi   & \PPLtCwHi/\PPSeeds \\
+timebank, pp$=1$   & \PPIvTb & \PPPostTbFull & \PPRebTbFull & \PPLtCwFull/\PPSeeds \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \subsection{分层拆解：LLM 层在宏观结果中的权重}\label{sec:layers}
 表~\ref{tab:layers} 从 replay 中拆出 6 名焦点老人与 14 名规则老人各自的窗口均值。三点观察：（1）\textbf{焦点老人的基线孤立率约为规则老人的三倍}（none：\FocIvNone\% 对 \RulIvNone\%），源于第 3.1 节所述接触生成机制差异——LLM 老人不行动即无接触；（2）\textbf{LLM 层主导了宏观效应}：焦点老人只占 30\% 人口，却贡献了基线孤立率的 \FocShareNone；个案管理对焦点层的配对效应（干预期 \PFocIvCw pp、反弹 \PFocRebCw pp）是规则层（\PRulIvCw pp、\PRulRebCw pp）的三至七倍。因此``生成式智能体模拟''并非装饰——但同时意味着主结果对 LLM 行为特征（含静默）高度敏感；（3）\textbf{时间银行的``不反弹''主要是规则层贡献}：规则层配对反弹 \PRulRebTb pp（post\_persist 起作用），LLM 层原始反弹 \PFocRebTb pp，与平台组（\PFocRebPf pp）相当，远小于个案管理（\PFocRebCw pp）。故 LLM 层支持的结论是``个案管理反弹远大于其余两种''，而非``时间银行几乎不反弹''。孤独感在两层均方向一致、幅度平缓。
@@ -204,7 +225,7 @@ platform & \multicolumn{2}{c}{\PFocIvPf\ / \PFocRebPf} & \multicolumn{2}{c}{\PFo
 \midrule
 孤立率对干预的即时响应（第 7 月阶跃） & 规定 & 指标定义 $+$ 每月来访触发接触 \\
 个案管理撤出后反弹 & 规定 & 社工来访停止即无接触 \\
-时间银行撤出后（规则层）延续 & 规定 & post\_persist 参数（0.5，扫描 0.3--0.7） \\
+时间银行撤出后（规则层）延续 & 规定 & post\_persist 参数；置零后撤出期水平与个案管理相同（表~\ref{tab:pp}） \\
 延迟成本按月线性累积 & 规定 & 干预即时起效的直接推论 \\
 关系数悖论（关系仍在、激活已失） & 规定 & 衰减慢于按月快照 \\
 两层孤立率水平相差三倍 & 半规定 & 接触生成机制不同（3.1 节），幅度非预设 \\
@@ -270,7 +291,7 @@ gpt-6-astra & none     & 11.3\%$^\dagger$ & 29.6 & 30.0 & $+0.4$ \\
 
 \textbf{（二）个案管理需要内置退出计划。}干预期效果最强与撤出后反弹最大是同一机制的两面：社工是被注入的活跃节点。反弹不随剂量缓解，提示退出设计（逐步减量、向互惠网络转介）应作为个案管理的标准组件而非可选项——这与``关系仍在、激活已失''的叙事一致（其性质见第~\ref{sec:results}~节）。
 
-\textbf{（三）结构性互助的可持续性是待检验假设而非结论。}时间银行的撤出后延续在规则层由 post\_persist 规定，在 LLM 层并未自发出现（焦点老人反弹 \PFocRebTb pp，剔除静默月 \PFocActRebTb pp）。因此``个案管理开路、时间银行接续''应作为后续实验假设提出，并以 post\_persist $=0$ 对照检验其是否依赖该参数。
+\textbf{（三）结构性互助的可持续性是待检验假设而非结论。}时间银行的撤出后延续在规则层由 post\_persist 规定，在 LLM 层并未自发出现（焦点老人反弹 \PFocRebTb pp，剔除静默月 \PFocActRebTb pp）。规则层置零对照（表~\ref{tab:pp}）证实：post\_persist $=0$ 时时间银行撤出后水平与个案管理相同，可持续性优势完全依赖该参数。因此``个案管理开路、时间银行接续''只能作为后续实验假设提出；它是否成立取决于真实结对关系在项目结束后的延续率，这恰是现有时间银行文献未测量的量\citep{lu2024timebank}，也是本模型最值得用实证数据标定的单一参数。
 
 \textbf{（四）弱干预谈时机无意义。}平台类干预总效应弱，时机不敏感——先保证强度，再优化时机。
 
@@ -282,7 +303,7 @@ gpt-6-astra & none     & 11.3\%$^\dagger$ & 29.6 & 30.0 & $+0.4$ \\
 \textbf{伦理。}全部智能体为模拟实体，不涉及真实个人；调查数据仅使用公开微观数据的聚合分布；LLM 生成的``老人理由''是机制探针而非真实老人话语，论文避免将其拟人化引用。模拟结论若被直接当作资源分配依据存在误用风险，故本文反复强调其假设生成属性。
 
 \section{结论}
-本文的主要产出是一套面向 LLM 社会模拟的科学性纪律，并以独居老人社会支持干预为案例完整演示：预注册与效度门槛、真实数据锚定与偏差如实报告、失效根因分类、含沉没成本的成本透明、受护栏约束的自主实验闭环，以及``规定 vs 涌现''的逐条对照。案例结果中，干预期个案管理领先与撤出后可持续性分化是在显式机制假设下复现的预期形态；分层拆解表明宏观结果由 LLM 层主导、时间银行的延续主要来自规则层。真正来自模拟的新信息在行为层：可区分的求助签名、个案管理组的高请求低成功、以及 gpt-6-astra 在无干预时更沉默且被来访拉动——后者对整个领域的效度门槛设计具有一般含义。我们把这些边界画清楚，正是为了让后续工作（post\_persist 置零对照、多模型基线静默率标定、LLM 层时机对照）有明确的靶子。全部数字由脚本自动生成，欢迎按附录复现。
+本文的主要产出是一套面向 LLM 社会模拟的科学性纪律，并以独居老人社会支持干预为案例完整演示：预注册与效度门槛、真实数据锚定与偏差如实报告、失效根因分类、含沉没成本的成本透明、受护栏约束的自主实验闭环，以及``规定 vs 涌现''的逐条对照。案例结果中，干预期个案管理领先与撤出后可持续性分化是在显式机制假设下复现的预期形态；分层拆解表明宏观结果由 LLM 层主导、时间银行的延续主要来自规则层。真正来自模拟的新信息在行为层：可区分的求助签名、个案管理组的高请求低成功、以及 gpt-6-astra 在无干预时更沉默且被来访拉动——后者对整个领域的效度门槛设计具有一般含义。我们把这些边界画清楚，正是为了让后续工作（LLM 层 post\_persist 置零对照、多模型基线静默率标定、LLM 层时机对照）有明确的靶子。全部数字由脚本自动生成，欢迎按附录复现。
 
 \bibliographystyle{unsrtnat}
 \bibliography{refs}
@@ -294,7 +315,7 @@ gpt-6-astra & none     & 11.3\%$^\dagger$ & 29.6 & 30.0 & $+0.4$ \\
   \item \textbf{代码与数据}：AgentSociety2 仓库 \texttt{examples/v2/elder\_support/}；环境模块 \texttt{custom/envs/elder\_support\_env.py}。
   \item \textbf{正式批次}：\texttt{run\_batch.sh 24 1 2 3}（断点自动续跑；效度门槛与归档逻辑内置）。
   \item \textbf{分析与图表}：\texttt{tools/compare\_conditions.py} $\rightarrow$ \texttt{comparison.json}；\texttt{tools/make\_figures.py}（每图配同名 CSV）；\texttt{tools/gen\_paper\_numbers.py}（本文全部数字的唯一来源）。
-  \item \textbf{机制扫描与闭环}：\texttt{tests/scan\_timing.py}、\texttt{tools/harness\_loop.py}（预注册头部 + 逐轮 JSONL 审计日志）。
+  \item \textbf{机制扫描与闭环}：\texttt{tests/scan\_timing.py}、\texttt{tests/scan\_post\_persist.py}、\texttt{tools/harness\_loop.py}（预注册头部 + 逐轮 JSONL 审计日志）。
   \item \textbf{成本与诊断}：\texttt{tools/cost\_report.py}、\texttt{tests/silence\_diagnosis.json}。
   \item \textbf{校准文档}：\texttt{data\_pipeline/out/} 下 \texttt{calibration\_targets.md} 与 \texttt{references\_verified.md}（含已否决条目与核实方法）。
   \item \textbf{实时面板}：\url{https://agentsociety.shangdian.me}（批次进度、结论卡片、机制证据、成本与失效诊断）。
@@ -304,7 +325,7 @@ gpt-6-astra & none     & 11.3\%$^\dagger$ & 29.6 & 30.0 & $+0.4$ \\
 下表把本文实践的纪律压成可直接套用的检查项，每项给出本文的落实位置，供其他 LLM 社会模拟研究对照。
 \begin{table}[H]
 \centering\small
-\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.06\columnwidth}>{\raggedright\arraybackslash}p{0.50\columnwidth}>{\raggedright\arraybackslash}p{0.38\columnwidth}@{}}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.05\columnwidth}>{\raggedright\arraybackslash}p{0.46\columnwidth}>{\raggedright\arraybackslash}p{0.38\columnwidth}@{}}
 \toprule
 \# & 检查项 & 本文落实 \\
 \midrule

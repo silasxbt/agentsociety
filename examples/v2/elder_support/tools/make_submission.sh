@@ -25,7 +25,7 @@ cp EVIDENCE.md README.md MODEL_COMPARE.md run_batch.sh run_model_compare.sh "$ST
 cp tools/model_compare_report.py tools/compare_conditions.py tools/make_figures.py tools/gen_paper_numbers.py \
    tools/collect_evidence.py tools/cost_report.py tools/harness_loop.py \
    tools/extract_cases.py tools/layer_decomposition.py "$STAGE/tools/" 2>/dev/null || true
-cp tests/scan_timing.py tests/scan_timing_result.json tests/harness_loop_log.jsonl \
+cp tests/scan_timing.py tests/scan_timing_result.json tests/scan_post_persist.py tests/scan_post_persist_result.json tests/harness_loop_log.jsonl \
    tests/cost_report.json tests/silence_diagnosis.json tests/model_compare_report.json tests/layer_decomposition.json "$STAGE/tests/" 2>/dev/null || true
 cp data_pipeline/out/calibration_targets.md data_pipeline/out/references_verified.md \
    "$STAGE/data_pipeline/out/" 2>/dev/null || true

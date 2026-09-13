@@ -7,6 +7,7 @@
 数据源（只读、不重算）：
 - tmp/batch/comparison.json      主批次（LLM 行为层）
 - tests/scan_timing_result.json  规则层时机/剂量扫描
+- tests/scan_post_persist_result.json  规则层 post_persist 扫描（含 0 对照）
 - tests/harness_loop_result.json harness 闭环
 - tests/cost_report.json         真实成本
 
@@ -116,6 +117,23 @@ def main() -> int:
               if "timebank" in k and v.get("post_window_len", 0) > 0]
     if reb_tb:
         L.append(f"\\newcommand{{\\RulesRebTb}}{{{pp(sum(reb_tb)/len(reb_tb))}}}")
+
+    # post_persist 扫描（tests/scan_post_persist.py 产物，规则层 20 种子）
+    ppath = EXP / "tests" / "scan_post_persist_result.json"
+    if ppath.is_file():
+        ps = jload(ppath)
+        L.append(f"\\newcommand{{\\PPSeeds}}{{{len(ps['seeds'])}}}")
+        L.append(f"\\newcommand{{\\PPRebCw}}{{{pp(ps['casework']['reb']['mean'])}}}")
+        L.append(f"\\newcommand{{\\PPPostCw}}{{{ps['casework']['post']['mean']*100:.1f}}}")
+        L.append(f"\\newcommand{{\\PPIvCw}}{{{ps['casework']['iv']['mean']*100:.1f}}}")
+        L.append(f"\\newcommand{{\\PPPostNone}}{{{ps['none']['post']['mean']*100:.1f}}}")
+        tags = {"pp0.0": "Zero", "pp0.3": "Lo", "pp0.5": "Mid", "pp0.7": "Hi", "pp1.0": "Full"}
+        for k, tag in tags.items():
+            v = ps["timebank"][k]
+            L.append(f"\\newcommand{{\\PPRebTb{tag}}}{{{pp(v['reb']['mean'])}}}")
+            L.append(f"\\newcommand{{\\PPPostTb{tag}}}{{{v['post']['mean']*100:.1f}}}")
+            L.append(f"\\newcommand{{\\PPLtCw{tag}}}{{{v['n_reb_lt_casework']}}}")
+        L.append(f"\\newcommand{{\\PPIvTb}}{{{ps['timebank']['pp0.5']['iv']['mean']*100:.1f}}}")
 
     # 个体叙事个案（tools/extract_cases.py 产物；仅采用来自有效 run 的个案，
     # 时间银行侧个案因唯一带结对记录的 run 未过静默门槛而缺位，正文如实说明）
