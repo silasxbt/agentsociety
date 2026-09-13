@@ -106,6 +106,33 @@ def main() -> int:
              f"{{{len(timing['preregistered']['seeds'])}}}")
     L.append(f"\\newcommand{{\\RulesBaselineOverall}}"
              f"{{{timing['baseline']['none'][f'overall_{P}']['mean']*100:.1f}}}")
+    L.append(f"\\newcommand{{\\DelayCumCasework}}"
+             f"{{{dc['casework']['slope_per_month']*24*100:.1f}}}")
+
+    # 跨模型敏感性（tools/model_compare.py 产物 tests/model_compare_report.json）
+    mcp = EXP / "tests" / "model_compare_report.json"
+    if mcp.is_file():
+        mc = jload(mcp)["models"]
+        mtag = {"gpt-5.6-sol": "Sol", "gpt-6-astra": "Astra"}
+        for mm in mc:
+            tag = next(v for k, v in mtag.items() if mm["label"].startswith(k))
+            for arm, at in (("none", "None"), ("casework", "Cw")):
+                a = mm["arms"][arm]
+                L.append(f"\\newcommand{{\\Mc{tag}Sil{at}}}{{{a['silence_rate']*100:.1f}}}")
+                L.append(f"\\newcommand{{\\Mc{tag}Iv{at}}}{{{a['iso_iv']*100:.1f}}}")
+                L.append(f"\\newcommand{{\\Mc{tag}Post{at}}}{{{a['iso_post']*100:.1f}}}")
+                L.append(f"\\newcommand{{\\Mc{tag}Reb{at}}}{{{pp(a['iso_rebound'])}}}")
+            p = mm["paired_casework_minus_none"]
+            L.append(f"\\newcommand{{\\Mc{tag}PIv}}{{{pp(p['iso_iv'])}}}")
+            L.append(f"\\newcommand{{\\Mc{tag}PPost}}{{{pp(p['iso_post'])}}}")
+            L.append(f"\\newcommand{{\\Mc{tag}PReb}}{{{pp(p['iso_rebound'])}}}")
+
+    # 关系存活曲线（tests/tie_survival_result.json，Burt 口径 48 月）
+    tsp = EXP / "tests" / "tie_survival_result.json"
+    if tsp.is_file():
+        cur = {int(a): b for a, b in jload(tsp)["curve"]}
+        L.append(f"\\newcommand{{\\TieSurvFourYr}}{{{cur[48]*100:.1f}}}")
+
     # casework 反弹带（时长 6 与 12 两点）
     ts = timing["timing_scan"]
     reb_cw = [v[f"rebound_{P}"]["mean"] for k, v in ts.items()
