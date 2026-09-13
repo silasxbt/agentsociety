@@ -156,6 +156,8 @@ def main() -> int:
                 continue
             L.append(f"\\newcommand{{\\FocIv{nm}}}{{{a['focal_iso_iv']*100:.1f}}}")
             L.append(f"\\newcommand{{\\FocPost{nm}}}{{{a['focal_iso_post']*100:.1f}}}")
+            L.append(f"\\newcommand{{\\FocActIv{nm}}}{{{a['focal_act_iso_iv']*100:.1f}}}")
+            L.append(f"\\newcommand{{\\FocActPost{nm}}}{{{a['focal_act_iso_post']*100:.1f}}}")
             L.append(f"\\newcommand{{\\RulIv{nm}}}{{{a['rule_iso_iv']*100:.1f}}}")
             L.append(f"\\newcommand{{\\RulPost{nm}}}{{{a['rule_iso_post']*100:.1f}}}")
             L.append(f"\\newcommand{{\\FocShare{nm}}}{{{a['focal_share_of_iso_iv']*100:.0f}\\%}}")
@@ -165,8 +167,21 @@ def main() -> int:
             L.append(f"\\newcommand{{\\RulLonPost{nm}}}{{{a['rule_lon_post']:.2f}}}")
             pv = a.get("paired_vs_none")
             if pv:
-                for k, mac in (("focal_iso_iv", "PFocIv"), ("focal_iso_reb", "PFocReb"), ("rule_iso_iv", "PRulIv"), ("rule_iso_reb", "PRulReb")):
+                for k, mac in (("focal_iso_iv", "PFocIv"), ("focal_iso_reb", "PFocReb"), ("rule_iso_iv", "PRulIv"), ("rule_iso_reb", "PRulReb"), ("focal_act_iso_iv", "PFocActIv"), ("focal_act_iso_reb", "PFocActReb")):
                     L.append(f"\\newcommand{{\\{mac}{nm}}}{{{pv[k]*100:+.1f}}}")
+
+    # 行为签名（tests/behavior_signature.json）：脚注数字不手抄
+    bs_p = EXP / "tests" / "behavior_signature.json"
+    if bs_p.is_file():
+        bs = jload(bs_p)
+        for c, nm in (("none", "None"), ("casework", "Cw"), ("timebank", "Tb"), ("platform", "Pf")):
+            b = bs.get(c)
+            if not b: continue
+            L.append(f"\\newcommand{{\\BsN{nm}}}{{{b['n']}}}")
+            L.append(f"\\newcommand{{\\BsReq{nm}}}{{{b['total_requests']}}}")
+            L.append(f"\\newcommand{{\\BsOk{nm}}}{{{b['total_success']}}}")
+            L.append(f"\\newcommand{{\\BsRate{nm}}}{{{b['success_rate']*100:.1f}}}")
+            L.append(f"\\newcommand{{\\BsPerRun{nm}}}{{{b['avg_requests_per_run']:.1f}}}")
 
     # 成本
     t = cost["totals"]

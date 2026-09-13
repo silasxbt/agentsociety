@@ -18,11 +18,13 @@
 \renewcommand{\bibfont}{\small}
 
 \usepackage{etoolbox}
+\usepackage{array}
+\usepackage{float}
 \input{numbers.tex}
 \graphicspath{{../figures/}}
 
-\title{\textbf{面向 LLM 社会模拟的科学性纪律：\\以独居老人社会支持干预为案例的分层生成式智能体模拟}}
-\author{惠栋帅 \quad 王才厚 \quad 雷明仁\\ \small AISS 2026 挑战赛参赛论文}
+\title{\textbf{独居老人社会支持干预的分层生成式智能体模拟\\及其科学性纪律}}
+\author{惠栋帅 \quad 王才厚 \quad 李聪煜\\ \small AISS 2026 挑战赛参赛论文}
 \date{}
 
 \begin{document}
@@ -34,7 +36,7 @@
 \begin{minipage}{\textwidth}
 \begin{center}\textbf{摘\quad 要}\end{center}
 \small
-多智能体 LLM 社会模拟面临三重质疑：数据是否凭空捏造、结论是否可复现、发现是否只是规则的回声。本文以独居老人社会支持干预为案例，提出并演示一套面向 LLM 社会模拟的\textbf{科学性纪律}：预注册假设与效度门槛、真实调查数据锚定、失效 run 归档与根因分类、含沉没成本的成本核算，以及\textbf{``规定 vs 涌现''的逐条对照}。模拟基于 AgentSociety2：6 名 LLM 驱动的焦点老人嵌入 20 人规则层支持网络，1 步 = 1 月、共 24 月，比较专业社工个案管理（casework）、时间银行互助（timebank）与数字平台志愿匹配（platform）于第 7--18 月实施、其后撤出 6 个月。结果（\ValidRuns/\TargetRuns\ 有效 run）：干预期个案管理孤立率最低（\IsoIvCasework\% 对基线 \IsoIvNone\%），撤出后反弹 \IsoRebCasework pp；时间银行反弹 \IsoRebTimebank pp。我们如实说明：这一可持续性分化是在显式编码的机制假设（干预即时接触、结对延续概率）下\emph{复现}的预期形态，而非涌现发现；分层拆解显示宏观孤立率的 \FocShareNone\ 来自 LLM 层，且时间银行的``不反弹''主要由规则层贡献，LLM 层仍反弹 \PFocRebTb pp。真正的涌现结果在行为层：三种干预的求助行为签名可区分，个案管理组求助最多、成功率最低；跨模型检验发现 gpt-6-astra 在无干预时更倾向``不行动''、外部行动者来访会拉动其产出决策，这对 LLM 社会模拟的效度门槛设计具有一般含义。所有结果可由公开脚本一键复现。\par\vspace{0.4em}
+本文以独居老人社会支持干预为对象，构建分层生成式智能体模拟，并附带一套可迁移的\textbf{科学性纪律}（预注册与效度门槛、真实调查数据锚定、失效 run 根因分类、含沉没成本的成本核算、``规定 vs 涌现''逐条对照，见附录检查清单）。模拟基于 AgentSociety2：6 名 LLM 驱动的焦点老人嵌入 20 人规则层支持网络，1 步 = 1 月、共 24 月，比较专业社工个案管理（casework）、时间银行互助（timebank）与数字平台志愿匹配（platform）于第 7--18 月实施、其后撤出 6 个月。结果（\ValidRuns/\TargetRuns\ 有效 run）：干预期个案管理孤立率最低（\IsoIvCasework\% 对基线 \IsoIvNone\%），撤出后反弹 \IsoRebCasework pp；时间银行反弹 \IsoRebTimebank pp。我们如实说明：这一可持续性分化是在显式编码的机制假设（干预即时接触、结对延续概率）下\emph{复现}的预期形态，而非涌现发现；分层拆解显示宏观孤立率的 \FocShareNone\ 来自 LLM 层；时间银行的``不反弹''主要由规则层贡献，LLM 层反弹 \PFocRebTb pp（剔除静默月后 \PFocActRebTb pp）；个案管理撤出后 LLM 老人的孤立率（\FocPostCw\%）高于从未干预组（\FocPostNone\%），剔除静默月后差距仍在。涌现结果在行为层：三种干预的求助行为签名可区分，个案管理组求助最多、成功率最低；跨模型检验发现 gpt-6-astra 在无干预时更倾向``不行动''、外部行动者来访会拉动其产出决策，这对 LLM 社会模拟的效度门槛设计具有一般含义。所有结果可由公开脚本一键复现。\par\vspace{0.4em}
 \noindent\textbf{关键词}：生成式智能体；社会支持网络；独居老人；社会工作干预；时间银行；多智能体模拟
 \end{minipage}
 \vspace{1.2em}
@@ -80,7 +82,7 @@
 \end{itemize}
 
 \subsection{数据校准}
-画像生成分布逐维锚定真实调查：性别（女 63.8\%）、自评健康、孤独感基线五档、在世子女数、子女常探望比例（78.7\%）取自 CLHLS 2021 独居子样本；子女距离取自 CHARLS 2015；纵向动态锚点（独居老人三年孤独发生率 27.2\%、持续率 53.3\%、丧偶冲击 +27pp）取自 Harmonized CHARLS 2011--2018。判定口径映射与已知偏差（CLHLS 高龄过抽样的再加权处理、面板流失未加权等）见附录与仓库文档。输出侧的外部效度检验目前只有一项：模拟三年新发孤独梯度与 Wei 等报告的独居/非独居发生率差（34.0\% vs 22.3\%）方向与量级一致\citep{wei2022living}，且该文调整协变量后差异不显著，故仅作描述性互证。关系衰减形态则与 Burt 拟合明确不吻合（第~\ref{sec:honest}~节）。因此如实表述：\textbf{校准的对齐目前在输入侧成立，模型的动力学部分尚未通过任何一项严格的外部效度检验}，这是后续工作最需补足之处。
+画像生成分布逐维锚定真实调查：性别（女 63.8\%）、自评健康、孤独感基线五档、在世子女数、子女常探望比例（78.7\%）取自 CLHLS 2021 独居子样本；子女距离取自 CHARLS 2015；纵向动态锚点（独居老人三年孤独发生率 27.2\%、持续率 53.3\%、丧偶冲击 +27pp）取自 Harmonized CHARLS 2011--2018。判定口径映射与已知偏差（CLHLS 高龄过抽样的再加权处理、面板流失未加权等）见附录与仓库文档。\textbf{校准覆盖范围的限制}：逐维锚定的对象是全部 20 人的\emph{画像分布}，不是接触过程。规则层老人的月度接触按画像自动生成，与调查中的探望频率直接对应；焦点老人的接触过程由 LLM 行为决定（第 3.1 节），其基线孤立率（\FocIvNone\%）远高于规则层（\RulIvNone\%）与任何调查锚点。因此严格地说，与调查对齐的是 14 名规则老人的接触水平和 20 人的画像，LLM 层的接触动力学未经校准。输出侧的外部效度检验目前只有一项：模拟三年新发孤独梯度与 Wei 等报告的独居/非独居发生率差（34.0\% vs 22.3\%）方向与量级一致\citep{wei2022living}，且该文调整协变量后差异不显著，故仅作描述性互证。关系衰减形态则与 Burt 拟合明确不吻合（第~\ref{sec:honest}~节）。因此如实表述：\textbf{校准的对齐目前在输入侧成立，模型的动力学部分尚未通过任何一项严格的外部效度检验}，这是后续工作最需补足之处。
 
 \subsection{预注册与效度门槛}\label{sec:prereg}
 假设（H1--H4）、主次结局、种子、有效性判据在正式批次启动前写入脚本头部：
@@ -93,7 +95,7 @@
 \textbf{H1} 干预期三种干预均降低孤立率，个案管理降幅最大；
 \textbf{H2} 干预期孤独感同向改善；
 \textbf{H3} 三种干预的行为签名可区分（求助路径、结对、志愿匹配）；
-\textbf{H4}（探索性）撤出后个案管理反弹大于时间银行——结构性互助更可持续。
+\textbf{H4}（探索性）撤出后个案管理反弹大于时间银行——结构性互助更可持续（预注册原文照录；第~\ref{sec:results}~节说明该形态由显式机制假设决定，不作涌现解读）。
 
 \section{主结果（LLM 行为层）}\label{sec:results}
 \DraftBadge
@@ -127,30 +129,34 @@
 \subsection{H4：显式机制假设下复现的可持续性分化}
 撤出后个案管理孤立率反弹 \IsoRebCasework pp（同 seed 配对差 \PairRebCasework pp），干预期优势几乎清零；时间银行反弹 \IsoRebTimebank pp（图~\ref{fig:traj}、图~\ref{fig:paired}）。规则层 20 种子扫描给出同向形态（casework 反弹 \RulesRebCwLo\ 至 \RulesRebCwHi pp、timebank \RulesRebTb pp）。
 
-\textbf{必须说明：这不是涌现发现。}两条机制都写在环境规则里——个案管理的情感接触由社工每月来访直接触发，撤出即消失；时间银行结对撤出后以 post\_persist（中点 0.5）概率延续互动，代码注释明示``延续概率是 H4 的关键机制假设''。LLM 焦点老人与规则老人处在同一环境、共用同一指标定义，规则层与 LLM 层因此\emph{不是}两条独立证据，早先版本``跨层互证''的表述在此撤回。H4 的准确表述是：\textbf{在显式编码的机制假设下，模拟复现了预期的可持续性分化，并给出了灵敏度范围}（post\_persist 0.3--0.7 扫描内方向不变；caseload 4--12 不改变反弹）。它的价值在于把``退出后依赖型支持消失、互惠型关系部分存续''这一实务直觉变成可参数化、可反驳的模型，而非证明它为真。最能检验该假设的补充实验是将 post\_persist 置零观察分化是否消失，本文未执行，列为后续工作。
+\textbf{必须说明：这不是涌现发现。}两条机制都写在环境规则里——个案管理的情感接触由社工每月来访直接触发，撤出即消失；时间银行结对撤出后以 post\_persist（中点 0.5）概率延续互动，代码注释明示``延续概率是 H4 的关键机制假设''。LLM 焦点老人与规则老人处在同一环境、共用同一指标定义，规则层与 LLM 层因此\emph{不是}两条独立证据，两层结果同向不构成跨层互证。H4 的准确表述是：\textbf{在显式编码的机制假设下，模拟复现了预期的可持续性分化，并给出了灵敏度范围}（post\_persist 0.3--0.7 扫描内方向不变；caseload 4--12 不改变反弹）。它的价值在于把``退出后依赖型支持消失、互惠型关系部分存续''这一实务直觉变成可参数化、可反驳的模型，而非证明它为真。最能检验该假设的补充实验是将 post\_persist 置零观察分化是否消失，本文未执行，列为后续工作。
 
 \subsection{分层拆解：LLM 层在宏观结果中的权重}\label{sec:layers}
-表~\ref{tab:layers} 从 replay 中拆出 6 名焦点老人与 14 名规则老人各自的窗口均值。三点观察：（1）\textbf{焦点老人的基线孤立率约为规则老人的三倍}（none：\FocIvNone\% 对 \RulIvNone\%），源于第 3.1 节所述接触生成机制差异——LLM 老人不行动即无接触；（2）\textbf{LLM 层主导了宏观效应}：焦点老人只占 30\% 人口，却贡献了基线孤立率的 \FocShareNone；个案管理对焦点层的配对效应（干预期 \PFocIvCw pp、反弹 \PFocRebCw pp）是规则层（\PRulIvCw pp、\PRulRebCw pp）的三至七倍。因此``生成式智能体模拟''并非装饰——但同时意味着主结果对 LLM 行为特征（含静默）高度敏感；（3）\textbf{时间银行的``不反弹''主要是规则层贡献}：规则层配对反弹 \PRulRebTb pp（post\_persist 起作用），而 LLM 层反弹 \PFocRebTb pp，与平台组（\PFocRebPf pp）相当，仅远小于个案管理（\PFocRebCw pp）。故 LLM 层支持的结论是``个案管理反弹远大于其余两种''，而非``时间银行几乎不反弹''。孤独感在两层均方向一致、幅度平缓。
+表~\ref{tab:layers} 从 replay 中拆出 6 名焦点老人与 14 名规则老人各自的窗口均值。三点观察：（1）\textbf{焦点老人的基线孤立率约为规则老人的三倍}（none：\FocIvNone\% 对 \RulIvNone\%），源于第 3.1 节所述接触生成机制差异——LLM 老人不行动即无接触；（2）\textbf{LLM 层主导了宏观效应}：焦点老人只占 30\% 人口，却贡献了基线孤立率的 \FocShareNone；个案管理对焦点层的配对效应（干预期 \PFocIvCw pp、反弹 \PFocRebCw pp）是规则层（\PRulIvCw pp、\PRulRebCw pp）的三至七倍。因此``生成式智能体模拟''并非装饰——但同时意味着主结果对 LLM 行为特征（含静默）高度敏感；（3）\textbf{时间银行的``不反弹''主要是规则层贡献}：规则层配对反弹 \PRulRebTb pp（post\_persist 起作用），LLM 层原始反弹 \PFocRebTb pp，与平台组（\PFocRebPf pp）相当，远小于个案管理（\PFocRebCw pp）。故 LLM 层支持的结论是``个案管理反弹远大于其余两种''，而非``时间银行几乎不反弹''。孤独感在两层均方向一致、幅度平缓。
+
+\textbf{焦点层数字测的是孤立还是静默？}表~\ref{tab:layers} 的``剔除静默月''列只统计当月有决策记录的焦点 agent-月（有效 run 的静默率 4.0--10.0\%），回答这一问题。剔除后各条件焦点孤立率下降 1--8 pp、排序不变、LLM 层主导地位不变；但时间银行的 LLM 层反弹从 \PFocRebTb pp 缩至 \PFocActRebTb pp，即其大半来自撤出期的静默月，剔除后介于规则层（\PRulRebTb pp）与个案管理（\PFocActRebCw pp）之间。表~\ref{tab:prescribed} 相应行按剔除后数字表述。
+
+\textbf{个案管理撤出后 LLM 老人比从未干预更孤立。}这是拆解暴露的最刺眼数字：焦点层 casework 撤出期孤立率 \FocPostCw\%，同期 none 组 \FocPostNone\%；剔除静默月后为 \FocActPostCw\% 对 \FocActPostNone\%，配对反弹 \PFocActRebCw pp，差距缩小但未消失，且三个 seed 全部高于配对基线。两种解释：（a）\emph{依赖型支持的过冲}——社工在场时 LLM 老人把求助集中投向社工（第~5.4 节``请求最多''），自发的邻里走访与子女联络被替代，撤出后既失去社工又未恢复原有行动模式，行为签名中``继续向不再响应的社工求助''与之互证；（b）\emph{静默伪影}——casework 三个 run 静默率 6.0--9.3\%，若静默集中在撤出期会抬高孤立率。剔除静默月后过冲仍在，说明 (b) 不能完全解释；但 $n=3$、且撤出期只有 6 个月，我们把 (a) 作为\textbf{待检验的探索性发现}而非结论报告，并指出它与 Masi 荟萃所警示的``干预结束即效应消失''相比更强——若在真实服务中存在，意味着无退出计划的个案管理可能净有害。
 
 \begin{table}[t]
 \centering\small
-\caption{分层拆解（窗口均值；孤立率 \%，孤独感 0--1）。焦点 = 6 名 LLM 老人，规则 = 14 名规则层老人；配对差 = 同 seed 下条件 $-$ none。}
+\caption{分层拆解（窗口均值；孤立率 \%，孤独感 0--1）。焦点 = 6 名 LLM 老人，规则 = 14 名规则层老人；``剔除静默月'' = 只计当月有决策记录的焦点 agent-月；配对差 = 同 seed 下条件 $-$ none。}
 \label{tab:layers}
 \resizebox{\columnwidth}{!}{%
-\begin{tabular}{lcccccc}
+\begin{tabular}{lcccccccc}
 \toprule
- & \multicolumn{2}{c}{焦点孤立率} & \multicolumn{2}{c}{规则孤立率} & \multicolumn{2}{c}{孤独感 焦点/规则} \\
-条件 & 干预期 & 撤出期 & 干预期 & 撤出期 & 干预期 & 撤出期 \\
+ & \multicolumn{2}{c}{焦点孤立率} & \multicolumn{2}{c}{焦点·剔除静默月} & \multicolumn{2}{c}{规则孤立率} & \multicolumn{2}{c}{孤独感 焦点/规则} \\
+条件 & 干预期 & 撤出期 & 干预期 & 撤出期 & 干预期 & 撤出期 & 干预期 & 撤出期 \\
 \midrule
-none     & \FocIvNone & \FocPostNone & \RulIvNone & \RulPostNone & \FocLonIvNone/\RulLonIvNone & \FocLonPostNone/\RulLonPostNone \\
-casework & \FocIvCw & \FocPostCw & \RulIvCw & \RulPostCw & \FocLonIvCw/\RulLonIvCw & \FocLonPostCw/\RulLonPostCw \\
-timebank & \FocIvTb & \FocPostTb & \RulIvTb & \RulPostTb & \FocLonIvTb/\RulLonIvTb & \FocLonPostTb/\RulLonPostTb \\
-platform & \FocIvPf & \FocPostPf & \RulIvPf & \RulPostPf & \FocLonIvPf/\RulLonIvPf & \FocLonPostPf/\RulLonPostPf \\
+none     & \FocIvNone & \FocPostNone & \FocActIvNone & \FocActPostNone & \RulIvNone & \RulPostNone & \FocLonIvNone/\RulLonIvNone & \FocLonPostNone/\RulLonPostNone \\
+casework & \FocIvCw & \FocPostCw & \FocActIvCw & \FocActPostCw & \RulIvCw & \RulPostCw & \FocLonIvCw/\RulLonIvCw & \FocLonPostCw/\RulLonPostCw \\
+timebank & \FocIvTb & \FocPostTb & \FocActIvTb & \FocActPostTb & \RulIvTb & \RulPostTb & \FocLonIvTb/\RulLonIvTb & \FocLonPostTb/\RulLonPostTb \\
+platform & \FocIvPf & \FocPostPf & \FocActIvPf & \FocActPostPf & \RulIvPf & \RulPostPf & \FocLonIvPf/\RulLonIvPf & \FocLonPostPf/\RulLonPostPf \\
 \midrule
-\multicolumn{7}{l}{配对差 vs none（pp）：干预期 / 反弹} \\
-casework & \multicolumn{2}{c}{\PFocIvCw\ / \PFocRebCw} & \multicolumn{2}{c}{\PRulIvCw\ / \PRulRebCw} & & \\
-timebank & \multicolumn{2}{c}{\PFocIvTb\ / \PFocRebTb} & \multicolumn{2}{c}{\PRulIvTb\ / \PRulRebTb} & & \\
-platform & \multicolumn{2}{c}{\PFocIvPf\ / \PFocRebPf} & \multicolumn{2}{c}{\PRulIvPf\ / \PRulRebPf} & & \\
+\multicolumn{9}{l}{配对差 vs none（pp）：干预期 / 反弹} \\
+casework & \multicolumn{2}{c}{\PFocIvCw\ / \PFocRebCw} & \multicolumn{2}{c}{\PFocActIvCw\ / \PFocActRebCw} & \multicolumn{2}{c}{\PRulIvCw\ / \PRulRebCw} & & \\
+timebank & \multicolumn{2}{c}{\PFocIvTb\ / \PFocRebTb} & \multicolumn{2}{c}{\PFocActIvTb\ / \PFocActRebTb} & \multicolumn{2}{c}{\PRulIvTb\ / \PRulRebTb} & & \\
+platform & \multicolumn{2}{c}{\PFocIvPf\ / \PFocRebPf} & \multicolumn{2}{c}{\PFocActIvPf\ / \PFocActRebPf} & \multicolumn{2}{c}{\PRulIvPf\ / \PRulRebPf} & & \\
 \bottomrule
 \end{tabular}}
 \end{table}
@@ -163,7 +169,7 @@ platform & \multicolumn{2}{c}{\PFocIvPf\ / \PFocRebPf} & \multicolumn{2}{c}{\PRu
 \end{figure}
 
 \subsection{行为签名与机制佐证（H3）}
-三种干预在焦点老人的行为日志中签名清晰可辨\footnote{\ValidRuns\ 个有效 run 的求助请求统计（\texttt{tests/behavior\_signature.json}）：none 3 run 共 249 次、成功 183（73.5\%，均 83.0 次/run）；timebank 247/185（74.9\%，82.3）；casework 412/271（65.8\%，137.3）；platform 2 run 159/94（59.1\%，79.5）。}：时间银行组求助成功率全场最高（结对互助起效）；个案管理组求助请求量最大（社工主动触达）但成功率最低之一；基线组与时间银行组请求量相近，平台组均请求量最少且成功率最低。个案管理组``请求最多、成功率最低''值得展开：社工是账本中可达性最高的关系，LLM 老人在有社工在场时更频繁地发起求助（含向社工求助），而社工撤出后老人继续按已习得的模式向不再响应的对象求助，失败请求累积——这是未被规则规定的行为层结果，与``依赖型支持''的实务描述一致，但同样只是 3 种子下的描述性观察。所谓\textbf{``关系数悖论''}（撤出后活跃关系数仍高而孤立率反弹）则需说明其性质：关系账本中社工关系在撤出后按 $\delta=0.06$ 缓慢衰减、数月内仍计入活跃关系，而孤立率定义只看当月是否有接触——悖论是指标定义的直接后果，不是新的机制证据；它的叙事价值在于提醒``关系存在''与``关系起作用''是两个量。
+三种干预在焦点老人的行为日志中签名清晰可辨\footnote{\ValidRuns\ 个有效 run 的求助请求统计（\texttt{tests/behavior\_signature.json}）：none \BsNNone\ run 共 \BsReqNone\ 次、成功 \BsOkNone（\BsRateNone\%，均 \BsPerRunNone\ 次/run）；timebank \BsReqTb/\BsOkTb（\BsRateTb\%，\BsPerRunTb）；casework \BsReqCw/\BsOkCw（\BsRateCw\%，\BsPerRunCw）；platform \BsNPf\ run \BsReqPf/\BsOkPf（\BsRatePf\%，\BsPerRunPf）。}：时间银行组求助成功率全场最高（结对互助起效）；个案管理组求助请求量最大（社工主动触达）但成功率最低之一；基线组与时间银行组请求量相近，平台组均请求量最少且成功率最低。个案管理组``请求最多、成功率最低''值得展开：社工是账本中可达性最高的关系，LLM 老人在有社工在场时更频繁地发起求助（含向社工求助），而社工撤出后老人继续按已习得的模式向不再响应的对象求助，失败请求累积——这是未被规则规定的行为层结果，与``依赖型支持''的实务描述一致，但同样只是 3 种子下的描述性观察。所谓\textbf{``关系数悖论''}（撤出后活跃关系数仍高而孤立率反弹）则需说明其性质：关系账本中社工关系在撤出后按 $\delta=0.06$ 缓慢衰减、数月内仍计入活跃关系，而孤立率定义只看当月是否有接触——悖论是指标定义的直接后果，不是新的机制证据；它的叙事价值在于提醒``关系存在''与``关系起作用''是两个量。
 
 个体轨迹把该悖论具体化（预注册选例规则：有效 casework run 中撤出前接受过社工探访、且撤出后孤独感反弹最大的焦点老人；探索性证据）。\CaseCwRun\ 的 \CaseCwAgent\ 号老人在撤出时点（第 18 月）孤独感仅 \CaseCwLonWd、活跃关系 \CaseCwTiesWd\ 条；至第 24 月关系仅减一条（\CaseCwTiesEnd\ 条），孤独感却升至 \CaseCwLonEnd——网络规模几乎未动，失去的只是激活它的社工节点。时间银行侧无来自有效 run 的对应个案（唯一带显式结对记录的 run 未过静默门槛，个案不入证据），如实说明。这对社工实务的含义是：个案管理应内置向互惠型网络的转介与退出计划。
 
@@ -202,9 +208,10 @@ platform & \multicolumn{2}{c}{\PFocIvPf\ / \PFocRebPf} & \multicolumn{2}{c}{\PRu
 延迟成本按月线性累积 & 规定 & 干预即时起效的直接推论 \\
 关系数悖论（关系仍在、激活已失） & 规定 & 衰减慢于按月快照 \\
 两层孤立率水平相差三倍 & 半规定 & 接触生成机制不同（3.1 节），幅度非预设 \\
-时间银行 LLM 层仍反弹 \PFocRebTb pp & 涌现 & LLM 老人未按结对关系主动互动 \\
+时间银行 LLM 层反弹 \PFocActRebTb pp（剔除静默月） & 涌现 & 结对对象已写入焦点老人关系账本、可走访/求助（工具核实），但 LLM 很少主动这样做 \\
 三种干预的求助行为签名 & 涌现 & 焦点老人工具调用分布 \\
 个案管理组求助最多、成功率最低 & 涌现 & 焦点老人行为日志 \\
+个案管理撤出后 LLM 老人比从未干预更孤立 & 涌现·待检验 & 分层拆解，剔除静默月后仍在 \\
 gpt-6-astra 无干预时更沉默、来访拉动决策 & 涌现 & 跨模型对照 \\
 行为型静默集中于干预窗内 & 涌现 & 失效 run 诊断 \\
 \bottomrule
@@ -263,14 +270,14 @@ gpt-6-astra & none     & 11.3\%$^\dagger$ & 29.6 & 30.0 & $+0.4$ \\
 
 \textbf{（二）个案管理需要内置退出计划。}干预期效果最强与撤出后反弹最大是同一机制的两面：社工是被注入的活跃节点。反弹不随剂量缓解，提示退出设计（逐步减量、向互惠网络转介）应作为个案管理的标准组件而非可选项——这与``关系仍在、激活已失''的叙事一致（其性质见第~\ref{sec:results}~节）。
 
-\textbf{（三）结构性互助的可持续性是待检验假设而非结论。}时间银行的撤出后延续在规则层由 post\_persist 规定，在 LLM 层并未自发出现（焦点老人反弹 \PFocRebTb pp）。因此``个案管理开路、时间银行接续''应作为后续实验假设提出，并以 post\_persist $=0$ 对照检验其是否依赖该参数。
+\textbf{（三）结构性互助的可持续性是待检验假设而非结论。}时间银行的撤出后延续在规则层由 post\_persist 规定，在 LLM 层并未自发出现（焦点老人反弹 \PFocRebTb pp，剔除静默月 \PFocActRebTb pp）。因此``个案管理开路、时间银行接续''应作为后续实验假设提出，并以 post\_persist $=0$ 对照检验其是否依赖该参数。
 
 \textbf{（四）弱干预谈时机无意义。}平台类干预总效应弱，时机不敏感——先保证强度，再优化时机。
 
 以上均为模型机制结论，用于生成可检验的政策假设，\textbf{不宣称真实人群的因果效应}。
 
 \section{局限与伦理}
-\textbf{局限。}（1）$n=3$ 种子（平台臂 $n=\NPlatform$）只支持描述性对比与方向判断，不支持显著性与稳定排序；（2）关系衰减机制存在 46\% 存活率地板，慢于文献实证形态；（3）LLM 焦点老人的行为效度依赖模型本身，行为型静默与真实老人的``合法不行动''难以区分，且 10\% 静默门槛按主模型 gpt-5.6-sol 设定，对更倾向``不行动''的模型（gpt-6-astra none 臂两次为 10.7--11.3\%）可能系统性偏严，见第~\ref{sec:robust}~节；（4）校准数据存在口径差（调查波次、独居子样本 vs 全体）；（5）撤出观察窗仅 6 个月；（7）主结局 isolation\_rate 为月度接触快照，被在场型服务直接命中，效应量应以孤独感为准；（8）宏观结果的一半以上由 6 名 LLM 老人贡献，主结果对 LLM 行为特征高度敏感；（6）Ristolainen RCT 的亚组效应存在基线不可比问题\citep{ristolainen2020effects}，个案管理参数依据以 Masi 荟萃为主。
+\textbf{局限。}（1）$n=3$ 种子（平台臂 $n=\NPlatform$）只支持描述性对比与方向判断，不支持显著性与稳定排序；（2）关系衰减机制存在 46\% 存活率地板，慢于文献实证形态；（3）LLM 焦点老人的行为效度依赖模型本身，行为型静默与真实老人的``合法不行动''难以区分，且 10\% 静默门槛按主模型 gpt-5.6-sol 设定，对更倾向``不行动''的模型（gpt-6-astra none 臂两次为 10.7--11.3\%）可能系统性偏严，见第~\ref{sec:robust}~节；（4）校准数据存在口径差（调查波次、独居子样本 vs 全体）；（5）撤出观察窗仅 6 个月；（6）Ristolainen RCT 的亚组效应存在基线不可比问题\citep{ristolainen2020effects}，个案管理参数依据以 Masi 荟萃为主；（7）主结局 isolation\_rate 为月度接触快照，被在场型服务直接命中，效应量应以孤独感为准；（8）宏观结果的一半以上由 6 名 LLM 老人贡献，两层接触生成机制不同、LLM 层接触动力学未经校准，主结果对 LLM 行为特征高度敏感。
 
 \textbf{伦理。}全部智能体为模拟实体，不涉及真实个人；调查数据仅使用公开微观数据的聚合分布；LLM 生成的``老人理由''是机制探针而非真实老人话语，论文避免将其拟人化引用。模拟结论若被直接当作资源分配依据存在误用风险，故本文反复强调其假设生成属性。
 
@@ -292,6 +299,30 @@ gpt-6-astra & none     & 11.3\%$^\dagger$ & 29.6 & 30.0 & $+0.4$ \\
   \item \textbf{校准文档}：\texttt{data\_pipeline/out/} 下 \texttt{calibration\_targets.md} 与 \texttt{references\_verified.md}（含已否决条目与核实方法）。
   \item \textbf{实时面板}：\url{https://agentsociety.shangdian.me}（批次进度、结论卡片、机制证据、成本与失效诊断）。
 \end{itemize}
+
+\section{可迁移检查清单：LLM 社会模拟的科学性纪律}\label{app:checklist}
+下表把本文实践的纪律压成可直接套用的检查项，每项给出本文的落实位置，供其他 LLM 社会模拟研究对照。
+\begin{table}[H]
+\centering\small
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.06\columnwidth}>{\raggedright\arraybackslash}p{0.50\columnwidth}>{\raggedright\arraybackslash}p{0.38\columnwidth}@{}}
+\toprule
+\# & 检查项 & 本文落实 \\
+\midrule
+1 & 假设、主次结局、种子、效度门槛在跑批前写入脚本并版本化 & \texttt{run\_batch.sh} 头部；第~\ref{sec:prereg}~节 \\
+2 & 效度门槛区分基础设施型与行为型失效，并说明门槛对模型的依赖 & 第 7.4 节；第~\ref{sec:robust}~节 \\
+3 & 失效 run 归档不删除，逐个写根因；不``跑到通过为止'' & \texttt{*.invalid-*} 目录；\texttt{silence\_diagnosis} \texttt{.json} \\
+4 & 输入分布逐维锚定真实调查，写明口径差与未覆盖部分 & 第 3.4 节 \\
+5 & 输出侧至少一项外部效度检验，未通过者如实报告 & 第 7.1、7.2 节（Burt 不吻合） \\
+6 & 每项主要结果标注``规定 / 半规定 / 涌现''及来源 & 表~\ref{tab:prescribed} \\
+7 & 混合架构须拆分各层对宏观结果的贡献，并给出剔除静默后的数字 & 表~\ref{tab:layers} \\
+8 & 指标性质说明：快照型 vs 动力学型，效应量以何者为准 & 第~\ref{sec:prereg}~节 \\
+9 & 无干预基线静默率按模型报告，作为选型指标 & 第~\ref{sec:robust}~节 \\
+10 & 成本含作废与对比 run 的沉没成本，报告调用量 & 第 8 节 \\
+11 & 正文数字全部由脚本生成，不手抄 & \texttt{numbers.tex} \\
+12 & 自主实验闭环有预注册搜索空间、轮数与资源上限、逐轮审计日志 & 第 6.2 节 \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \section{效度门槛判定细则}
 run 有效当且仅当：DONE 标志存在；月度指标 0--24 完整；决策记录非空；6 名焦点老人合计静默率 $\le$10\%（严格大于 0.10 判无效）；LLM 调用错误率 $\le$5\%。判无效的 run 以时间戳目录归档（\texttt{*.invalid-<timestamp>}），保留全部 trace 与决策日志供诊断，不删除。

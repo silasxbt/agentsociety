@@ -23,6 +23,12 @@ def load_run(d: Path):
     rows = []
     for f in sorted((d / "replay").glob("elder_support_agent_state.*.jsonl")):
         rows += [json.loads(l) for l in f.read_text(encoding="utf-8").splitlines() if l.strip()]
+    dec_path = d / "env" / "ElderSupportEnv" / "state" / "decisions.jsonl"
+    acted = set()
+    if dec_path.is_file():
+        for l in dec_path.read_text(encoding="utf-8").splitlines():
+            if l.strip():
+                x = json.loads(l); acted.add((x["agent_id"], x["month"]))
     ts = sorted({r["t"] for r in rows})
     month_of = {t: i for i, t in enumerate(ts)}  # 第 0 个快照 = 月 0
     by_month = defaultdict(list)
@@ -32,7 +38,9 @@ def load_run(d: Path):
     for m, rs in sorted(by_month.items()):
         g = {"focal": [r for r in rs if r["agent_id"] in focal],
              "rule": [r for r in rs if r["agent_id"] not in focal],
-             "all": rs}
+             "all": rs,
+             # 剔除该月无任何决策记录（静默）的焦点老人后的焦点层
+             "focal_act": [r for r in rs if r["agent_id"] in focal and (r["agent_id"], m) in acted]}
         traj[m] = {k: {"iso": sum(1 for r in v if r["months_no_emotional"] >= 1) / len(v),
                        "lon": sum(r["loneliness"] for r in v) / len(v),
                        "n": len(v)} for k, v in g.items() if v}
@@ -51,7 +59,9 @@ def main():
         traj, nf, nr = load_run(d)
         cond = FORMAL.match(d.name).group(1)
         rec = {"n_focal": nf, "n_rule": nr}
-        for key in ("focal", "rule", "all"):
+        rec["focal_silent_cells"] = sum(1 for m in traj for _ in [0] if "focal" in traj[m]) and sum(
+            traj[m]["focal"]["n"] - traj[m].get("focal_act", {"n": 0})["n"] for m in traj if "focal" in traj[m])
+        for key in ("focal", "rule", "all", "focal_act"):
             for metric in ("iso", "lon"):
                 rec[f"{key}_{metric}_iv"] = win(traj, key, metric, *IV)
                 rec[f"{key}_{metric}_post"] = win(traj, key, metric, *POST)
@@ -61,7 +71,7 @@ def main():
     for cond, recs in per_cond.items():
         agg = {"n_runs": len(recs)}
         for k in recs[0]:
-            if k.startswith(("focal_", "rule_", "all_")) and not k.startswith("trajectory"):
+            if k.startswith(("focal_", "rule_", "all_")) and not k.startswith("trajectory") and k != "focal_silent_cells":
                 vals = [r[k] for r in recs if r[k] is not None]
                 agg[k] = round(sum(vals) / len(vals), 4) if vals else None
         # 焦点层在宏观孤立率中的份额：focal 贡献 = 6/20 * focal_iso
@@ -79,7 +89,7 @@ def main():
             if FORMAL.match(n).group(1) != cond: continue
             base = out["runs"].get(f"none_s{seed(n)}")
             if not base: continue
-            for key in ("focal", "rule"):
+            for key in ("focal", "rule", "focal_act"):
                 diffs[f"{key}_iso_iv"].append(r[f"{key}_iso_iv"] - base[f"{key}_iso_iv"])
                 diffs[f"{key}_iso_reb"].append((r[f"{key}_iso_post"] - r[f"{key}_iso_iv"]) - (base[f"{key}_iso_post"] - base[f"{key}_iso_iv"]))
         out["by_condition"][cond]["paired_vs_none"] = {k: round(sum(v) / len(v), 4) for k, v in diffs.items()}
@@ -92,6 +102,7 @@ def main():
         a = out["by_condition"].get(c)
         if not a: continue
         print(f"{c:10s} {a['n_runs']:>2d} | {a['focal_iso_iv']*100:5.1f}/{a['focal_iso_post']*100:5.1f}   | {a['rule_iso_iv']*100:5.1f}/{a['rule_iso_post']*100:5.1f}   | {a['focal_share_of_iso_iv']*100:5.1f}%   | {a['focal_lon_iv']:.3f}/{a['focal_lon_post']:.3f}   | {a['rule_lon_iv']:.3f}/{a['rule_lon_post']:.3f}")
+        print(f"           剔除静默月后焦点iso iv/post: {a['focal_act_iso_iv']*100:5.1f}/{a['focal_act_iso_post']*100:5.1f}")
         if "paired_vs_none" in a: print("           配对 vs none:", a["paired_vs_none"])
 
 if __name__ == "__main__":
