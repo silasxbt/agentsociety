@@ -15,6 +15,7 @@ AISS 2026 参赛研究：独居老人支持网络的衰减、韧性与介入时�
 | `data_pipeline/out/calibration_targets.md` | 校准靶标总表（模拟必须对齐的真实数字）|
 | `tools/analyze.py` | 单运行分析：曲线 + 决策定性摘要 + 打靶 + 异常检测 + 反思沉淀 |
 | `tools/compare_conditions.py` | 跨条件对比（干预期/撤出后指标，均值±极差）|
+| `tools/layer_decomposition.py` | 从 replay 拆分 6 名 LLM 焦点老人与 14 名规则层老人的孤立率/孤独感轨迹（论文分层拆解表）|
 | `run_prototype.sh` | 单次原型运行（基线）|
 | `run_batch.sh` | 正式实验：4 条件 × 多种子，断点自动续跑 |
 | `tests/smoke_rules_only.py` | 机制冒烟：可复现/基线恶化/衰减/restore |

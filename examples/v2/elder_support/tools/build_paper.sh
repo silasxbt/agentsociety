@@ -20,6 +20,8 @@ else
   echo "  ⚠ 未找到带 matplotlib 的 venv，跳过图表刷新（figures/ 可能与正文数字不同步）"
 fi
 
+echo "== 分层拆解（焦点层 vs 规则层）=="
+python3 "$EXP/tools/layer_decomposition.py" | head -1
 echo "== 刷新 numbers.tex =="
 python3 "$EXP/tools/gen_paper_numbers.py"
 

@@ -145,6 +145,29 @@ def main() -> int:
                  f"start={cand['iv_start']} dur={cand['duration']}}}")
         L.append(f"\\newcommand{{\\LoopBestScore}}{{{b['score']*100:.2f}}}")
 
+    # 分层拆解（tools/layer_decomposition.py）：焦点层 vs 规则层
+    lay_p = EXP / "tests" / "layer_decomposition.json"
+    if lay_p.is_file():
+        lay = jload(lay_p)["by_condition"]
+        names = {"none": "None", "casework": "Cw", "timebank": "Tb", "platform": "Pf"}
+        for c, nm in names.items():
+            a = lay.get(c)
+            if not a:
+                continue
+            L.append(f"\\newcommand{{\\FocIv{nm}}}{{{a['focal_iso_iv']*100:.1f}}}")
+            L.append(f"\\newcommand{{\\FocPost{nm}}}{{{a['focal_iso_post']*100:.1f}}}")
+            L.append(f"\\newcommand{{\\RulIv{nm}}}{{{a['rule_iso_iv']*100:.1f}}}")
+            L.append(f"\\newcommand{{\\RulPost{nm}}}{{{a['rule_iso_post']*100:.1f}}}")
+            L.append(f"\\newcommand{{\\FocShare{nm}}}{{{a['focal_share_of_iso_iv']*100:.0f}\\%}}")
+            L.append(f"\\newcommand{{\\FocLonIv{nm}}}{{{a['focal_lon_iv']:.2f}}}")
+            L.append(f"\\newcommand{{\\FocLonPost{nm}}}{{{a['focal_lon_post']:.2f}}}")
+            L.append(f"\\newcommand{{\\RulLonIv{nm}}}{{{a['rule_lon_iv']:.2f}}}")
+            L.append(f"\\newcommand{{\\RulLonPost{nm}}}{{{a['rule_lon_post']:.2f}}}")
+            pv = a.get("paired_vs_none")
+            if pv:
+                for k, mac in (("focal_iso_iv", "PFocIv"), ("focal_iso_reb", "PFocReb"), ("rule_iso_iv", "PRulIv"), ("rule_iso_reb", "PRulReb")):
+                    L.append(f"\\newcommand{{\\{mac}{nm}}}{{{pv[k]*100:+.1f}}}")
+
     # 成本
     t = cost["totals"]
     L.append(f"\\newcommand{{\\CostTotal}}{{{cost['grand_total_usd']:.0f}}}")

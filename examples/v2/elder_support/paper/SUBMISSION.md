@@ -11,8 +11,8 @@
 
 | # | 材料 | 路径 | 状态 |
 |---|------|------|------|
-| 1 | 论文（中文，主稿） | `paper/main_zh.pdf` | ✅ 8 页，数字已冻结（11 有效 run，2026-09-12） |
-| 2 | 论文（英文） | `paper/main_en.pdf` | ✅ 8 页，数字已冻结；图表用 `_en` 英文版 |
+| 1 | 论文（中文，主稿） | `paper/main_zh.pdf` | ✅ 9 页，数字已冻结（11 有效 run）；2026-09-13 按外审意见重定位为"科学性纪律"并新增分层拆解表与规定/涌现对照表 |
+| 2 | 论文（英文） | `paper/main_en.pdf` | ✅ 10 页，数字已冻结；图表用 `_en` 英文版；与中文稿同步修订 |
 | 3 | 论文源码 | `paper/main_zh.tex`、`paper/main_en.tex`、`paper/refs.bib`、`paper/numbers.tex` | ✅ numbers.tex 由脚本生成 |
 | 4 | 图表 + 数据 CSV | `figures/fig1–fig4.{png,csv}` + `fig*_en.png` | ✅ 中英双语（脚本可重生成，CSV 只一份） |
 | 5 | 证据台账 | `EVIDENCE.md` | ✅ 自动生成 |
@@ -28,6 +28,7 @@
 - `tools/harness_loop.py` + `tests/harness_loop_log.jsonl`（闭环审计日志）
 - `tools/cost_report.py` + `tests/cost_report.json`
 - `tests/silence_diagnosis.json`（失效 run 根因）
+- `tools/layer_decomposition.py` + `tests/layer_decomposition.json`（焦点层/规则层孤立率与孤独感拆解，论文 tab:layers 数据源）
 - `data_pipeline/out/calibration_targets.md`、`references_verified.md`
 - 归档失效 run 目录（`tmp/batch/*.invalid-*`，如体积超限则只附诊断摘要）
 
