@@ -7,6 +7,7 @@
 数据源（只读、不重算）：
 - tmp/batch/comparison.json      主批次（LLM 行为层）
 - tests/scan_timing_result.json  规则层时机/剂量扫描
+- tests/tie_survival_floor_result.json  存活率地板（decay 0.06--0.40 扫描）
 - tests/scan_post_persist_result.json  规则层 post_persist 扫描（含 0 对照）
 - tests/harness_loop_result.json harness 闭环
 - tests/cost_report.json         真实成本
@@ -132,6 +133,13 @@ def main() -> int:
     if tsp.is_file():
         cur = {int(a): b for a, b in jload(tsp)["curve"]}
         L.append(f"\\newcommand{{\\TieSurvFourYr}}{{{cur[48]*100:.1f}}}")
+    # 存活率地板（tests/tie_survival_floor_result.json，decay 0.06--0.40 扫描）
+    tfp = EXP / "tests" / "tie_survival_floor_result.json"
+    if tfp.is_file():
+        tf = jload(tfp)
+        L.append(f"\\newcommand{{\\TieFloor}}{{{tf['floor']*100:.1f}}}")
+        L.append(f"\\newcommand{{\\TieFloorDecay}}{{{tf['floor_decay']}}}")
+        L.append(f"\\newcommand{{\\TieFloorYrOne}}{{{tf['rows'][tf['floor_decay']]['y1']*100:.1f}}}")
 
     # casework 反弹带（时长 6 与 12 两点）
     ts = timing["timing_scan"]
