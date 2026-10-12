@@ -324,6 +324,12 @@ tr[data-run]{cursor:pointer}
     <p class="note" id="qaPrinciple">–</p>
     <div id="qaList" class="qa-list"></div>
   </div>
+  <div class="card" style="margin-top:16px">
+    <h3 data-i18n="resourcesTitle">代码与论文</h3>
+    <p><a href="https://github.com/silasxbt/agentsociety" target="_blank" rel="noopener noreferrer" data-i18n="repoLink">GitHub 仓库</a></p>
+    <p><a href="/downloads/main_zh.pdf" download="main_zh.pdf" data-i18n="paperZhLink">下载中文论文（PDF）</a></p>
+    <p><a href="/downloads/main_en.pdf" download="main_en.pdf" data-i18n="paperEnLink">下载英文论文（PDF）</a></p>
+  </div>
 </section>
 
 </main>
@@ -334,6 +340,10 @@ const $ = id => document.getElementById(id);
 // ---------------- i18n ----------------
 const I18N = {
   title:['Dashboard','Dashboard'],
+  resourcesTitle:['代码与论文','Code and papers'],
+  repoLink:['GitHub 仓库','GitHub repository'],
+  paperZhLink:['下载中文论文（PDF）','Download Chinese paper (PDF)'],
+  paperEnLink:['下载英文论文（PDF）','Download English paper (PDF)'],
   lblRun:['当前轮次','Current run'], lblProgress:['总进度','Batch progress'],
   lblElapsed:['已耗时','Elapsed'], lblEta:['预估结束','ETA'],
   lblCost:['费用','Cost'], lblTokTotal:['消耗 tokens','Tokens used'],

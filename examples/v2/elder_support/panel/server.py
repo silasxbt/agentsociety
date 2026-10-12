@@ -564,6 +564,16 @@ def api_runs():
     return [summarize_run(d) for d in sorted(all_run_dirs(), key=lambda d: (d / "env").stat().st_mtime, reverse=True)]
 
 
+@app.get("/downloads/{filename}")
+def download_paper(filename: str):
+    if filename not in {"main_zh.pdf", "main_en.pdf"}:
+        return JSONResponse({"error": "论文不存在"}, status_code=404)
+    path = EXP / "paper" / filename
+    if not path.is_file():
+        return JSONResponse({"error": "论文尚未部署"}, status_code=404)
+    return FileResponse(path, media_type="application/pdf", filename=filename)
+
+
 @app.get("/api/qa")
 def api_qa():
     return load_qa()

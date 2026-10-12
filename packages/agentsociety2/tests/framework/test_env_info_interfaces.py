@@ -1,9 +1,13 @@
 from agentsociety2.contrib.env.economy_space import EconomySpace
 from agentsociety2.contrib.env.mobility_space.environment import MobilitySpace
 from agentsociety2.registry import get_registered_agent_modules, get_registered_env_modules
+from agentsociety2.registry.base import ModuleRegistry
 
 
-def test_registered_modules_expose_description_and_init_description():
+def test_registered_modules_expose_description_and_init_description(tmp_path, monkeypatch):
+    # Do not inherit a temporary workspace from an earlier singleton user.
+    monkeypatch.setattr(ModuleRegistry, "_instance", None)
+    monkeypatch.setenv("WORKSPACE_PATH", str(tmp_path))
     for module_type, env_class in get_registered_env_modules():
         description = env_class.description()
         init_description = env_class.init_description()

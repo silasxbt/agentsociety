@@ -42,7 +42,6 @@ from agentsociety2.backend.path_security import (
     extract_zip_under,
     require_disjoint_copy_paths,
     require_safe_skill_name,
-    resolve_path_under_directory,
     resolve_skill_relative,
     resolve_under_root,
     resolve_workspace_root,
@@ -175,7 +174,14 @@ async def import_skill(req: ImportRequest):
     """从工作区内路径导入 Agent Skill（复制到 custom/skills/）。"""
     workspace = _require_workspace(req.workspace_path)
     workspace_root = resolve_workspace_root(workspace)
-    source = resolve_path_under_directory(workspace_root, req.source_path)
+    # Keep the containment barrier next to the filesystem sinks so both human
+    # reviewers and static analysis can trace the untrusted source path.
+    source_path = os.path.realpath(os.path.expanduser(req.source_path))
+    root_path = os.fspath(workspace_root)
+    root_prefix = root_path if root_path.endswith(os.sep) else root_path + os.sep
+    if not source_path.startswith(root_prefix) or source_path == root_path:
+        raise HTTPException(400, "Source must be a directory inside the workspace")
+    source = Path(source_path)
     if not source.is_dir():
         raise HTTPException(
             status_code=400, detail=f"Directory not found: {req.source_path}"
@@ -190,6 +196,12 @@ async def import_skill(req: ImportRequest):
     skill_name = require_safe_skill_name(source.name)
     dest = skill_install_dir(workspace, skill_name)
     require_disjoint_copy_paths(source, dest)
+    # copytree follows nested symlinks by default. Validate the entire source
+    # before replacing an installed skill, and reject links (including cycles).
+    for directory, dirs, files in os.walk(source):
+        for name in dirs + files:
+            if (Path(directory) / name).is_symlink():
+                raise HTTPException(400, "Skill import does not allow symbolic links")
     if dest.exists():
         shutil.rmtree(dest)
     dest.parent.mkdir(parents=True, exist_ok=True)
