@@ -201,6 +201,15 @@ medium 8 场，目前仅韩国节点 `none_s1`，尚未证明能跑完。
       （65–69 岁仅 5.6%，80 岁以上占 69.4%，见 `data_pipeline/out/clhls2021_dist.md`）。
       `calibration_targets.md` 中“用 CHARLS 2018 加权年龄分布替代”只是计划。→ 改说法，
       或在任务 B 中真正再加权。
+- [x] **规则层扫描全部使用占位画像**（2026-10-19 发现，论文已补披露：第 3.4 节末段、
+      局限 (10)）。`scan_timing.py`（harness 复用）、`scan_decay_outcomes.py`
+      （`scan_post_persist.py` 复用）、`measure_tie_survival.py`
+      （`scan_tie_survival_floor.py` 复用）及两个冒烟测试都直接调用 `gen_elder`
+      （占位），不是 `gen_elder_calibrated`。时机、剂量、harness、`tab:pp`、Burt 存活曲线
+      均受影响。→ 待在数据机器上改用校准画像重跑（`DATA_MACHINE_RUNBOOK.md` 4.1）。
+      这也让问题 1 的“校准 vs 占位”消融有了现成的对照组。
+- [x] `.gitignore` 已放行 `data_pipeline/out/*.json`；`gen_profiles.py` 缺分布文件时
+      改为报错退出，不再静默降级。
 - [ ] **待核实：正式批次是否真用了校准画像。** 根目录 `.gitignore` 的 `*.json`
       使 `clhls2021_dist.json` 从未入库；该文件缺失时 `gen_profiles.py` 静默退回
       占位分布。本机即无此文件。须在数据机器上重生成画像与 `tmp/init/profiles_s*.json`

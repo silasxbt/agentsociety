@@ -173,6 +173,8 @@ profiles.json
 !extension/package.nls.json
 !extension/package.nls.*.json
 !extension/skills/*/manifest.json
+# Aggregate survey distributions read by gen_profiles.py (no microdata)
+!examples/v2/elder_support/data_pipeline/out/*.json
 !frontend/package-lock.json
 *.jsonl
 

@@ -182,7 +182,12 @@ def main() -> None:
     args = ap.parse_args()
 
     rng = random.Random(args.seed)
-    if not args.placeholder and DIST_PATH.is_file():
+    if not args.placeholder and not DIST_PATH.is_file():
+        raise SystemExit(
+            f"缺少校准分布 {DIST_PATH}；先运行 data_pipeline/extract_clhls2021.py，"
+            "或显式传 --placeholder 使用占位分布"
+        )
+    if not args.placeholder:
         dist = json.loads(DIST_PATH.read_text(encoding="utf-8"))
         elders = [
             gen_elder_calibrated(rng, i + 1, i < args.focal, dist)

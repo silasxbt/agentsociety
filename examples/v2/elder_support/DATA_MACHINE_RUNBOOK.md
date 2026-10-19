@@ -46,9 +46,10 @@ done
 
 ### 1.2 修复这个隐患（提交）
 
-- `.gitignore` 增加例外 `!examples/v2/elder_support/data_pipeline/out/*.json`，
-  提交 `clhls2021_dist.json`、`harmonized_charls.json`（均为汇总分布，脚本头部已注明可入 git）。
-- `gen_profiles.py` 在找不到分布文件且未显式传 `--placeholder` 时报错退出，而不是静默降级。
+- 已完成（2026-10-19）：`.gitignore` 放行 `data_pipeline/out/*.json`；`gen_profiles.py`
+  缺分布文件且未传 `--placeholder` 时报错退出。
+- 待做：在数据机器上提交 `clhls2021_dist.json`、`harmonized_charls.json`
+  （均为汇总分布，脚本头部已注明可入 git）。
 
 ### 1.3 记录数据版本
 
@@ -104,6 +105,11 @@ Harmonized CHARLS 60+、`hhres==1`；截面用个体权重（`r4wtrespb`），�
 把 `custom/envs/elder_support_env.py` 和 `init/gen_profiles.py` 中第 3 节表格里的常数，
 改为从 `init_config.json` 读取的 `dynamics` 参数字典，默认值等于现值（硬规则 4）。
 `init/config_params.py` 增加 `--dynamics <json>` 参数。
+
+同时给规则层扫描增加画像来源选项。现有扫描（`scan_timing.py`、`scan_decay_outcomes.py`、
+`measure_tie_survival.py` 及复用它们的 `harness_loop.py`、`scan_post_persist.py`、
+`scan_tie_survival_floor.py`）都直接调用占位画像 `gen_elder`。增加 `--profiles placeholder|calibrated`，
+默认 `placeholder` 以复现旧结果；新结果用 `calibrated` 重跑，写入新文件名，不覆盖旧结果。
 
 验收：
 - 用旧配置跑 `tests/smoke_rules_only.py`、`tests/smoke_interventions.py` 通过，
