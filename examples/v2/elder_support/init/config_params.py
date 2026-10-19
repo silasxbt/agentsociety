@@ -50,6 +50,17 @@ def _profile_block(e: dict) -> str:
     )
 
 
+def _load_json_arg(value: str | None) -> dict | None:
+    if value is None:
+        return None
+    path = Path(value)
+    text = path.read_text(encoding="utf-8") if path.is_file() else value
+    data = json.loads(text)
+    if not isinstance(data, dict):
+        raise SystemExit(f"期望 JSON 对象：{value}")
+    return data
+
+
 def questionnaire_step(month: int, target_ids: list[int]) -> dict:
     return {
         "type": "questionnaire",
@@ -93,7 +104,19 @@ def main() -> None:
     )
     ap.add_argument("--iv-start", type=int, default=7)
     ap.add_argument("--iv-end", type=int, default=18)
+    ap.add_argument(
+        "--dynamics", default=None,
+        help="覆盖 DEFAULT_DYNAMICS 的 JSON 文件路径或 JSON 字符串；缺省用环境默认值",
+    )
+    ap.add_argument(
+        "--iv-params", default=None,
+        help="覆盖 INTERVENTION_DEFAULTS[<intervention>] 的 JSON 文件路径或 JSON 字符串",
+    )
     args = ap.parse_args()
+    dynamics = _load_json_arg(args.dynamics)
+    iv_params = _load_json_arg(args.iv_params) or {}
+    if iv_params and args.intervention == "none":
+        ap.error("--iv-params 需要配合 --intervention 使用")
 
     profiles_path = Path(args.profiles).resolve()
     elders = json.loads(profiles_path.read_text(encoding="utf-8"))
@@ -132,12 +155,13 @@ def main() -> None:
                                 "type": args.intervention,
                                 "start_month": args.iv_start,
                                 "end_month": args.iv_end,
-                                "params": {},
+                                "params": iv_params,
                             }
                         }
                         if args.intervention != "none"
                         else {}
                     ),
+                    **({"dynamics": dynamics} if dynamics else {}),
                 },
             }
         ],
