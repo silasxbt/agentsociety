@@ -50,6 +50,15 @@ done
   缺分布文件且未传 `--placeholder` 时报错退出。
 - 待做：在数据机器上提交 `clhls2021_dist.json`、`harmonized_charls.json`
   （均为汇总分布，脚本头部已注明可入 git）。
+- 待做：`EVIDENCE.md` 引用的 `tests/harness_loop_result.json`、`tests/harness_loop_log.jsonl`、
+  `tests/cost_report.json`、`tests/silence_diagnosis.json` 从未入库（被 `*.json` 规则排除），
+  本机不存在。在数据机器上确认后提交（`.gitignore` 已放行 `tests/*.json`；`.jsonl` 若仍被
+  忽略，用 `git check-ignore -v` 查明后处理）。
+- 待做：`EVIDENCE.md` 与论文引用的以下证据文件从未入库，代码机器上不存在，
+  须在数据机器上确认并提交（`.gitignore` 已放行 `tests/*.json`）：
+  `tests/harness_loop_result.json`、`tests/harness_loop_log.jsonl`、
+  `tests/cost_report.json`、`tests/silence_diagnosis.json`。
+  提交前确认其中不含密钥或原始微观数据。
 
 ### 1.3 记录数据版本
 
