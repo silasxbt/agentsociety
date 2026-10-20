@@ -9,10 +9,14 @@
 逐年检查其中仍存在的比例，得到可与 Burt Table 1 直接比较的存活率。
 
 不消耗 LLM（纯规则层）。
+
+用法：<runtime-venv-python> tests/measure_tie_survival.py [--profiles placeholder|calibrated]
+输出：tests/tie_survival_result.json（calibrated 时加 _calibrated 后缀）
 """
 
 from __future__ import annotations
 
+import argparse
 import asyncio
 import json
 import math
@@ -28,7 +32,9 @@ sys.path.insert(0, str(REPO_ROOT / "custom" / "envs"))
 sys.path.insert(0, str(EXP_DIR / "init"))
 
 from elder_support_env import ElderSupportEnv  # noqa: E402
-from gen_profiles import gen_elder  # noqa: E402
+from gen_profiles import (  # noqa: E402
+    add_profiles_arg, make_elders, profile_source, result_path, set_profile_source,
+)
 
 # Burt (2000) Figure 1A 拟合方程 Y=(T+1)^(γ+κ·KIN+λ·WORK) 的 OLS 系数
 BURT_G, BURT_K, BURT_L = -0.716, 0.250, -1.126
@@ -60,7 +66,7 @@ def kin_share(env: ElderSupportEnv, keys: set[tuple[int, str]]) -> float:
 
 async def measure(num: int, months: int, seed: int, decay: float) -> dict:
     rng = random.Random(seed)  # 必须复用同一 rng，否则 num 个老人完全相同
-    elders = [gen_elder(rng, i + 1, focal=False) for i in range(num)]
+    elders = make_elders(rng, num)
     with tempfile.TemporaryDirectory() as td:
         env = ElderSupportEnv(elders=elders, seed=seed, decay_rate=decay)
         env._bind_workspace(Path(td) / "ws")
@@ -78,10 +84,14 @@ async def measure(num: int, months: int, seed: int, decay: float) -> dict:
             alive = len(t0 & snapshot_ties(env))
             curve.append((tick, alive / len(t0) if t0 else 0.0))
 
-    return {"n_ties_t0": len(t0), "kin_share": kin, "curve": curve, "decay": decay}
+    return {"n_ties_t0": len(t0), "kin_share": kin, "curve": curve, "decay": decay,
+            "profiles": profile_source()}
 
 
 async def main() -> int:
+    ap = argparse.ArgumentParser()
+    add_profiles_arg(ap)
+    print(f"画像来源：{set_profile_source(ap.parse_args().profiles)}")
     MONTHS = 48
     res = await measure(num=50, months=MONTHS, seed=7, decay=0.06)
     curve = dict(res["curve"])
@@ -111,7 +121,7 @@ async def main() -> int:
         T = 0.5 ** (1 / e) - 1
         print(f"Burt {lab:<12} 半衰期 {T:.2f} 年")
 
-    Path(__file__).with_name("tie_survival_result.json").write_text(
+    result_path(Path(__file__).with_name("tie_survival_result.json")).write_text(
         json.dumps(res, ensure_ascii=False, indent=2), encoding="utf-8"
     )
     return 0

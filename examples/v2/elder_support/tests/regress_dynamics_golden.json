@@ -1,0 +1,102 @@
+{
+  "none_s1": {
+    "sha256": "0cff1fe02540284fdd0b7f09e057ec29d8e756ad37fc02861a800c454fe2cf56",
+    "final_isolation_rate": 0.2,
+    "final_avg_loneliness": 0.3849
+  },
+  "none_s2": {
+    "sha256": "6793a09a6f33afaab6ca6832c75261d8d56cf50fc0d092eb42022efb33e27789",
+    "final_isolation_rate": 0.3,
+    "final_avg_loneliness": 0.4957
+  },
+  "none_s3": {
+    "sha256": "95687db8b04a2be654280586d54e3853ba619d08b8b6dbe63db6f151cac52557",
+    "final_isolation_rate": 0.35,
+    "final_avg_loneliness": 0.4665
+  },
+  "none_s4": {
+    "sha256": "1e6bdc2744cc2a1cb7f8efcaf27d0060945770b642ac85882516f25e3124359d",
+    "final_isolation_rate": 0.15,
+    "final_avg_loneliness": 0.3554
+  },
+  "none_s5": {
+    "sha256": "d83b30b51c5722380026b70fde0acc8fd380af92a0200cfb4f520867e9c300d6",
+    "final_isolation_rate": 0.4,
+    "final_avg_loneliness": 0.5133
+  },
+  "casework_s1": {
+    "sha256": "959009e938c52c170dde6ee742863378cd3767064bd87887162318f7a64c0c1d",
+    "final_isolation_rate": 0.15,
+    "final_avg_loneliness": 0.3511
+  },
+  "casework_s2": {
+    "sha256": "237a4f9436643706d84ac2f9b7c5b9c5fc772b1611f176331b9908c286fa702b",
+    "final_isolation_rate": 0.2,
+    "final_avg_loneliness": 0.3827
+  },
+  "casework_s3": {
+    "sha256": "5a90702704dcd4e25b757ca7fcfacab88ad3783935f8c335773356a5cfcaf819",
+    "final_isolation_rate": 0.35,
+    "final_avg_loneliness": 0.4005
+  },
+  "casework_s4": {
+    "sha256": "b022c3796ab7d64df20e34c121294b93f5db21dc06102ab7ec24a46e7bca2fcc",
+    "final_isolation_rate": 0.15,
+    "final_avg_loneliness": 0.3465
+  },
+  "casework_s5": {
+    "sha256": "5df980d488aaa3a5f8fce82abfa1b728aadd583e3554b4a05be65cac32952c67",
+    "final_isolation_rate": 0.35,
+    "final_avg_loneliness": 0.3984
+  },
+  "timebank_s1": {
+    "sha256": "071c6aea31715ec59f60c55f633b63a03c901757d49f5f7d9b71d36f9deb29fa",
+    "final_isolation_rate": 0.2,
+    "final_avg_loneliness": 0.3549
+  },
+  "timebank_s2": {
+    "sha256": "fbcde80f0fb1199a3777321fabc76cf6c26c00135ada5918c0faa2228ceb6d32",
+    "final_isolation_rate": 0.15,
+    "final_avg_loneliness": 0.3901
+  },
+  "timebank_s3": {
+    "sha256": "7cac3865f7bcf704f57c9325571ad3c6c0c251d95c9ddb96efef00435c62de11",
+    "final_isolation_rate": 0.1,
+    "final_avg_loneliness": 0.3651
+  },
+  "timebank_s4": {
+    "sha256": "fd33c57c49da52a99ae9a5fd1e4e511785661ca7010b1c42bd88e45247956017",
+    "final_isolation_rate": 0.1,
+    "final_avg_loneliness": 0.3199
+  },
+  "timebank_s5": {
+    "sha256": "ee60142ac2adecb72db75bba8fa81ce937bc78f4c74a129bbb59897da52236f4",
+    "final_isolation_rate": 0.2,
+    "final_avg_loneliness": 0.3899
+  },
+  "platform_s1": {
+    "sha256": "458982225cc1629e5c36c34b338fa9f67c8121f0907bae6637aa3b85dc33053c",
+    "final_isolation_rate": 0.2,
+    "final_avg_loneliness": 0.3381
+  },
+  "platform_s2": {
+    "sha256": "fe7f19573d883b727a126389e974433b723cea0d9cdd64415d99c0b4ed8128f5",
+    "final_isolation_rate": 0.3,
+    "final_avg_loneliness": 0.4385
+  },
+  "platform_s3": {
+    "sha256": "a334a50330f2faba53ead5e725d582c43643e336ea0c4f14fbd8326d7007f260",
+    "final_isolation_rate": 0.4,
+    "final_avg_loneliness": 0.4129
+  },
+  "platform_s4": {
+    "sha256": "e4c5f64a86c1764c7443c10429906dbacca8c4a2c3179592cc9d9dbb0068675e",
+    "final_isolation_rate": 0.35,
+    "final_avg_loneliness": 0.3886
+  },
+  "platform_s5": {
+    "sha256": "e45f6d3b4620fcba44e038fb8863ebe72787eb3cd909626a37fadf76bd93097f",
+    "final_isolation_rate": 0.45,
+    "final_avg_loneliness": 0.4594
+  }
+}

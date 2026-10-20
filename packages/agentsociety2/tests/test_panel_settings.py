@@ -92,3 +92,26 @@ def test_llm_call_overrides_reads_env(monkeypatch: pytest.MonkeyPatch):
     monkeypatch.delenv("AGENTSOCIETY_LLM_REASONING_EFFORT", raising=False)
     monkeypatch.delenv("AGENTSOCIETY_LLM_TEMPERATURE", raising=False)
     assert llm_call_overrides() == {}
+
+
+def test_reasoning_alias_switch_only_for_openai_wire(monkeypatch: pytest.MonkeyPatch):
+    from agentsociety2.backend.panel_settings import llm_call_overrides
+
+    monkeypatch.delenv("AGENTSOCIETY_LLM_TEMPERATURE", raising=False)
+    monkeypatch.setenv("AGENTSOCIETY_LLM_REASONING_EFFORT", "medium")
+    monkeypatch.delenv("AGENTSOCIETY_LLM_ALLOW_REASONING_ALIAS", raising=False)
+    monkeypatch.delenv("AGENTSOCIETY_LLM_PROVIDER", raising=False)
+    assert llm_call_overrides() == {"reasoning_effort": "medium"}
+
+    monkeypatch.setenv("AGENTSOCIETY_LLM_ALLOW_REASONING_ALIAS", "1")
+    assert llm_call_overrides() == {
+        "reasoning_effort": "medium",
+        "allowed_openai_params": ["reasoning_effort"],
+    }
+
+    monkeypatch.setenv("AGENTSOCIETY_LLM_PROVIDER", "anthropic")
+    assert llm_call_overrides() == {"reasoning_effort": "medium"}
+
+    monkeypatch.delenv("AGENTSOCIETY_LLM_REASONING_EFFORT")
+    monkeypatch.setenv("AGENTSOCIETY_LLM_PROVIDER", "openai")
+    assert llm_call_overrides() == {}

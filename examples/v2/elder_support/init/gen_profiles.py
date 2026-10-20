@@ -19,13 +19,67 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import random
+from functools import lru_cache
 from pathlib import Path
 
 DIST_PATH = (
     Path(__file__).resolve().parent.parent
     / "data_pipeline" / "out" / "clhls2021_dist.json"
 )
+
+# 规则层脚本的画像来源：placeholder（历史结果所用）或 calibrated（CLHLS 2021 分布）。
+PROFILE_SOURCES = ("placeholder", "calibrated")
+PROFILE_ENV = "ELDER_PROFILES"
+
+
+@lru_cache(maxsize=1)
+def load_dist() -> dict:
+    if not DIST_PATH.is_file():
+        raise SystemExit(
+            f"缺少校准分布 {DIST_PATH}；先运行 data_pipeline/extract_clhls2021.py，"
+            "或显式使用占位分布"
+        )
+    return json.loads(DIST_PATH.read_text(encoding="utf-8"))
+
+
+def add_profiles_arg(ap: argparse.ArgumentParser) -> None:
+    ap.add_argument(
+        "--profiles", choices=PROFILE_SOURCES, default=None,
+        help=f"画像来源（默认读环境变量 {PROFILE_ENV}，未设置则为 placeholder）",
+    )
+
+
+def set_profile_source(source: str | None) -> str:
+    """命令行显式指定时写入环境变量，使被导入的 run_once 一并生效；返回最终来源。"""
+    if source is not None:
+        os.environ[PROFILE_ENV] = source
+    return profile_source()
+
+
+def profile_source() -> str:
+    source = os.environ.get(PROFILE_ENV, "placeholder")
+    if source not in PROFILE_SOURCES:
+        raise SystemExit(f"{PROFILE_ENV}={source!r} 无效，可选 {PROFILE_SOURCES}")
+    return source
+
+
+def make_elders(rng: random.Random, num: int, n_focal: int = 0,
+                source: str | None = None) -> list[dict]:
+    source = source or profile_source()
+    if source == "calibrated":
+        dist = load_dist()
+        return [gen_elder_calibrated(rng, i + 1, i < n_focal, dist) for i in range(num)]
+    return [gen_elder(rng, i + 1, i < n_focal) for i in range(num)]
+
+
+def result_path(path: Path, source: str | None = None) -> Path:
+    """占位画像沿用原文件名（已入库的历史结果），其他来源加后缀，避免覆盖。"""
+    source = source or profile_source()
+    if source == "placeholder":
+        return path
+    return path.with_name(f"{path.stem}_{source}{path.suffix}")
 
 # b12 自评健康 -> health 分值中心
 _HEALTH_MAP = {"1": 0.88, "2": 0.75, "3": 0.55, "4": 0.35, "5": 0.20}
@@ -182,15 +236,11 @@ def main() -> None:
     args = ap.parse_args()
 
     rng = random.Random(args.seed)
-    if not args.placeholder and DIST_PATH.is_file():
-        dist = json.loads(DIST_PATH.read_text(encoding="utf-8"))
-        elders = [
-            gen_elder_calibrated(rng, i + 1, i < args.focal, dist)
-            for i in range(args.num)
-        ]
-        mode = f"calibrated(CLHLS2021, n={dist['_meta']['n_living_alone_65plus']})"
+    source = "placeholder" if args.placeholder else "calibrated"
+    elders = make_elders(rng, args.num, args.focal, source)
+    if source == "calibrated":
+        mode = f"calibrated(CLHLS2021, n={load_dist()['_meta']['n_living_alone_65plus']})"
     else:
-        elders = [gen_elder(rng, i + 1, i < args.focal) for i in range(args.num)]
         mode = "placeholder"
     print(f"mode={mode}")
     out = Path(args.out).resolve()

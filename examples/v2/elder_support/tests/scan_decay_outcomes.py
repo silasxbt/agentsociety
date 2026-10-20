@@ -12,13 +12,14 @@
 
 用法：
   AGENTSOCIETY_LLM_API_KEY=dummy AGENTSOCIETY_LLM_API_BASE=https://tokenflux.dev/v1 \
-    <runtime-venv-python> tests/scan_decay_outcomes.py
+    <runtime-venv-python> tests/scan_decay_outcomes.py [--profiles placeholder|calibrated]
 
-输出：终端表格 + tests/scan_decay_outcomes_result.json
+输出：终端表格 + tests/scan_decay_outcomes_result.json（calibrated 时加 _calibrated 后缀）
 """
 
 from __future__ import annotations
 
+import argparse
 import asyncio
 import json
 import random
@@ -34,7 +35,7 @@ sys.path.insert(0, str(REPO_ROOT / "custom" / "envs"))
 sys.path.insert(0, str(EXP_DIR / "init"))
 
 from elder_support_env import ElderSupportEnv  # noqa: E402
-from gen_profiles import gen_elder  # noqa: E402
+from gen_profiles import add_profiles_arg, make_elders, result_path, set_profile_source  # noqa: E402
 
 MONTHS = 24          # 与正式批次一致
 IV_START, IV_END = 7, 18
@@ -49,7 +50,7 @@ KEYS = ["isolation_rate", "deep_isolation_rate", "avg_loneliness", "avg_active_t
 async def run_once(seed: int, decay: float, cond: str, params: dict) -> list[dict]:
     """跑一个 (seed, decay, condition)，返回逐月 metrics 行。"""
     rng = random.Random(seed)
-    elders = [gen_elder(rng, i + 1, focal=False) for i in range(N_ELDERS)]
+    elders = make_elders(rng, N_ELDERS)
     iv = None
     if cond != "none":
         iv = {"type": cond, "start_month": IV_START, "end_month": IV_END,
@@ -96,6 +97,10 @@ def agg(per_seed: list[dict]) -> dict:
 
 
 async def main() -> int:
+    ap = argparse.ArgumentParser()
+    add_profiles_arg(ap)
+    profiles = set_profile_source(ap.parse_args().profiles)
+    print(f"画像来源：{profiles}")
     results = {"decay_scan": {}, "caseload_scan": {}}
 
     # ---- D 扫描：decay × condition ----
@@ -132,10 +137,11 @@ async def main() -> int:
         show("E 扫描 caseload（casework, decay=0.06）",
              results["caseload_scan"], metric)
 
-    out_path = Path(__file__).with_name("scan_decay_outcomes_result.json")
+    out_path = result_path(Path(__file__).with_name("scan_decay_outcomes_result.json"))
     out_path.write_text(json.dumps(
         {"months": MONTHS, "iv_window": [IV_START, IV_END], "n_elders": N_ELDERS,
-         "seeds": SEEDS, "note": "全部老人为规则层（无 LLM），只用于条件间对比方向",
+         "seeds": SEEDS, "profiles": profiles,
+         "note": "全部老人为规则层（无 LLM），只用于条件间对比方向",
          **results}, ensure_ascii=False, indent=2), encoding="utf-8")
     print(f"\n结果已写入 {out_path}")
     return 0

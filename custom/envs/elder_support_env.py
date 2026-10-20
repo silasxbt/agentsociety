@@ -29,15 +29,114 @@ _STATE_REL = "state/ENV_STATE.json"
 _METRICS_REL = "state/metrics.jsonl"
 _DECISIONS_REL = "state/decisions.jsonl"
 
-# 深度孤立判定阈值：连续无情感性支持的月数
-DEEP_ISOLATION_MONTHS = 3
-
-# 子女距离 -> (探望概率系数, 工具性帮助可达性)
-_DISTANCE_FACTOR = {
-    "local": (1.0, 1.0),
-    "same_city": (0.6, 0.7),
-    "other_province": (0.2, 0.15),
+# 动力学参数默认值。均为建模假设（来源见论文附录参数表），可经构造参数
+# ``dynamics`` 覆盖；默认值即正式批次所用取值，改动须同步更新回归基准
+# ``examples/v2/elder_support/tests/regress_dynamics_golden.json``。
+DEFAULT_DYNAMICS: Dict[str, Any] = {
+    # 子女关系
+    "family_initial_strength": 0.8,
+    "family_reach": {"local": 1.0, "same_city": 0.7, "other_province": 0.15},
+    "family_reach_unknown": 0.15,
+    # 月度事件（基准发生率见 event_rates）
+    "event_age_threshold": 70,
+    "event_age_slope": 0.03,
+    "illness_scale": 0.6,
+    "illness_health_loss": 0.05,
+    "fall_health_loss": 0.08,
+    "health_floor": 0.05,
+    # 一次联系构成情感支持的概率：base + slope × 关系强度
+    "deep_talk_base_in_person": 0.25,
+    "deep_talk_base_phone": 0.10,
+    "deep_talk_strength_slope": 0.35,
+    # 求助：成功概率 base + slope × 强度 × 可达性
+    "help_base": 0.15,
+    "help_strength_slope": 0.8,
+    "help_success_strength_gain": 0.08,
+    "help_success_loneliness_drop": 0.06,
+    "help_fail_strength_loss": 0.05,
+    "help_fail_loneliness_rise": 0.05,
+    # 规则层老人的月度行为
+    "family_contact_base": 0.5,
+    "family_contact_strength_slope": 0.5,
+    "family_contact_strength_gain": 0.02,
+    "neighbor_contact_base": 0.2,
+    "neighbor_contact_strength_slope": 0.45,
+    "neighbor_contact_strength_gain": 0.03,
+    "no_help_base": 0.25,
+    "no_help_introversion_slope": 0.5,
+    "help_max_attempts": 2,
+    # 月末结算：关系删除阈值、孤独感稳态与回归速度、深度孤立
+    "tie_delete_threshold": 0.05,
+    "lonely_target_base": 0.90,
+    "lonely_target_per_emotional": 0.12,
+    "lonely_target_emotional_cap": 4,
+    "lonely_target_per_tie": 0.05,
+    "lonely_target_tie_cap": 5,
+    "lonely_target_per_health": 0.25,
+    "lonely_target_per_introversion": 0.10,
+    "lonely_relaxation": 0.5,
+    "deep_isolation_months": 3,
+    # 焦点老人工具
+    "call_family_strength_gain": 0.04,
+    "visit_strength_gain": 0.05,
+    "activity_loneliness_drop": 0.04,
+    "activity_friend_base": 0.35,
+    "activity_friend_extro_slope": 0.4,
+    "activity_friend_strength": 0.25,
+    # 干预对象的风险评分（社工探访与时间银行共用）
+    "risk_w_no_emotional": 2.0,
+    "risk_w_frailty": 1.5,
+    "risk_w_few_ties": 1.0,
+    "risk_few_ties_threshold": 3,
+    "risk_w_events": 0.8,
+    "risk_w_loneliness": 1.0,
 }
+
+# 各干预内部参数默认值，可经 intervention["params"] 覆盖。
+INTERVENTION_DEFAULTS: Dict[str, Dict[str, Any]] = {
+    "casework": {
+        "n_workers": 2,
+        "caseload": 8,
+        "worker_tie_strength": 0.4,
+        "visit_emotional_p": 0.8,
+        "visit_strength_gain": 0.05,
+        "family_link_p": 0.5,
+        "family_link_emotional_p": 0.4,
+        "family_link_strength_gain": 0.05,
+    },
+    "timebank": {
+        "max_per_helper": 2,
+        "helper_min_health": 0.6,
+        "helper_max_age": 78,
+        "tie_strength": 0.35,
+        "visit_p": 0.85,
+        "recipient_emotional_p": 0.6,
+        "recipient_instrumental_p": 0.5,
+        "recipient_strength_gain": 0.06,
+        "helper_emotional_p": 0.4,
+        "helper_strength_gain": 0.04,
+        "post_persist": 0.5,
+        "post_recipient_emotional_p": 0.5,
+        "post_recipient_strength_gain": 0.03,
+        "post_helper_emotional_p": 0.3,
+        "post_helper_strength_gain": 0.02,
+    },
+    "platform": {
+        "coverage": 0.6,
+        "need_months_no_emotional": 2,
+        "tie_strength": 0.2,
+        "tie_strength_cap": 0.35,
+        "emotional_p": 0.3,
+        "strength_gain": 0.03,
+    },
+}
+
+
+def _merge_params(defaults: Dict[str, Any], override: Optional[Dict[str, Any]], what: str) -> Dict[str, Any]:
+    unknown = set(override or {}) - set(defaults)
+    if unknown:
+        raise ValueError(f"未知的{what}参数：{sorted(unknown)}")
+    return {**defaults, **(override or {})}
 
 
 def _clamp(x: float, lo: float = 0.0, hi: float = 1.0) -> float:
@@ -72,6 +171,7 @@ class ElderSupportEnv(EnvBase):
         decay_rate: float = 0.06,
         event_rates: Optional[Dict[str, float]] = None,
         intervention: Optional[Dict[str, Any]] = None,
+        dynamics: Optional[Dict[str, Any]] = None,
     ):
         """初始化环境。
 
@@ -84,10 +184,13 @@ class ElderSupportEnv(EnvBase):
         :param seed: 随机种子（保证同种子可复现）。
         :param decay_rate: 关系强度月衰减率（当月无联系时）。
         :param event_rates: 月度事件基准概率，键：``illness``/``fall``/``neighbor_move``。
+        :param intervention: 干预配置，``params`` 可覆盖 ``INTERVENTION_DEFAULTS``。
+        :param dynamics: 覆盖 ``DEFAULT_DYNAMICS`` 中的动力学参数；未知键报错。
         """
         super().__init__()
         self._seed = int(seed)
         self._rng = random.Random(self._seed)
+        self._dyn = _merge_params(DEFAULT_DYNAMICS, dynamics, "动力学")
         self._decay_rate = float(decay_rate)
         self._event_rates = {
             "illness": 0.10,
@@ -106,6 +209,11 @@ class ElderSupportEnv(EnvBase):
         # 干预配置：{"type": none|casework|timebank|platform,
         #           "start_month": int, "end_month": int, "params": {...}}
         self._intervention: Dict[str, Any] = intervention or {"type": "none"}
+        iv_type = self._intervention.get("type", "none")
+        if iv_type != "none":
+            if iv_type not in INTERVENTION_DEFAULTS:
+                raise ValueError(f"未知的干预类型：{iv_type}")
+            _merge_params(INTERVENTION_DEFAULTS[iv_type], self._intervention.get("params"), iv_type)
         self._timebank_credits: Dict[int, float] = {}
         self._timebank_pairs: List[List[int]] = []
 
@@ -120,7 +228,7 @@ class ElderSupportEnv(EnvBase):
                 "kind": "family",
                 "distance": c.get("distance", "other_province"),
                 "contact_per_month": float(c.get("contact_per_month", 2.0)),
-                "strength": 0.8,
+                "strength": self._dyn["family_initial_strength"],
                 "last_contact_month": 0,
                 "emotional_count": 0,
                 "instrumental_count": 0,
@@ -175,8 +283,10 @@ class ElderSupportEnv(EnvBase):
 - event_rates: dict 月度事件概率（illness/fall/neighbor_move）
 - intervention: dict 干预配置 {"type": none|casework|timebank|platform,
   "start_month": int, "end_month": int, "params": {...}}。
-  casework=社工个案管理（n_workers/caseload）；timebank=时间银行互助
-  （max_per_helper/post_persist）；platform=数字平台志愿匹配（coverage）
+  casework=风险导向的社工外展探访；timebank=时间银行互助；platform=数字平台志愿匹配。
+  params 可覆盖的键及默认值见 INTERVENTION_DEFAULTS（如 n_workers/caseload、
+  max_per_helper/post_persist、coverage），未知键报错
+- dynamics: dict 覆盖动力学参数，键及默认值见 DEFAULT_DYNAMICS，未知键报错
 
 焦点老人可用工具：observe_my_life（观察自身处境）、call_family（给子女打电话）、
 visit_neighbor（找邻居朋友走动）、seek_help（求助）、join_activity（参加社区活动）、
@@ -196,6 +306,7 @@ stay_home（宅家并说明原因）。统计工具：community_report。
                     "rng_state": self._rng.getstate(),
                     "decay_rate": self._decay_rate,
                     "event_rates": self._event_rates,
+                    "dynamics": self._dyn,
                     "month": self._month,
                     "started": self._started,
                     "elders": {str(k): v for k, v in self._elders.items()},
@@ -219,6 +330,7 @@ stay_home（宅家并说明原因）。统计工具：community_report。
         self._seed = int(data["seed"])
         self._decay_rate = float(data["decay_rate"])
         self._event_rates = dict(data["event_rates"])
+        self._dyn = _merge_params(DEFAULT_DYNAMICS, data.get("dynamics"), "动力学")
         self._month = int(data["month"])
         self._started = bool(data.get("started", True))
         self._elders = {int(k): v for k, v in data["elders"].items()}
@@ -292,8 +404,9 @@ stay_home（宅家并说明原因）。统计工具：community_report。
 
         日常寒暄不等于情感支持：概率随关系强度上升，见面走动高于电话。
         """
-        base = 0.25 if in_person else 0.10
-        return self._rng.random() < base + 0.35 * tie["strength"]
+        d = self._dyn
+        base = d["deep_talk_base_in_person"] if in_person else d["deep_talk_base_phone"]
+        return self._rng.random() < base + d["deep_talk_strength_slope"] * tie["strength"]
 
     def _try_help(self, elder: Dict[str, Any], name: str, help_type: str) -> bool:
         """按关系强度与可达性判定求助是否成功，并更新账本。"""
@@ -301,10 +414,11 @@ stay_home（宅家并说明原因）。统计工具：community_report。
         self._counters["help_requests"] += 1
         if tie is None:
             return False
+        d = self._dyn
         reach = 1.0
         if tie["kind"] == "family":
-            reach = _DISTANCE_FACTOR.get(tie["distance"], (0.2, 0.15))[1]
-        p = _clamp(0.15 + 0.8 * tie["strength"] * reach)
+            reach = d["family_reach"].get(tie["distance"], d["family_reach_unknown"])
+        p = _clamp(d["help_base"] + d["help_strength_slope"] * tie["strength"] * reach)
         ok = self._rng.random() < p
         if ok:
             self._counters["help_success"] += 1
@@ -313,25 +427,26 @@ stay_home（宅家并说明原因）。统计工具：community_report。
                 name,
                 emotional=(help_type == "emotional"),
                 instrumental=(help_type != "emotional"),
-                delta=0.08,
+                delta=d["help_success_strength_gain"],
             )
-            elder["loneliness"] = _clamp(elder["loneliness"] - 0.06)
+            elder["loneliness"] = _clamp(elder["loneliness"] - d["help_success_loneliness_drop"])
         else:
-            tie["strength"] = _clamp(tie["strength"] - 0.05)
-            elder["loneliness"] = _clamp(elder["loneliness"] + 0.05)
+            tie["strength"] = _clamp(tie["strength"] - d["help_fail_strength_loss"])
+            elder["loneliness"] = _clamp(elder["loneliness"] + d["help_fail_loneliness_rise"])
         return ok
 
     def _gen_events(self, elder: Dict[str, Any]) -> List[str]:
+        d = self._dyn
         events: List[str] = []
-        age_factor = 1.0 + max(0, elder["age"] - 70) * 0.03
+        age_factor = 1.0 + max(0, elder["age"] - d["event_age_threshold"]) * d["event_age_slope"]
         if self._rng.random() < self._event_rates["illness"] * (
             2.0 - elder["health"]
-        ) * age_factor * 0.6:
+        ) * age_factor * d["illness_scale"]:
             events.append("患病（本月身体不适，需要买药或就医）")
-            elder["health"] = _clamp(elder["health"] - 0.05, 0.05)
+            elder["health"] = _clamp(elder["health"] - d["illness_health_loss"], d["health_floor"])
         if self._rng.random() < self._event_rates["fall"] * age_factor:
             events.append("跌倒（行动不便，日常起居需要人搭把手）")
-            elder["health"] = _clamp(elder["health"] - 0.08, 0.05)
+            elder["health"] = _clamp(elder["health"] - d["fall_health_loss"], d["health_floor"])
         if self._rng.random() < self._event_rates["neighbor_move"]:
             neighbors = [
                 n for n, t in elder["ties"].items() if t["kind"] in ("neighbor", "friend")
@@ -344,12 +459,15 @@ stay_home（宅家并说明原因）。统计工具：community_report。
 
     def _rule_layer_month(self, elder: Dict[str, Any]) -> None:
         """规则层老人的月度行为：子女联系、邻里互动、遇事求助。"""
+        d = self._dyn
         # 子女按频率联系（泊松近似：逐次伯努利）；通话不必然构成情感支持
         for name, tie in list(elder["ties"].items()):
             if tie["kind"] != "family":
                 continue
             n_contact = 0
-            expect = tie["contact_per_month"] * (0.5 + 0.5 * tie["strength"])
+            expect = tie["contact_per_month"] * (
+                d["family_contact_base"] + d["family_contact_strength_slope"] * tie["strength"]
+            )
             while expect > 0:
                 if self._rng.random() < min(1.0, expect):
                     n_contact += 1
@@ -358,36 +476,41 @@ stay_home（宅家并说明原因）。统计工具：community_report。
                 self._touch_tie(
                     elder, name,
                     emotional=self._deep_talk(tie, in_person=False),
-                    delta=0.02,
+                    delta=d["family_contact_strength_gain"],
                 )
         # 邻里互动：外向性 × 强度；见面走动更容易说上心里话
         for name, tie in list(elder["ties"].items()):
             if tie["kind"] == "family":
                 continue
-            if self._rng.random() < elder["extroversion"] * (0.2 + 0.45 * tie["strength"]):
+            if self._rng.random() < elder["extroversion"] * (
+                d["neighbor_contact_base"] + d["neighbor_contact_strength_slope"] * tie["strength"]
+            ):
                 self._touch_tie(
                     elder, name,
                     emotional=self._deep_talk(tie, in_person=True),
-                    delta=0.03,
+                    delta=d["neighbor_contact_strength_gain"],
                 )
-        # 遇事求助：从最强的关系开始，最多两次
+        # 遇事求助：从最强的关系开始，最多 help_max_attempts 次
         if elder["month_events"]:
             candidates = sorted(
                 elder["ties"].items(), key=lambda kv: kv[1]["strength"], reverse=True
             )
             # 内向者可能干脆不求助（面子/怕麻烦，规则层的简化近似）
-            if self._rng.random() < 0.25 + 0.5 * (1 - elder["extroversion"]):
+            if self._rng.random() < d["no_help_base"] + d["no_help_introversion_slope"] * (
+                1 - elder["extroversion"]
+            ):
                 candidates = []
-            for name, _tie in candidates[:2]:
+            for name, _tie in candidates[: d["help_max_attempts"]]:
                 if self._try_help(elder, name, "instrumental"):
                     break
 
     def _end_of_month(self, elder: Dict[str, Any]) -> None:
         """月末结算：衰减、孤独感稳态回归、深度孤立判定。"""
+        d = self._dyn
         for name, tie in list(elder["ties"].items()):
             if tie["last_contact_month"] < self._month:
                 tie["strength"] = _clamp(tie["strength"] * (1 - self._decay_rate))
-                if tie["strength"] < 0.05:
+                if tie["strength"] < d["tie_delete_threshold"]:
                     del elder["ties"][name]
         if elder["month_emotional"] > 0:
             elder["months_no_emotional"] = 0
@@ -396,17 +519,17 @@ stay_home（宅家并说明原因）。统计工具：community_report。
         # 孤独感向稳态水平回归：稳态由情感支持量、关系数量、健康与性格决定。
         # 联系多则稳态低，孤立则稳态高——不会单调塌缩，也不会无界上升。
         target = _clamp(
-            0.90
-            - 0.12 * min(elder["month_emotional"], 4)
-            - 0.05 * min(len(elder["ties"]), 5)
-            - 0.25 * elder["health"]
-            + 0.10 * (1 - elder["extroversion"])
+            d["lonely_target_base"]
+            - d["lonely_target_per_emotional"] * min(elder["month_emotional"], d["lonely_target_emotional_cap"])
+            - d["lonely_target_per_tie"] * min(len(elder["ties"]), d["lonely_target_tie_cap"])
+            - d["lonely_target_per_health"] * elder["health"]
+            + d["lonely_target_per_introversion"] * (1 - elder["extroversion"])
         )
         elder["loneliness"] = _clamp(
-            elder["loneliness"] + 0.5 * (target - elder["loneliness"])
+            elder["loneliness"] + d["lonely_relaxation"] * (target - elder["loneliness"])
         )
         elder["deep_isolation"] = (
-            elder["months_no_emotional"] >= DEEP_ISOLATION_MONTHS
+            elder["months_no_emotional"] >= d["deep_isolation_months"]
             and elder["month_instrumental"] == 0
         )
 
@@ -423,13 +546,15 @@ stay_home（宅家并说明原因）。统计工具：community_report。
     def _risk_rank(self) -> List[Dict[str, Any]]:
         """按孤立风险从高到低排序（社工评估逻辑的简化版）。"""
 
+        d = self._dyn
+
         def score(e: Dict[str, Any]) -> float:
             return (
-                2.0 * e["months_no_emotional"]
-                + 1.5 * (1 - e["health"])
-                + 1.0 * max(0, 3 - len(e["ties"]))
-                + 0.8 * len(e["month_events"])
-                + e["loneliness"]
+                d["risk_w_no_emotional"] * e["months_no_emotional"]
+                + d["risk_w_frailty"] * (1 - e["health"])
+                + d["risk_w_few_ties"] * max(0, d["risk_few_ties_threshold"] - len(e["ties"]))
+                + d["risk_w_events"] * len(e["month_events"])
+                + d["risk_w_loneliness"] * e["loneliness"]
             )
 
         return sorted(self._elders.values(), key=score, reverse=True)
@@ -447,11 +572,17 @@ stay_home（宅家并说明原因）。统计工具：community_report。
             {"month": self._month, "agent_id": -1, "action": action, **detail}
         )
 
+    def _iv_params(self) -> Dict[str, Any]:
+        iv_type = self._intervention["type"]
+        return _merge_params(
+            INTERVENTION_DEFAULTS[iv_type], self._intervention.get("params"), iv_type
+        )
+
     def _apply_intervention(self) -> None:
         if not self._intervention_active():
             return
         iv_type = self._intervention["type"]
-        params = self._intervention.get("params", {})
+        params = self._iv_params()
         if iv_type == "casework":
             self._iv_casework(params)
         elif iv_type == "timebank":
@@ -460,22 +591,26 @@ stay_home（宅家并说明原因）。统计工具：community_report。
             self._iv_platform(params)
 
     def _iv_casework(self, params: dict) -> None:
-        """专业社工个案管理：风险评估 → 高风险者每月探访 + 家庭联结。"""
-        n_workers = int(params.get("n_workers", 2))
-        caseload = int(params.get("caseload", 8))
+        """风险导向的社工外展探访：风险排序 → 高风险者每月探访 + 家庭联结。
+
+        不实现个案管理的需求评估、服务计划、跟进与结案。"""
+        n_workers = int(params["n_workers"])
+        caseload = int(params["caseload"])
         capacity = n_workers * caseload
         for i, e in enumerate(self._risk_rank()[:capacity]):
             worker = f"社工小{'王李张刘'[i % n_workers % 4]}"
-            self._make_tie(e, worker, "social_worker", 0.4)
+            self._make_tie(e, worker, "social_worker", params["worker_tie_strength"])
             # 专业会谈：情感支持概率高
-            self._touch_tie(e, worker, emotional=(self._rng.random() < 0.8), delta=0.05)
+            self._touch_tie(e, worker, emotional=(self._rng.random() < params["visit_emotional_p"]),
+                            delta=params["visit_strength_gain"])
             e["month_events"].append(f"{worker}本月上门探访了一次")
             # 联结服务：概率性修复最强家庭纽带
             fam = [n for n, t in e["ties"].items() if t["kind"] == "family"]
-            if fam and self._rng.random() < 0.5:
+            if fam and self._rng.random() < params["family_link_p"]:
                 target = max(fam, key=lambda n: e["ties"][n]["strength"])
-                self._touch_tie(e, target, emotional=(self._rng.random() < 0.4),
-                                delta=0.05)
+                self._touch_tie(e, target,
+                                emotional=(self._rng.random() < params["family_link_emotional_p"]),
+                                delta=params["family_link_strength_gain"])
                 self._log_intervention(
                     "casework_link", {"elder": e["id"], "family": target}
                 )
@@ -487,11 +622,11 @@ stay_home（宅家并说明原因）。统计工具：community_report。
 
         结对关系一旦建立即持续（写入双方关系账本），这是撤出后可持续性的机制来源。
         """
-        max_per_helper = int(params.get("max_per_helper", 2))
+        max_per_helper = int(params["max_per_helper"])
         # 每月重算可服务者；结对只增不减（关系存续）
         helpers = [
             e for e in self._elders.values()
-            if e["health"] >= 0.6 and e["age"] <= 78
+            if e["health"] >= params["helper_min_health"] and e["age"] <= params["helper_max_age"]
         ]
         paired_recipients = {p[1] for p in self._timebank_pairs}
         load = {h["id"]: 0 for h in helpers}
@@ -515,14 +650,17 @@ stay_home（宅家并说明原因）。统计工具：community_report。
             h, r = self._elders.get(hid), self._elders.get(rid)
             if h is None or r is None:
                 continue
-            if self._rng.random() < 0.85:  # 偶有当月未成行
+            if self._rng.random() < params["visit_p"]:  # 偶有当月未成行
                 hname, rname = f"互助伙伴{h['name']}", f"互助对象{r['name']}"
-                self._make_tie(r, hname, "timebank", 0.35)
-                self._make_tie(h, rname, "timebank", 0.35)
-                self._touch_tie(r, hname, emotional=(self._rng.random() < 0.6),
-                                instrumental=(self._rng.random() < 0.5), delta=0.06)
-                self._touch_tie(h, rname, emotional=(self._rng.random() < 0.4),
-                                delta=0.04)
+                self._make_tie(r, hname, "timebank", params["tie_strength"])
+                self._make_tie(h, rname, "timebank", params["tie_strength"])
+                self._touch_tie(r, hname,
+                                emotional=(self._rng.random() < params["recipient_emotional_p"]),
+                                instrumental=(self._rng.random() < params["recipient_instrumental_p"]),
+                                delta=params["recipient_strength_gain"])
+                self._touch_tie(h, rname,
+                                emotional=(self._rng.random() < params["helper_emotional_p"]),
+                                delta=params["helper_strength_gain"])
                 self._timebank_credits[hid] = self._timebank_credits.get(hid, 0) + 1
                 r["month_events"].append(f"{hname}本月来陪伴帮忙")
 
@@ -530,9 +668,8 @@ stay_home（宅家并说明原因）。统计工具：community_report。
         """时间银行撤出后：不再新结对、不再计积分，但已建立的人际结对
         （非机构服务，而是真实互惠关系）以较低概率延续互动。
         延续概率是 H4 的关键机制假设，报告中做敏感性分析。"""
-        post_p = float(
-            self._intervention.get("params", {}).get("post_persist", 0.5)
-        )
+        params = self._iv_params()
+        post_p = float(params["post_persist"])
         for hid, rid in self._timebank_pairs:
             h, r = self._elders.get(hid), self._elders.get(rid)
             if h is None or r is None:
@@ -540,25 +677,27 @@ stay_home（宅家并说明原因）。统计工具：community_report。
             if self._rng.random() < post_p:
                 hname, rname = f"互助伙伴{h['name']}", f"互助对象{r['name']}"
                 if hname in r["ties"]:
-                    self._touch_tie(r, hname, emotional=(self._rng.random() < 0.5),
-                                    delta=0.03)
+                    self._touch_tie(r, hname,
+                                    emotional=(self._rng.random() < params["post_recipient_emotional_p"]),
+                                    delta=params["post_recipient_strength_gain"])
                 if rname in h["ties"]:
-                    self._touch_tie(h, rname, emotional=(self._rng.random() < 0.3),
-                                    delta=0.02)
+                    self._touch_tie(h, rname,
+                                    emotional=(self._rng.random() < params["post_helper_emotional_p"]),
+                                    delta=params["post_helper_strength_gain"])
 
     def _iv_platform(self, params: dict) -> None:
         """数字平台志愿匹配：响应式、覆盖广，但志愿者轮换、关系浅。"""
-        coverage = float(params.get("coverage", 0.6))
+        coverage = float(params["coverage"])
         for e in self._elders.values():
-            need = bool(e["month_events"]) or e["months_no_emotional"] >= 2
+            need = bool(e["month_events"]) or e["months_no_emotional"] >= params["need_months_no_emotional"]
             if not need or self._rng.random() > coverage:
                 continue
             vol = f"志愿者{self._rng.choice('甲乙丙丁戊己庚辛')}"
-            self._make_tie(e, vol, "volunteer", 0.2)
+            self._make_tie(e, vol, "volunteer", params["tie_strength"])
             tie = e["ties"][vol]
-            tie["strength"] = min(tie["strength"], 0.35)  # 轮换制，关系难深
-            self._touch_tie(e, vol, emotional=(self._rng.random() < 0.3),
-                            instrumental=bool(e["month_events"]), delta=0.03)
+            tie["strength"] = min(tie["strength"], params["tie_strength_cap"])  # 轮换制，关系难深
+            self._touch_tie(e, vol, emotional=(self._rng.random() < params["emotional_p"]),
+                            instrumental=bool(e["month_events"]), delta=params["strength_gain"])
             e["month_events"].append(f"{vol}通过社区平台上门服务了一次")
             self._log_intervention("platform_serve", {"elder": e["id"], "volunteer": vol})
 
@@ -606,7 +745,7 @@ stay_home（宅家并说明原因）。统计工具：community_report。
             return {"ok": False, "message": f"联系人里没有「{child_name}」"}
         tie = e["ties"][child_name]
         deep = self._deep_talk(tie, in_person=False)
-        self._touch_tie(e, child_name, emotional=deep, delta=0.04)
+        self._touch_tie(e, child_name, emotional=deep, delta=self._dyn["call_family_strength_gain"])
         self._log_decision(
             agent_id, "call_family",
             {"target": child_name, "reason": reason, "deep_talk": deep},
@@ -623,7 +762,7 @@ stay_home（宅家并说明原因）。统计工具：community_report。
             return {"ok": False, "message": f"认识的人里没有「{neighbor_name}」"}
         tie = e["ties"][neighbor_name]
         deep = self._deep_talk(tie, in_person=True)
-        self._touch_tie(e, neighbor_name, emotional=deep, delta=0.05)
+        self._touch_tie(e, neighbor_name, emotional=deep, delta=self._dyn["visit_strength_gain"])
         self._log_decision(
             agent_id, "visit_neighbor",
             {"target": neighbor_name, "reason": reason, "deep_talk": deep},
@@ -661,10 +800,11 @@ stay_home（宅家并说明原因）。统计工具：community_report。
     @tool(readonly=False)
     async def join_activity(self, agent_id: int, activity: str, reason: str) -> dict:
         """参加社区活动（如广场舞、棋牌、义诊），有机会结识新邻居。"""
+        d = self._dyn
         e = self._elder(agent_id)
-        e["loneliness"] = _clamp(e["loneliness"] - 0.04)
+        e["loneliness"] = _clamp(e["loneliness"] - d["activity_loneliness_drop"])
         e["month_emotional"] += 1
-        made_friend = self._rng.random() < 0.35 + 0.4 * e["extroversion"]
+        made_friend = self._rng.random() < d["activity_friend_base"] + d["activity_friend_extro_slope"] * e["extroversion"]
         new_name = None
         if made_friend:
             new_name = f"活动认识的{self._rng.choice(['张阿姨', '刘叔', '王婶', '陈伯', '李姐'])}"
@@ -673,7 +813,7 @@ stay_home（宅家并说明原因）。统计工具：community_report。
                     "kind": "friend",
                     "distance": "local",
                     "contact_per_month": 0.0,
-                    "strength": 0.25,
+                    "strength": d["activity_friend_strength"],
                     "last_contact_month": self._month,
                     "emotional_count": 1,
                     "instrumental_count": 0,
