@@ -39,13 +39,15 @@ deep_isolation_rate 仅敏感性；avg_active_ties 仅描述。
 
 用法：
   AGENTSOCIETY_LLM_API_KEY=dummy AGENTSOCIETY_LLM_API_BASE=https://tokenflux.dev/v1 \
-    <runtime-venv-python> tests/scan_timing.py
+    <runtime-venv-python> tests/scan_timing.py [--profiles placeholder|calibrated]
 
 输出：终端表格 + tests/scan_timing_result.json + tests/scan_timing_report.md
+（--profiles calibrated 时文件名加 _calibrated 后缀）
 """
 
 from __future__ import annotations
 
+import argparse
 import asyncio
 import json
 import math
@@ -62,7 +64,7 @@ sys.path.insert(0, str(REPO_ROOT / "custom" / "envs"))
 sys.path.insert(0, str(EXP_DIR / "init"))
 
 from elder_support_env import ElderSupportEnv  # noqa: E402
-from gen_profiles import gen_elder  # noqa: E402
+from gen_profiles import add_profiles_arg, make_elders, result_path, set_profile_source  # noqa: E402
 
 MONTHS = 24
 N_ELDERS = 20
@@ -79,7 +81,7 @@ PRIMARY = "isolation_rate"
 async def run_once(seed: int, cond: str | None, iv_start: int, iv_end: int) -> list[dict]:
     """跑一个 (seed, condition, window)，返回逐月 metrics 行。"""
     rng = random.Random(seed)
-    elders = [gen_elder(rng, i + 1, focal=False) for i in range(N_ELDERS)]
+    elders = make_elders(rng, N_ELDERS)
     iv = None
     if cond:
         iv = {"type": cond, "start_month": iv_start, "end_month": iv_end, "params": {}}
@@ -140,6 +142,10 @@ def slope(xs: list[float], ys: list[float]) -> float:
 
 
 async def main() -> int:
+    ap = argparse.ArgumentParser()
+    add_profiles_arg(ap)
+    profiles = set_profile_source(ap.parse_args().profiles)
+    print(f"画像来源：{profiles}")
     results: dict = {"baseline": {}, "timing_scan": {}, "duration_scan": {}}
 
     # ---- none 基线（每 seed 一次，摘要窗口按 7–18 报告以便与正式批次对齐）----
@@ -221,6 +227,7 @@ async def main() -> int:
                             "T2 更长时长降低干预期/期末孤立率，反弹不必然减小"],
             "seeds": SEEDS, "starts": STARTS, "durations": DURATIONS,
             "decay": DECAY, "n_elders": N_ELDERS, "months": MONTHS,
+            "profiles": profiles,
         },
         "caveats": [
             "规则层（无 LLM），绝对水平不可与正式批次直接比较，仅比较方向与量级",
@@ -229,7 +236,7 @@ async def main() -> int:
         ],
         **results,
     }
-    out_path = Path(__file__).with_name("scan_timing_result.json")
+    out_path = result_path(Path(__file__).with_name("scan_timing_result.json"))
     out_path.write_text(json.dumps(out, ensure_ascii=False, indent=2),
                         encoding="utf-8")
     print(f"\n结果已写入 {out_path}")
@@ -242,8 +249,10 @@ def write_report(res: dict) -> None:
     p = res["preregistered"]
     L = []
     L.append("# 介入时机与剂量：规则层扫描报告\n")
-    L.append(f"自动生成自 scan_timing_result.json；{len(p['seeds'])} 种子，"
-             f"N={p['n_elders']} 老人（全规则层），{p['months']} 月，decay={p['decay']}。\n")
+    profiles = p.get("profiles", "placeholder")
+    L.append(f"自动生成自 {result_path(Path('scan_timing_result.json'), profiles).name}；"
+             f"{len(p['seeds'])} 种子，N={p['n_elders']} 老人（全规则层），{p['months']} 月，"
+             f"decay={p['decay']}，画像来源 {profiles}。\n")
     L.append("## 预注册\n")
     L.append(f"- 主指标：{p['primary_metric']}\n- 假设：" + "；".join(p["hypotheses"]) + "\n")
     L.append("## 限制（先读这里）\n")
@@ -276,7 +285,7 @@ def write_report(res: dict) -> None:
              "量级几何』；不用于宣称真实老年人群的因果效应。指向实践的叙事应写成："
              "『在本模型的衰减机制下，筛查与介入每延迟一月，两年平均孤立率"
              "上升约 X 个百分点，提示轮候时间本身是干预设计变量』。")
-    path = Path(__file__).with_name("scan_timing_report.md")
+    path = result_path(Path(__file__).with_name("scan_timing_report.md"), profiles)
     path.write_text("\n".join(L) + "\n", encoding="utf-8")
     print(f"报告已写入 {path}")
 

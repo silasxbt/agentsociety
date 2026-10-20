@@ -28,6 +28,7 @@
 
 from __future__ import annotations
 
+import argparse
 import asyncio
 import json
 import os
@@ -42,6 +43,7 @@ EXP_DIR = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(EXP_DIR / "tests"))
 
 import scan_timing as st  # noqa: E402  复用规则层 runner 与摘要口径
+from gen_profiles import add_profiles_arg, result_path, set_profile_source  # noqa: E402
 
 SPACE = {"conditions": ["casework", "timebank", "platform"],
          "iv_start": [3, 12], "duration": [6, 12], "iv_end_max": 24}
@@ -52,6 +54,15 @@ MODEL = os.environ.get("AGENTSOCIETY_LLM_MODEL", "gpt-5.6-sol")
 API_BASE = os.environ.get("AGENTSOCIETY_LLM_API_BASE", "https://tokenflux.dev/v1")
 LOG_PATH = EXP_DIR / "tests" / "harness_loop_log.jsonl"
 RESULT_PATH = EXP_DIR / "tests" / "harness_loop_result.json"
+GRID_PATH = EXP_DIR / "tests" / "scan_timing_result.json"
+
+
+def load_grid() -> dict:
+    """读取与当前画像来源一致的 scan_timing 网格结果。"""
+    path = result_path(GRID_PATH)
+    if not path.is_file():
+        raise SystemExit(f"缺少 {path}；先用相同的 --profiles 运行 tests/scan_timing.py")
+    return json.loads(path.read_text(encoding="utf-8"))
 
 
 def llm(prompt: str) -> str:
@@ -115,8 +126,7 @@ async def evaluate(cand: dict) -> dict:
 
 
 def evidence_block(history: list[dict]) -> str:
-    grid = json.loads((EXP_DIR / "tests" / "scan_timing_result.json")
-                      .read_text(encoding="utf-8"))
+    grid = load_grid()
     lines = ["已评估网格（scan_timing，20 种子，overall=第1–24月平均孤立率，越低越好）："]
     for name, v in {**grid["timing_scan"], **grid["duration_scan"]}.items():
         lines.append(f"  {name}: overall={v['overall_isolation_rate']['mean']:.4f} "
@@ -137,6 +147,12 @@ def key_of(c: dict) -> tuple:
 
 
 async def main() -> int:
+    ap = argparse.ArgumentParser()
+    add_profiles_arg(ap)
+    profiles = set_profile_source(ap.parse_args().profiles)
+    log_path, result_out = result_path(LOG_PATH), result_path(RESULT_PATH)
+    print(f"画像来源：{profiles}")
+    load_grid()
     history: list[dict] = []
     tried: set[tuple] = set()
     # 网格里 duration 12 或 start 7 的组合视为已试，逼设计师探索网格之外
@@ -144,7 +160,7 @@ async def main() -> int:
     grid_tried |= {(c, 7, d) for c in SPACE["conditions"] for d in st.DURATIONS if d <= 12}
     best: dict | None = None
     no_improve = 0
-    log_f = LOG_PATH.open("a", encoding="utf-8")
+    log_f = log_path.open("a", encoding="utf-8")
 
     for it in range(1, MAX_ITER + 1):
         prompt = f"""你是模拟实验设计师。任务：在约束内提出下一个值得评估的干预配置，
@@ -200,8 +216,7 @@ duration 6-12 整数；iv_start+duration-1 ≤ 24。总迭代 {MAX_ITER} 轮，�
             break
     log_f.close()
 
-    grid = json.loads((EXP_DIR / "tests" / "scan_timing_result.json")
-                      .read_text(encoding="utf-8"))
+    grid = load_grid()
     grid_best = min(
         ({"name": k, "overall": v["overall_isolation_rate"]["mean"]}
          for k, v in {**grid["timing_scan"], **grid["duration_scan"]}.items()),
@@ -209,21 +224,21 @@ duration 6-12 整数；iv_start+duration-1 ≤ 24。总迭代 {MAX_ITER} 轮，�
     out = {
         "preregistered": {"objective": "min overall_isolation_rate (months 1-24, 20 seeds)",
                           "space": SPACE, "max_iter": MAX_ITER, "patience": PATIENCE,
-                          "seeds": SEEDS, "designer_model": MODEL},
+                          "seeds": SEEDS, "designer_model": MODEL, "profiles": profiles},
         "iterations": history,
         "best": best,
         "grid_best_for_reference": grid_best,
         "caveats": ["规则层机制探索，不进主结果",
                      "LLM 仅提案，评估为确定性规则层",
-                     "全部轮次已落盘（harness_loop_log.jsonl），无选择性报告"],
+                     f"全部轮次已落盘（{log_path.name}），无选择性报告"],
         "generated_at": datetime.now(timezone.utc).isoformat(),
     }
-    RESULT_PATH.write_text(json.dumps(out, ensure_ascii=False, indent=2),
-                           encoding="utf-8")
+    result_out.write_text(json.dumps(out, ensure_ascii=False, indent=2),
+                          encoding="utf-8")
     print(f"\n闭环最优：{best['candidate'] if best else None} "
           f"overall={best['score']:.4f}" if best else "无有效评估")
     print(f"网格参照最优：{grid_best['name']} overall={grid_best['overall']:.4f}")
-    print(f"结果已写入 {RESULT_PATH}")
+    print(f"结果已写入 {result_out}")
     return 0
 
 

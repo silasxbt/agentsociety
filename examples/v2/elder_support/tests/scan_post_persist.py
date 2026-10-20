@@ -8,21 +8,26 @@
 
 用法：
   AGENTSOCIETY_LLM_API_KEY=dummy AGENTSOCIETY_LLM_API_BASE=https://tokenflux.dev/v1 \
-    <runtime-venv-python> tests/scan_post_persist.py
-输出：tests/scan_post_persist_result.json
+    <runtime-venv-python> tests/scan_post_persist.py [--profiles placeholder|calibrated]
+输出：tests/scan_post_persist_result.json（calibrated 时加 _calibrated 后缀）
 """
 from __future__ import annotations
-import asyncio, json, statistics, sys
+import argparse, asyncio, json, statistics, sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from scan_decay_outcomes import run_once, summarize, IV_START, IV_END, MONTHS, N_ELDERS  # noqa: E402
+from gen_profiles import add_profiles_arg, result_path, set_profile_source  # noqa: E402
 
 SEEDS = list(range(1, 21))
 PP_VALUES = [0.0, 0.3, 0.5, 0.7, 1.0]
 DECAY = 0.06
 
 async def main() -> int:
+    ap = argparse.ArgumentParser()
+    add_profiles_arg(ap)
+    profiles = set_profile_source(ap.parse_args().profiles)
+    print(f"画像来源：{profiles}")
     base, cw = {}, {}
     for s in SEEDS:
         base[s] = summarize(await run_once(s, DECAY, "none", params={}))
@@ -31,7 +36,7 @@ async def main() -> int:
     def agg(vals): return {"mean": round(statistics.mean(vals), 4),
                            "sd": round(statistics.stdev(vals), 4)}
     out = {"months": MONTHS, "iv_window": [IV_START, IV_END], "n_elders": N_ELDERS,
-           "seeds": SEEDS, "decay": DECAY,
+           "seeds": SEEDS, "decay": DECAY, "profiles": profiles,
            "note": "全部老人为规则层（无 LLM）；反弹=撤出期−干预期孤立率；配对=同 seed 减 none",
            "none": {"iv": agg([base[s]["iv_isolation_rate"] for s in SEEDS]),
                     "post": agg([base[s]["post_isolation_rate"] for s in SEEDS]),
@@ -61,7 +66,7 @@ async def main() -> int:
     print(f"none: iv {out['none']['iv']['mean']:.3f} post {out['none']['post']['mean']:.3f} reb {out['none']['reb']['mean']:+.4f}")
     print(f"casework: iv {out['casework']['iv']['mean']:.3f} post {out['casework']['post']['mean']:.3f} "
           f"reb {out['casework']['reb']['mean']:+.4f}±{out['casework']['reb']['sd']:.4f} paired {out['casework']['paired_reb']['mean']:+.4f}")
-    dest = Path(__file__).with_name("scan_post_persist_result.json")
+    dest = result_path(Path(__file__).with_name("scan_post_persist_result.json"))
     dest.write_text(json.dumps(out, ensure_ascii=False, indent=2), encoding="utf-8")
     print(f"结果已写入 {dest}")
     return 0

@@ -111,19 +111,33 @@ Harmonized CHARLS 60+、`hhres==1`；截面用个体权重（`r4wtrespb`），�
 
 ### 4.1 参数外置
 
-把 `custom/envs/elder_support_env.py` 和 `init/gen_profiles.py` 中第 3 节表格里的常数，
-改为从 `init_config.json` 读取的 `dynamics` 参数字典，默认值等于现值（硬规则 4）。
-`init/config_params.py` 增加 `--dynamics <json>` 参数。
+**环境部分已完成（2026-10-19/20，本机）**：
+- `elder_support_env.py` 的常数已移入 `DEFAULT_DYNAMICS` / `INTERVENTION_DEFAULTS`，
+  `config_params.py` 支持 `--dynamics`、`--iv-params`（JSON 文件或字符串）。
+  默认值的结果由 `tests/regress_dynamics.py` 锁定（20/20 一致）。
+- 规则层扫描已支持 `--profiles placeholder|calibrated`（也可设环境变量
+  `ELDER_PROFILES`），覆盖 `scan_timing.py`、`scan_decay_outcomes.py`、
+  `scan_post_persist.py`、`measure_tie_survival.py`、`scan_tie_survival_floor.py`、
+  `tools/harness_loop.py`。默认 `placeholder`，结果与已入库文件逐位一致；
+  `calibrated` 结果写入加 `_calibrated` 后缀的新文件，harness 读取同来源的网格。
 
-同时给规则层扫描增加画像来源选项。现有扫描（`scan_timing.py`、`scan_decay_outcomes.py`、
-`measure_tie_survival.py` 及复用它们的 `harness_loop.py`、`scan_post_persist.py`、
-`scan_tie_survival_floor.py`）都直接调用占位画像 `gen_elder`。增加 `--profiles placeholder|calibrated`，
-默认 `placeholder` 以复现旧结果；新结果用 `calibrated` 重跑，写入新文件名，不覆盖旧结果。
+数据机器上要做的：
+
+```bash
+for s in tests/scan_timing.py tests/scan_decay_outcomes.py tests/scan_post_persist.py \
+         tests/scan_tie_survival_floor.py; do
+  $PY $EXP/$s --profiles calibrated
+done
+# harness 需要 LLM 网关，且须在 scan_timing --profiles calibrated 之后运行
+$PY $EXP/tools/harness_loop.py --profiles calibrated
+```
+
+尚未做：`init/gen_profiles.py` 内的画像常数（子女联系频率、邻里关系数与强度等）仍写在
+代码里，校准时一并外置。
 
 验收：
-- 用旧配置跑 `tests/smoke_rules_only.py`、`tests/smoke_interventions.py` 通过，
-  且任取一个旧规则层扫描点重跑，结果与 `tests/scan_timing_result.json` 逐位一致。
-- 新增 `init/dynamics_v2.json`，取值来自 `calibration_v2.json`。
+- `tests/regress_dynamics.py` 仍为 20/20 一致；旧扫描用默认参数重跑与已入库结果一致。
+- 新增 `init/dynamics_v2.json`，取值来自 `calibration_v2.json`，经 `--dynamics` 传入。
 
 ### 4.2 画像消融（问题 1）
 
