@@ -32,6 +32,16 @@ tools/build_paper.sh all
 4. 英文版附录参数表尚缺，须对照中文版补齐后再编译。
 5. PDF 同步到面板：`/srv/agentsociety-panel/app/paper/`（silasvps）。
 
+## Astra 静默定性（数据机器，`tmp/model_compare/gpt-6-astra/`）
+
+论文已把 astra 无干预静默从“涌现”降为“待核实，可能为只读路由接口伪影”。核查：
+
+1. 对 none 臂两次运行，逐个静默 agent-月找其前一条 `ask_env` / 路由回复，统计是否出现
+   “只支持查询 / 不支持联系”类文字，以及之后是否直接 `finish`。
+2. 与 casework 臂、Sol none 臂同口径对比。
+3. 若静默月多数前接此类回复：失效根因新增第三类“接口型”，第 7 节改写；若没有：
+   恢复为模型行为现象，仍不作为主发现。
+
 ## 下一版方向（数据机器跑完 DATA_MACHINE_RUNBOOK 任务后）
 
 按结果分别改写，不预写结论：
