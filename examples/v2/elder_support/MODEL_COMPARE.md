@@ -105,3 +105,14 @@ tmp/model_compare/<model-slug>/<condition>_s1/
   astra casework 臂静默率仅 2.0%，与 none 臂形成"外部行动者拉动决策"的对照。
 - `tools/model_compare_report.py` 改为：run 结束 = DONE 或 INVALID，INVALID 臂保留并标注。
 - 本地 `tmp/model_compare/gpt-6-astra/` 已从 VM 拉回（不含 *.log），VM 侧保留原件。
+
+## 2026-10-20 复核：第 12 场 platform_s2 是行为型静默，不是事故
+
+12 场主批次里唯一未冻结的是 platform seed 2。9 月 11 日把它写成“静默集中在网关超时步、基础设施型、不再补跑”。2026-10-20 在美国机面板副本 `/srv/agentsociety-panel/app/tmp/batch/platform_s2` 上重读 trace，这条不成立：
+
+- 150 个 `agent.step` 全部完成，`llm.completion` 2084 次，非 ok 为 0。
+- 静默 17/150（11.3%），分散在 agent 2/3/4/5/6 的个别月份，没有整月黑洞。
+- 决策里有 43 次 `stay_home`，说明“不行动”当时是会被记下来的；缺的是那 17 个月没有写出任何环境行动。
+- `daily-guidance` 六个焦点老人都激活了，和有效 Sol run 一样，不是误开技能导致的静默。
+
+2026-10-19 在美国机用同一画像、gpt-5.6-sol、审计代理补跑（`supplements/20261019/sol_platform_s2_rerun_20261019/platform_s2`）：CLI 完成，静默率 60.7%（91/150），LLM 错误率 0，判 INVALID。trace 里大量 `ask_env` 回复是“环境只支持查询，不支持联系子女/邻居”，随后 `finish`，不写 `call_family` / `visit_neighbor` / `stay_home`。agent 2 与 agent 4 整场无决策。这是同一类行为型静默被放大，不是网关事故；不补进 11 个有效 run。论文第 4 节与稳健性节已按此改口径。
