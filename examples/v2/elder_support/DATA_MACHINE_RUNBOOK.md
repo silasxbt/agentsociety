@@ -177,19 +177,19 @@ $PY $EXP/tools/harness_loop.py --profiles calibrated
 
 前置条件：任务 C 全部验收，`dynamics_v2_tuned.json` 冻结并提交。
 
-1. **预注册**（问题 5）：新建 `CROSS_MODEL_PROTOCOL_V2.md`，写定
-   - 设计：gpt-5.6-sol、gpt-6-astra medium、Claude Opus 5.5 × 4 条件 × seed 1/2/3；
-     另加 LLM 层时机对照（预防期、预警期、危机期三个启动月，casework 与 timebank）。
-   - 收敛判据：各模型配对差方向是否一致；跨模型差异是否小于跨种子差异。
-   - 静默：保留 10% 绝对门槛做质控；同时报告每模型 none 臂基线静默率，并做剔除静默月的焦点层分析。
-   - 输出目录：`tmp/v2_calibrated/<model>/<cond>_s<seed>/`，旧目录不动。
-2. **工程**：`tools/run_astra_single.py` 中写死的模型名与 `reasoning_effort=medium`
-   校验改为参数；Opus 走 `AGENTSOCIETY_LLM_PROVIDER=anthropic`，先用真实小请求确认
-   网关可调用、请求审计记录完整，再开跑。
+1. **预注册**（问题 5）：`CROSS_MODEL_PROTOCOL_V2.md` 已在本机起草（2026-10-20）。
+   设计、收敛判据、静默处理、输出目录见该文件。开跑前只改勘误，不得改判据。
+2. **工程**（本机已完成，数据机器上验收）：
+   - `run_astra_single.py` 支持 `--model/--reasoning-effort/--provider/--run-dir`；
+     anthropic 审计 `/messages` 的 thinking / output_config。
+   - `AGENTSOCIETY_LLM_ALLOW_REASONING_ALIAS=1` 已写入
+     `packages/agentsociety2/.../panel_settings.py`，仅 openai 线生效。
+   - `cross_model_cohort.py prepare/report` 支持任意模型、种子与 `--extra-cohort`。
+   数据机器上：Opus 先发一条真实 medium 小请求，确认审计与计费后再开跑。
 3. **资源**：e2-micro（1GB）串行太慢，换 4–8 核、约 16GB 机器同时跑 3–4 场；
    先小规模试并发，确认网关不致静默。费用估算每场约 \$100–130，以账单为准。
-4. **分析**：`tools/cross_model_cohort.py report` 扩展为三模型；结论按
-   `paper/main_zh.tex` 的“规定 vs 涌现”表逐条标注各模型下是否一致。
+4. **分析**：`cross_model_cohort.py report --extra-cohort opus_medium=... --seeds 1,2,3`；
+   结论按 `tab:prescribed` 逐条标注各模型下是否一致。
 
 ## 6. 任务 E：论文重构（与任务 D 并行开始，D 出数后定稿）
 

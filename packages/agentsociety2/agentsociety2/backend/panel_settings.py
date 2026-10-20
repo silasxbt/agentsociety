@@ -304,6 +304,15 @@ def llm_call_overrides() -> dict[str, Any]:
     depth = os.getenv("AGENTSOCIETY_LLM_REASONING_EFFORT", "").strip().lower()
     if depth in {"low", "medium", "high"}:
         kwargs["reasoning_effort"] = depth
+        # litellm rejects reasoning_effort for OpenAI-compatible model aliases missing
+        # from its model map. The anthropic provider maps it to thinking/output_config
+        # itself; whitelisting there would also leak the raw field into the request.
+        provider = os.getenv("AGENTSOCIETY_LLM_PROVIDER", "openai").strip().lower()
+        if (
+            os.getenv("AGENTSOCIETY_LLM_ALLOW_REASONING_ALIAS", "").strip() == "1"
+            and provider != "anthropic"
+        ):
+            kwargs["allowed_openai_params"] = ["reasoning_effort"]
     temp = os.getenv("AGENTSOCIETY_LLM_TEMPERATURE", "").strip()
     if temp:
         try:

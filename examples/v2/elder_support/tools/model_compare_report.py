@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
-"""双模型（gpt-5.6-sol vs gpt-6-astra）敏感性对比报告（MODEL_COMPARE.md 的分析步骤）。
+"""跨模型敏感性对比报告。
 
-sol 臂读主批次 tmp/batch/{none,casework}_s1；新模型臂读
-tmp/model_compare/<slug>/{none,casework}_s1（须有 DONE 且无 INVALID）。
+sol 臂读主批次 tmp/batch/{none,casework}_s1；其余模型读
+tmp/model_compare/<slug>/{none,casework}_s1（须有 DONE 或 INVALID）。
 输出：每模型 casework−none 配对差（iso_iv / iso_post / iso_rebound）
 + 每月孤立率轨迹，写 tests/model_compare_report.json 并打印表格。
 窗口与主批次 compare_conditions.py 一致：iv=7–18，post=19–月末。
-单 seed，仅描述性比较；不做显著性 / 排名声称。
+单 seed，仅描述性比较；不做显著性 / 排名声称。v2 批次（4 条件 × 3 种子）
+用 tools/cross_model_cohort.py report。
 """
 
 from __future__ import annotations
@@ -99,7 +100,7 @@ def main() -> None:
 
     out = {
         "windows": {"intervention": [IV_START, IV_END], "post": [19, MONTHS]},
-        "note": "单 seed 描述性比较；判读标准=两模型下 casework 是否同向呈现「干预期压低 + 撤出后反弹」；silence_rate 为焦点老人无决策 agent-月占比（门槛 10%）",
+        "note": "单 seed 描述性比较（tmp/model_compare 下每个子目录一个模型）；判读标准=各模型下 casework 是否同向呈现「干预期压低 + 撤出后反弹」；silence_rate 为焦点老人无决策 agent-月占比（门槛 10%）",
         "models": models,
     }
     dest = ROOT / "tests" / "model_compare_report.json"
