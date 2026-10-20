@@ -6,7 +6,8 @@
 
 ## 一、今天完成的工作
 
-提交均在 `main` 分支（`c2dbcd92`…`7bdfd38e`），时间顺序如下。
+提交 `c2dbcd92`…`7bdfd38e` 在分支 `elder-support/finals-prep-20261019`，经
+[PR #19](https://github.com/silasxbt/agentsociety/pull/19) 合入 `main`（`main` 受保护，不能直推）。时间顺序如下。
 
 1. **六个问题的审查与计划**（`c2dbcd92`）
    - 六个问题逐条分类（2/2/5/3/2/2），写明依据与下一步，赛道建议投
