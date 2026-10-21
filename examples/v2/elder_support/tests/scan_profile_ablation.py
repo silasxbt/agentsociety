@@ -27,6 +27,13 @@
   CHARLS（60+）而画像来自 CLHLS（65+）；动力学未经校准，本实验只比较画像来源。
 ==========================================================================
 
+== 补充预注册（2026-10-21，校准后复跑）==================================
+复跑用 tools/calibrate_dynamics.py 选出的 init/dynamics_v2_tuned.json（--dynamics），
+设计、种子（1–20）、指标与判据与上文完全相同，输出加 _tuned 后缀。
+动力学是在校准画像、种子 101–120 上拟合的；复跑种子 1–20 与拟合种子不重叠。
+已知不对称：拟合只用了校准画像，这会偏向校准来源，结果须并列报告此点。
+==========================================================================
+
 用法：AGENTSOCIETY_LLM_API_KEY=dummy AGENTSOCIETY_LLM_API_BASE=http://localhost \\
        <venv-python> tests/scan_profile_ablation.py [--sources calibrated,uniform,resample]
 输出：tests/profile_ablation_result.json（只含汇总，不含个体记录）
@@ -91,12 +98,16 @@ def input_fidelity(elders: list, dist: dict) -> dict:
     return d
 
 
+DYNAMICS: dict = {}
+
+
 async def run_env(elders: list, seed: int, cond: str, months: int, snap: tuple = ()) -> tuple:
     iv = None if cond == "none" else {"type": cond, "start_month": IV_START,
                                       "end_month": IV_END, "params": {}}
     snaps = {}
     with tempfile.TemporaryDirectory() as td:
-        env = ElderSupportEnv(elders=elders, seed=seed, decay_rate=DECAY, intervention=iv)
+        env = ElderSupportEnv(elders=elders, seed=seed, decay_rate=DECAY, intervention=iv,
+                              dynamics=DYNAMICS or None)
         env._bind_workspace(Path(td) / "ws")
         t = datetime(2026, 1, 1, 8)
         for tick in range(months + 1):
@@ -160,10 +171,15 @@ async def run_source(source: str, dist: dict) -> dict:
 async def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--sources", default="calibrated,uniform,resample")
-    srcs = ap.parse_args().sources.split(",")
+    ap.add_argument("--dynamics", default=None, help="动力学覆盖 JSON 文件（校准后复跑）")
+    args = ap.parse_args()
+    srcs = args.sources.split(",")
+    if args.dynamics:
+        DYNAMICS.update(json.loads(Path(args.dynamics).read_text(encoding="utf-8")))
     dist = load_dist()
     out = {"preregistered": "见脚本头部（2026-10-21）", "seeds": SEEDS, "n_elders": N_ELDERS,
            "decay": DECAY, "burn_in": BURN_IN, "horizon": HORIZON, "targets": TARGETS,
+           "dynamics_override": DYNAMICS,
            "results": {}}
     for src in srcs:
         out["results"][src] = await run_source(src, dist)
@@ -171,7 +187,8 @@ async def main() -> int:
         print(f"{src:<11} 输入TVD {r['A_input_tvd']['mean']['mean']:.3f}  "
               f"输出主误差 {r['B_primary_mean_abs_err_pp']:.1f}pp  "
               + "  ".join(f"{k.split('_')[0]}={v['sim']:.1%}" for k, v in r["B_output"].items()))
-    p = Path(__file__).with_name("profile_ablation_result.json")
+    name = "profile_ablation_result_tuned.json" if DYNAMICS else "profile_ablation_result.json"
+    p = Path(__file__).with_name(name)
     p.write_text(json.dumps(out, ensure_ascii=False, indent=2), encoding="utf-8")
     print(f"写入 {p}")
     return 0
