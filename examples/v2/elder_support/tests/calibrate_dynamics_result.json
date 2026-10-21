@@ -1,0 +1,99 @@
+{
+  "preregistered": "见脚本头部（2026-10-21）",
+  "seeds": [
+    101,
+    102,
+    103,
+    104,
+    105,
+    106,
+    107,
+    108,
+    109,
+    110,
+    111,
+    112,
+    113,
+    114,
+    115,
+    116,
+    117,
+    118,
+    119,
+    120
+  ],
+  "grid": {
+    "lonely_relaxation": [
+      0.2,
+      0.3,
+      0.4,
+      0.5
+    ],
+    "lonely_noise_sd": [
+      0.0,
+      0.04,
+      0.08,
+      0.12,
+      0.16,
+      0.2
+    ],
+    "lonely_target_base": [
+      0.8,
+      0.85,
+      0.9
+    ]
+  },
+  "best": {
+    "params": {
+      "lonely_relaxation": 0.2,
+      "lonely_noise_sd": 0.2,
+      "lonely_target_base": 0.9
+    },
+    "sim": {
+      "B1_lonely_often": 0.195,
+      "B2_lonely_sometimes_plus": 0.3125,
+      "B3_incidence_3y": 0.2609,
+      "B4_persistence_3y": 0.4872
+    },
+    "err_pp": {
+      "B1_lonely_often": 4.5,
+      "B2_lonely_sometimes_plus": 8.75,
+      "B3_incidence_3y": 1.11,
+      "B4_persistence_3y": 4.58
+    },
+    "train_err": 4.788,
+    "holdout_err": 4.58,
+    "at_risk": [
+      322,
+      78
+    ]
+  },
+  "default": {
+    "params": {
+      "lonely_relaxation": 0.5,
+      "lonely_noise_sd": 0.0,
+      "lonely_target_base": 0.9
+    },
+    "sim": {
+      "B1_lonely_often": 0.1375,
+      "B2_lonely_sometimes_plus": 0.215,
+      "B3_incidence_3y": 0.0899,
+      "B4_persistence_3y": 0.9636
+    },
+    "err_pp": {
+      "B1_lonely_often": 1.25,
+      "B2_lonely_sometimes_plus": 18.5,
+      "B3_incidence_3y": 18.21,
+      "B4_persistence_3y": 43.06
+    },
+    "train_err": 12.655,
+    "holdout_err": 43.06,
+    "at_risk": [
+      345,
+      55
+    ]
+  },
+  "spearman_train_vs_holdout": 0.458,
+  "V1_holdout_improves": true,
+  "V2_positive_spearman": true
+}
