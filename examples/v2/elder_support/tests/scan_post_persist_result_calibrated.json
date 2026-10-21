@@ -1,0 +1,167 @@
+{
+  "months": 24,
+  "iv_window": [
+    7,
+    18
+  ],
+  "n_elders": 20,
+  "seeds": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20
+  ],
+  "decay": 0.06,
+  "profiles": "calibrated",
+  "note": "全部老人为规则层（无 LLM）；反弹=撤出期−干预期孤立率；配对=同 seed 减 none",
+  "none": {
+    "iv": {
+      "mean": 0.1606,
+      "sd": 0.0642
+    },
+    "post": {
+      "mean": 0.1617,
+      "sd": 0.0649
+    },
+    "reb": {
+      "mean": 0.001,
+      "sd": 0.0237
+    }
+  },
+  "casework": {
+    "iv": {
+      "mean": 0.0294,
+      "sd": 0.0183
+    },
+    "post": {
+      "mean": 0.1254,
+      "sd": 0.0578
+    },
+    "reb": {
+      "mean": 0.096,
+      "sd": 0.0493
+    },
+    "paired_reb": {
+      "mean": 0.095,
+      "sd": 0.0549
+    }
+  },
+  "timebank": {
+    "pp0.0": {
+      "post_persist": 0.0,
+      "iv": {
+        "mean": 0.0983,
+        "sd": 0.062
+      },
+      "post": {
+        "mean": 0.145,
+        "sd": 0.0666
+      },
+      "reb": {
+        "mean": 0.0467,
+        "sd": 0.0484
+      },
+      "paired_reb": {
+        "mean": 0.0456,
+        "sd": 0.046
+      },
+      "n_reb_lt_casework": 17
+    },
+    "pp0.3": {
+      "post_persist": 0.3,
+      "iv": {
+        "mean": 0.0983,
+        "sd": 0.062
+      },
+      "post": {
+        "mean": 0.1308,
+        "sd": 0.0705
+      },
+      "reb": {
+        "mean": 0.0325,
+        "sd": 0.0456
+      },
+      "paired_reb": {
+        "mean": 0.0315,
+        "sd": 0.0402
+      },
+      "n_reb_lt_casework": 19
+    },
+    "pp0.5": {
+      "post_persist": 0.5,
+      "iv": {
+        "mean": 0.0983,
+        "sd": 0.062
+      },
+      "post": {
+        "mean": 0.1167,
+        "sd": 0.0683
+      },
+      "reb": {
+        "mean": 0.0183,
+        "sd": 0.035
+      },
+      "paired_reb": {
+        "mean": 0.0173,
+        "sd": 0.0315
+      },
+      "n_reb_lt_casework": 19
+    },
+    "pp0.7": {
+      "post_persist": 0.7,
+      "iv": {
+        "mean": 0.0983,
+        "sd": 0.062
+      },
+      "post": {
+        "mean": 0.1133,
+        "sd": 0.0616
+      },
+      "reb": {
+        "mean": 0.015,
+        "sd": 0.0304
+      },
+      "paired_reb": {
+        "mean": 0.014,
+        "sd": 0.0246
+      },
+      "n_reb_lt_casework": 20
+    },
+    "pp1.0": {
+      "post_persist": 1.0,
+      "iv": {
+        "mean": 0.0983,
+        "sd": 0.062
+      },
+      "post": {
+        "mean": 0.1058,
+        "sd": 0.0646
+      },
+      "reb": {
+        "mean": 0.0075,
+        "sd": 0.0294
+      },
+      "paired_reb": {
+        "mean": 0.0065,
+        "sd": 0.0259
+      },
+      "n_reb_lt_casework": 19
+    }
+  }
+}

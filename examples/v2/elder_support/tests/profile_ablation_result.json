@@ -1,0 +1,325 @@
+{
+  "preregistered": "见脚本头部（2026-10-21）",
+  "seeds": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20
+  ],
+  "n_elders": 20,
+  "decay": 0.06,
+  "burn_in": 12,
+  "horizon": 48,
+  "targets": {
+    "B1_lonely_often": 0.15,
+    "B2_lonely_sometimes_plus": 0.4,
+    "B3_incidence_3y": 0.272,
+    "B4_persistence_3y": 0.533
+  },
+  "results": {
+    "calibrated": {
+      "A_input_tvd": {
+        "age_band": {
+          "mean": 0.2011,
+          "sd": 0.0766
+        },
+        "sex": {
+          "mean": 0.1273,
+          "sd": 0.0891
+        },
+        "health_b12": {
+          "mean": 0.1578,
+          "sd": 0.0575
+        },
+        "loneliness_b38": {
+          "mean": 0.1761,
+          "sd": 0.078
+        },
+        "children": {
+          "mean": 0.2202,
+          "sd": 0.0626
+        },
+        "mean": {
+          "mean": 0.1765,
+          "sd": 0.0339
+        }
+      },
+      "B_output": {
+        "B1_lonely_often": {
+          "sim": 0.1475,
+          "target": 0.15,
+          "abs_err_pp": 0.25
+        },
+        "B2_lonely_sometimes_plus": {
+          "sim": 0.245,
+          "target": 0.4,
+          "abs_err_pp": 15.5
+        },
+        "B3_incidence_3y": {
+          "sim": 0.0968,
+          "target": 0.272,
+          "abs_err_pp": 17.52
+        },
+        "B4_persistence_3y": {
+          "sim": 0.9831,
+          "target": 0.533,
+          "abs_err_pp": 45.01
+        }
+      },
+      "B_seed_sd": {
+        "B1": 0.085,
+        "B2": 0.0887
+      },
+      "B_counts": {
+        "incidence_at_risk": 341,
+        "persistence_at_risk": 59
+      },
+      "B_primary_mean_abs_err_pp": 19.57,
+      "C_paired_vs_none": {
+        "casework": {
+          "iv": {
+            "mean": -0.1313,
+            "sd": 0.0547
+          },
+          "post": {
+            "mean": -0.0363,
+            "sd": 0.029
+          }
+        },
+        "timebank": {
+          "iv": {
+            "mean": -0.0623,
+            "sd": 0.0494
+          },
+          "post": {
+            "mean": -0.045,
+            "sd": 0.0333
+          }
+        },
+        "platform": {
+          "iv": {
+            "mean": -0.0263,
+            "sd": 0.0232
+          },
+          "post": {
+            "mean": -0.0229,
+            "sd": 0.0376
+          }
+        }
+      },
+      "C_iv_ranking": [
+        "casework",
+        "timebank",
+        "platform"
+      ]
+    },
+    "uniform": {
+      "A_input_tvd": {
+        "age_band": {
+          "mean": 0.2493,
+          "sd": 0.0824
+        },
+        "sex": {
+          "mean": 0.1556,
+          "sd": 0.1114
+        },
+        "health_b12": {
+          "mean": 0.3289,
+          "sd": 0.0808
+        },
+        "loneliness_b38": {
+          "mean": 0.2865,
+          "sd": 0.105
+        },
+        "children": {
+          "mean": 0.2268,
+          "sd": 0.0761
+        },
+        "mean": {
+          "mean": 0.2494,
+          "sd": 0.044
+        }
+      },
+      "B_output": {
+        "B1_lonely_often": {
+          "sim": 0.2225,
+          "target": 0.15,
+          "abs_err_pp": 7.25
+        },
+        "B2_lonely_sometimes_plus": {
+          "sim": 0.3875,
+          "target": 0.4,
+          "abs_err_pp": 1.25
+        },
+        "B3_incidence_3y": {
+          "sim": 0.1608,
+          "target": 0.272,
+          "abs_err_pp": 11.12
+        },
+        "B4_persistence_3y": {
+          "sim": 0.9775,
+          "target": 0.533,
+          "abs_err_pp": 44.45
+        }
+      },
+      "B_seed_sd": {
+        "B1": 0.0866,
+        "B2": 0.0825
+      },
+      "B_counts": {
+        "incidence_at_risk": 311,
+        "persistence_at_risk": 89
+      },
+      "B_primary_mean_abs_err_pp": 16.02,
+      "C_paired_vs_none": {
+        "casework": {
+          "iv": {
+            "mean": -0.1927,
+            "sd": 0.0512
+          },
+          "post": {
+            "mean": -0.0658,
+            "sd": 0.0454
+          }
+        },
+        "timebank": {
+          "iv": {
+            "mean": -0.1096,
+            "sd": 0.0511
+          },
+          "post": {
+            "mean": -0.0829,
+            "sd": 0.0526
+          }
+        },
+        "platform": {
+          "iv": {
+            "mean": -0.0431,
+            "sd": 0.0281
+          },
+          "post": {
+            "mean": -0.0287,
+            "sd": 0.0396
+          }
+        }
+      },
+      "C_iv_ranking": [
+        "casework",
+        "timebank",
+        "platform"
+      ]
+    },
+    "resample": {
+      "A_input_tvd": {
+        "age_band": {
+          "mean": 0.2133,
+          "sd": 0.0588
+        },
+        "sex": {
+          "mean": 0.0837,
+          "sd": 0.0811
+        },
+        "health_b12": {
+          "mean": 0.1664,
+          "sd": 0.0723
+        },
+        "loneliness_b38": {
+          "mean": 0.1517,
+          "sd": 0.048
+        },
+        "children": {
+          "mean": 0.1951,
+          "sd": 0.0503
+        },
+        "mean": {
+          "mean": 0.162,
+          "sd": 0.0274
+        }
+      },
+      "B_output": {
+        "B1_lonely_often": {
+          "sim": 0.12,
+          "target": 0.15,
+          "abs_err_pp": 3.0
+        },
+        "B2_lonely_sometimes_plus": {
+          "sim": 0.2025,
+          "target": 0.4,
+          "abs_err_pp": 19.75
+        },
+        "B3_incidence_3y": {
+          "sim": 0.0966,
+          "target": 0.272,
+          "abs_err_pp": 17.54
+        },
+        "B4_persistence_3y": {
+          "sim": 1.0,
+          "target": 0.533,
+          "abs_err_pp": 46.7
+        }
+      },
+      "B_seed_sd": {
+        "B1": 0.0768,
+        "B2": 0.085
+      },
+      "B_counts": {
+        "incidence_at_risk": 352,
+        "persistence_at_risk": 48
+      },
+      "B_primary_mean_abs_err_pp": 21.75,
+      "C_paired_vs_none": {
+        "casework": {
+          "iv": {
+            "mean": -0.1098,
+            "sd": 0.0509
+          },
+          "post": {
+            "mean": -0.0246,
+            "sd": 0.0384
+          }
+        },
+        "timebank": {
+          "iv": {
+            "mean": -0.071,
+            "sd": 0.0389
+          },
+          "post": {
+            "mean": -0.0429,
+            "sd": 0.0383
+          }
+        },
+        "platform": {
+          "iv": {
+            "mean": -0.0308,
+            "sd": 0.0278
+          },
+          "post": {
+            "mean": -0.0162,
+            "sd": 0.035
+          }
+        }
+      },
+      "C_iv_ranking": [
+        "casework",
+        "timebank",
+        "platform"
+      ]
+    }
+  }
+}

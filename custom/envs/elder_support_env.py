@@ -75,6 +75,9 @@ DEFAULT_DYNAMICS: Dict[str, Any] = {
     "lonely_target_per_health": 0.25,
     "lonely_target_per_introversion": 0.10,
     "lonely_relaxation": 0.5,
+    # 月度孤独感个体扰动（标准差）。默认 0 = 无扰动，历史结果逐位不变；
+    # 扰动用独立随机流，sd=0 时不抽样，不影响其他随机过程。2026-10-21 为动力学校准新增。
+    "lonely_noise_sd": 0.0,
     "deep_isolation_months": 3,
     # 焦点老人工具
     "call_family_strength_gain": 0.04,
@@ -190,6 +193,7 @@ class ElderSupportEnv(EnvBase):
         super().__init__()
         self._seed = int(seed)
         self._rng = random.Random(self._seed)
+        self._noise_rng = random.Random(self._seed * 1000003 + 17)
         self._dyn = _merge_params(DEFAULT_DYNAMICS, dynamics, "动力学")
         self._decay_rate = float(decay_rate)
         self._event_rates = {
@@ -304,6 +308,7 @@ stay_home（宅家并说明原因）。统计工具：community_report。
                 {
                     "seed": self._seed,
                     "rng_state": self._rng.getstate(),
+                    "noise_rng_state": self._noise_rng.getstate(),
                     "decay_rate": self._decay_rate,
                     "event_rates": self._event_rates,
                     "dynamics": self._dyn,
@@ -341,10 +346,14 @@ stay_home（宅家并说明原因）。统计工具：community_report。
         }
         self._timebank_pairs = [list(p) for p in data.get("timebank_pairs", [])]
         self._rng = random.Random(self._seed)
+        self._noise_rng = random.Random(self._seed * 1000003 + 17)
         try:
             st = data.get("rng_state")
             if st:
                 self._rng.setstate((st[0], tuple(st[1]), st[2]))
+            nst = data.get("noise_rng_state")
+            if nst:
+                self._noise_rng.setstate((nst[0], tuple(nst[1]), nst[2]))
         except Exception:
             pass  # 随机态恢复失败时退回种子重置，不阻断 resume
         return True
@@ -528,6 +537,10 @@ stay_home（宅家并说明原因）。统计工具：community_report。
         elder["loneliness"] = _clamp(
             elder["loneliness"] + d["lonely_relaxation"] * (target - elder["loneliness"])
         )
+        if d["lonely_noise_sd"] > 0:
+            elder["loneliness"] = _clamp(
+                elder["loneliness"] + self._noise_rng.gauss(0.0, d["lonely_noise_sd"])
+            )
         elder["deep_isolation"] = (
             elder["months_no_emotional"] >= d["deep_isolation_months"]
             and elder["month_instrumental"] == 0

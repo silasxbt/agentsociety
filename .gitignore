@@ -228,3 +228,6 @@ examples/v2/elder_support/paper/*.synctex.gz
 !packages/agentsociety2/agentsociety2/agent/skills/**/references/*.json
 # 调查微观数据（CHARLS/CLHLS）不入 git，只用于本地生成校准分布
 data/raw/
+
+# 受限个体数据（CLHLS 记录重抽等），不入库
+data/restricted/
