@@ -116,3 +116,10 @@ tmp/model_compare/<model-slug>/<condition>_s1/
 - `daily-guidance` 六个焦点老人都激活了，和有效 Sol run 一样，不是误开技能导致的静默。
 
 2026-10-19 在美国机用同一画像、gpt-5.6-sol、审计代理补跑（`supplements/20261019/sol_platform_s2_rerun_20261019/platform_s2`）：CLI 完成，静默率 60.7%（91/150），LLM 错误率 0，判 INVALID。trace 里大量 `ask_env` 回复是“环境只支持查询，不支持联系子女/邻居”，随后 `finish`，不写 `call_family` / `visit_neighbor` / `stay_home`。agent 2 与 agent 4 整场无决策。这是同一类行为型静默被放大，不是网关事故；不补进 11 个有效 run。论文第 4 节与稳健性节已按此改口径。
+
+## 2026-10-21 更正：上一条“行为型静默”应为路由设计问题
+
+上一条把 platform_s2 及其补跑判为“行为型静默、不是事故”。复核确认：补跑中“环境只支持查询，
+不支持联系子女/邻居”的回答来自只读路由（只把只读工具交给生成模型，且未区分“这次不能写”与
+“没有这个功能”），astra 的高静默同源。失效类型改为“接口型”，详见 `ROUTER_INCIDENT_20261021.md`。
+判定结果（无效、不补进主结果）不变。

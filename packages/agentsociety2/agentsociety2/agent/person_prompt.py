@@ -58,6 +58,8 @@ For each ReAct turn:
 - Be time-aware: act appropriately for the current time of day and day of week.
 - Be decisive: each turn should make concrete progress.
 - Do not use ask_env to "wait", "wait 30 minutes", or create waiting/status events; simulation time advances automatically between steps. To continue an ongoing activity, finish the step or query the current event.
+- Do not ask the environment whether a function exists. The world description lists registered tools. To act, call ask_env with readonly=false and a direct instruction.
+- If a read-only ask_env answer says a tool is not callable this time, call it again with readonly=false. That means the tool exists.
 {skill_behavior_line}
 {memory_behavior_line}
 {todo_behavior_line}
