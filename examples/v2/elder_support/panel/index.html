@@ -351,7 +351,7 @@ const I18N = {
   statusRun:['运行中','Running'], statusIdle:['空闲','Idle'], statusDone:['已完成','Done'],
   runQueued:['排队中','queued'],
   condNone:['基线','baseline'], condCasework:['社工探访','casework'],
-  condTimebank:['时间银行','timebank'], condPlatform:['数字平台','platform'],
+  condTimebank:['互助结对','timebank'], condPlatform:['志愿匹配','platform'],
   btnStart:['启动模拟','Start Simulation'], btnStop:['停止','Stop'],
   navLive:['运行台','Live'], navConcl:['结论','Conclusions'], navHistory:['日志','Logs'],
   navQa:['介绍','About'],
@@ -390,7 +390,7 @@ const I18N = {
   lblMonths:['月数','Months'], lblSeed:['随机种子','Random seed'], lblNum:['老人数','Number of elders'],
   lblFocal:['LLM 焦点数','LLM focal count'], lblCond:['干预条件','Intervention'],
   condNone:['无干预（基线）','None (baseline)'], condCasework:['社工探访','Casework (outreach visits)'],
-  condTimebank:['时间银行互助','Timebank'], condPlatform:['数字平台志愿','Digital platform'],
+  condTimebank:['互助结对（时间银行）','Mutual-aid pairing'], condPlatform:['志愿匹配（数字平台）','Volunteer matching'],
   lblIvS:['干预开始月','Intervention start month'], lblIvE:['干预结束月','Intervention end month'],
   lblNote:['备注 / 预留提示词（暂存于 run 元数据，后续版本注入 agent 指引）','Notes / reserved prompt (stored in run metadata, injected into agent instructions in a future version)'],
   notePh:['例如：本轮观察重点、给焦点老人的附加指引……','e.g. what to watch this run, extra guidance for focal elders…'],
@@ -410,7 +410,7 @@ const I18N = {
   h2e:['定性证据已现（87 岁焦点老人案例），定量分层待批量实验','Qualitative evidence seen (87yo focal case); quantitative stratification pending batch runs'],
   h3t:['预警期介入性价比最高','Intervening during the warning phase is most cost-effective'],
   h3e:['时机实验未开始（批量实验之后）','Timing experiment not started yet (after batch runs)'],
-  h4t:['时间银行撤出后可持续性最好','Timebank has the best post-withdrawal persistence'],
+  h4t:['互助结对撤出后可持续性最好','Timebank has the best post-withdrawal persistence'],
   cmpTitle:['三种干预对照','Comparison of the three interventions'],
   quoteTitle:['行为效度：模拟中自发出现的「中国式求助心理」（对照 CLHLS a58「不想麻烦子女」61.4%）','Behavioral validity: emergent "reluctance to trouble family" (cf. CLHLS a58, 61.4%)'],
   chLon:['平均孤独感（月度）','Avg loneliness (monthly)'], chIso:['孤立率与深度孤立率（月度）','Isolation & deep isolation rate (monthly)'],
@@ -435,7 +435,7 @@ const I18N = {
   batchNote:['（正式批量实验结果）',' (formal batch results)'],
   smokeNote:['（{label}，正式批量实验后自动替换）',' ({label}, will auto-switch to formal batch results)'],
   batchPending:['批量结果已生成，见 tmp/batch/comparison.json（表格渲染待接入）','Batch results generated, see tmp/batch/comparison.json (table rendering pending)'],
-  h4ok:['冒烟方向成立：撤出后孤立率 时间银行 {tb}% < 平台 < 个案 < 基线 {none}%（待批量验证）','Smoke-test direction holds: post-withdrawal isolation timebank {tb}% < platform < casework < baseline {none}% (pending batch validation)'],
+  h4ok:['冒烟方向成立：撤出后孤立率 互助结对 {tb}% < 志愿匹配 < 社工探访 < 基线 {none}%（待批量验证）','Smoke-test direction holds: post-withdrawal isolation timebank {tb}% < platform < casework < baseline {none}% (pending batch validation)'],
   tileLon:['平均孤独感','Avg loneliness'], tileIso:['孤立率','Isolation rate'], tileDeep:['深度孤立率','Deep isolation rate'],
   tileTies:['平均活跃关系','Avg active ties'], tileCalls:['LLM 调用','LLM calls'],
   tileLonSub:['起点 ','from '], tileIsoSub:['当月无任何来访/联系','no visit/contact this month'],
@@ -454,10 +454,10 @@ const I18N = {
   // ---- 结论页 ----
   conclTitle:['正式批次论文核心结果','Formal batch: headline paper results'],
   conclTitleTip:['整页的阅读说明。下面的数字来自 11 次正式模拟（计划 12 次，1 次因老人“发呆”太多被判无效）。每次模拟：20 个虚拟老人过 24 个月，第 7–18 月有人来帮忙，之后帮忙的人撤走。','How to read this page. Numbers come from 11 formal runs (12 planned; 1 ruled invalid because elders went silent too often). Each run: 20 virtual elders over 24 months, help arrives in months 7–18, then is withdrawn.'],
-  chBatchTrajTip:['横轴是月份，纵轴是“多少比例的老人处于孤立状态”。四条线是四种情况：没人管、社工上门探访、老人互助时间银行、平台配志愿者。看线什么时候往下掉（帮忙起效）、撤走后又弹回多少。','X is month, Y is the share of elders who are isolated. Four lines: no help, social-worker outreach visits, peer timebank, platform-matched volunteers. Watch when the line drops (help works) and how much it bounces back after withdrawal.'],
+  chBatchTrajTip:['横轴是月份，纵轴是“多少比例的老人处于孤立状态”。四条线是四种情况：没人管、社工探访、互助结对、志愿匹配。看线什么时候往下掉（帮忙起效）、撤走后又弹回多少。','X is month, Y is the share of elders who are isolated. Four lines: no help, social-worker outreach visits, peer timebank, platform-matched volunteers. Watch when the line drops (help works) and how much it bounces back after withdrawal.'],
   chBatchScatterTip:['每个点是一次模拟在“有人帮忙那 12 个月”里的平均孤立率。同一种帮法跑了 3 次（换随机种子），点挤在一起说明结果稳，散开说明运气成分大。','Each dot is one run\'s average isolation rate during the 12 help months. Each condition ran 3 times with different random seeds: tight dots mean stable results, scattered dots mean luck matters.'],
   ivTitleTip:['把图变成数字：每种帮法平均让多少比例的老人孤立、跑了几次有效模拟。这是论文最主要的一张表。核心发现：社工上门探访在帮忙期间孤立率最低；它每月固定覆盖 16 人，投入量比另两种多，不能直接说明哪种方法更好。','The chart as numbers: for each kind of help, the average isolation share and how many valid runs. The paper\'s main table. Key finding: casework has the lowest isolation while help is present; it covers a fixed 16 elders a month, more input than the other two, so this does not show which method is better.'],
-  effectTitleTip:['“反弹”= 帮忙的人走后，孤立率比帮忙期间涨回多少。“配对差值”= 同一随机种子下“有人帮”减“没人帮”，像同一个班分两组对照，更公平。结论：社工撤走后反弹最大；时间银行反弹较小，但这是模型设定的结果——撤出后结对关系按 50% 概率继续互动，在规则层把这个概率设为 0 时，两者撤出后水平相同。','“Rebound” = how much isolation climbs back after help leaves. “Paired difference” = helped minus unhelped under the same random seed, like splitting one class into two groups for a fair comparison. Casework rebounds hardest; the timebank rebounds less, but this follows from a model setting: pairs keep interacting with probability 0.5 after withdrawal, and with that probability set to 0 in the rules layer both end at the same post-withdrawal level.'],
+  effectTitleTip:['“反弹”= 帮忙的人走后，孤立率比帮忙期间涨回多少。“配对差值”= 同一随机种子下“有人帮”减“没人帮”，像同一个班分两组对照，更公平。结论：社工撤走后反弹最大；互助结对反弹较小，但这是模型设定的结果——撤出后结对关系按 50% 概率继续互动，在规则层把这个概率设为 0 时，两者撤出后水平相同。','“Rebound” = how much isolation climbs back after help leaves. “Paired difference” = helped minus unhelped under the same random seed, like splitting one class into two groups for a fair comparison. Casework rebounds hardest; the timebank rebounds less, but this follows from a model setting: pairs keep interacting with probability 0.5 after withdrawal, and with that probability set to 0 in the rules layer both end at the same post-withdrawal level.'],
   mechTitleTip:['用不带大模型的简化规则模型跑了很多遍，回答“早帮还是晚帮”“帮多少够”。“延迟成本”= 每晚一个月开始帮，两年平均孤立率大约多涨多少个百分点，用来说服决策者早行动。','A simpler rules-only model run many times to answer “help early or late?” and “how much is enough?”. “Delay cost” = roughly how many percentage points the 2-year average isolation rises for each month help is postponed.'],
   loopTitleTip:['程序自己“设计实验→跑→打分→改方案→再跑”的记录：每轮改了什么、分数怎么变。目的是证明流程可以自动迭代，而不是人手工调出好看结果。','A log of the program designing an experiment, running it, scoring it, revising and re-running: what changed each round and how the score moved. Shows the pipeline iterates on its own rather than being hand-tuned for nice results.'],
   qualityTitleTip:['给每条结论贴“可信度标签”：哪些由 3 次重复得出、哪些只有 2 次、哪些只是探索性的，提醒读者别过度解读。','A reliability label for each conclusion: which rest on 3 repeats, which on only 2, which are exploratory, so readers do not over-interpret.'],
@@ -522,9 +522,9 @@ const ACTS = {
   visit_neighbor:['串门','Visit neighbor'], call_family:['联系子女','Call family'], seek_help:['求助','Seek help'],
   join_activity:['社区活动','Community activity'], stay_home:['待在家','Stay home'],
   casework_visit:['社工探访','Casework visit'], casework_link:['社工联结家庭','Casework family link'],
-  timebank_match:['时间银行结对','Timebank match'], platform_serve:['平台志愿服务','Platform service'],
+  timebank_match:['互助结对','Mutual-aid pairing'], platform_serve:['志愿匹配服务','Volunteer matching'],
 };
-const CONDS = {none:['基线','Baseline'], casework:['社工探访','Casework'], timebank:['时间银行','Timebank'], platform:['数字平台','Platform']};
+const CONDS = {none:['基线','Baseline'], casework:['社工探访','Casework'], timebank:['互助结对','Mutual-aid pairing'], platform:['志愿匹配','Volunteer matching']};
 const OUT = {success:['求助成功','Succeeded'], declined:['被婉拒','Declined'], no_such_tie:['无人可求','No one to ask']};
 
 let LANG = localStorage.getItem('lang') || 'zh';

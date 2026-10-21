@@ -21,7 +21,7 @@ TEXT = {
         "focal": "LLM 焦点层\n6 名老人（PersonAgent）\n记忆 · 推理 · 理由",
         "rules": "规则层\n14 名老人\n按联系频率自动接触",
         "router": "环境路由\n一句话 → 代码生成 → 工具\n只读 / 可写；注册表能力清单",
-        "env": "ElderSupportEnv\n关系账本 · 衰减 · 月度事件\n干预：社工探访 /\n时间银行 / 数字平台",
+        "env": "ElderSupportEnv\n关系账本 · 衰减 · 月度事件\n干预：社工探访 /\n互助结对 / 志愿匹配",
         "trace": "全程留痕\nmetrics · decisions · trace",
         "gate": "科学性纪律\n预注册 · 效度门槛 · 根因分类\n成本核算 · 结果来源对照",
         "loop": "提案--评估回路（harness）\n干预排期搜索 · 动力学校准（训练 / 留出）",
