@@ -30,6 +30,7 @@ Example::
 
 import asyncio
 import os
+import re
 import time
 import uuid
 from abc import ABC, abstractmethod
@@ -162,6 +163,100 @@ class ModuleToolsInfo(BaseModel):
 
 # ToolsInfoDict is just a type alias for Dict[str, ModuleToolsInfo]
 ToolsInfoDict = Dict[str, ModuleToolsInfo]
+
+_CAPABILITY_QUESTION = re.compile(
+    r"("
+    r"有没有[^。\n]{0,16}(?:功能|工具|接口|方法)|"
+    r"有无[^。\n]{0,16}(?:功能|工具|接口)|"
+    r"是否(?:支持|提供)|"
+    r"(?:能不能|能否|可不可以)(?:联系|打电话|串门|求助)|"
+    r"能做什么|可以做什么|有哪些功能|有哪些工具|有什么功能|有什么工具|哪些接口|支持哪些|"
+    r"what (?:tools|functions|actions)|what can i|which tools|"
+    r"do you (?:support|have)|is there (?:a |an )?(?:tool|function|api)|"
+    r"available tools"
+    r")",
+    re.IGNORECASE,
+)
+_FALSE_CAPABILITY_DENIAL = re.compile(
+    r"("
+    r"不支持|没有[^。\n]{0,16}功能|未提供|不能打电话|不能串门|"
+    r"只支持查询|只支持观察|只支持只读|"
+    r"does not support|doesn't support|cannot call|can't call|"
+    r"only supports? (?:query|observe|read)|no such (?:tool|function)"
+    r")",
+    re.IGNORECASE,
+)
+
+
+def is_capability_question(instruction: str) -> bool:
+    """Whether the instruction asks which environment tools exist."""
+    text = instruction.strip()
+    if text in {"<observe>", "<statistics>"}:
+        return False
+    return _CAPABILITY_QUESTION.search(text) is not None
+
+
+def iter_registered_tools(tools_info: ToolsInfoDict):
+    """Yield ``(module_name, tool)`` for every registered tool."""
+    for module_name, module_data in tools_info.items():
+        for tool_info in module_data.tools:
+            yield module_name, tool_info
+
+
+def format_registered_tool_catalog(tools_info: ToolsInfoDict, *, readonly: bool) -> str:
+    """Deterministic catalog. Read-only calls still list write tools as existing."""
+    if not tools_info:
+        return ""
+    if readonly:
+        header = (
+            "环境工具清单（以注册表为准，不要再问这些功能是否存在）。"
+            "本次是只读查询：callable_now=false 只表示这一次不能执行，工具仍然存在。"
+            "要行动请用 readonly=false 再请求一次。"
+        )
+    else:
+        header = (
+            "环境工具清单（以注册表为准，不要再问这些功能是否存在）。"
+            "本次可以调用下列全部工具。要行动时直接下令，不要先询问功能在不在。"
+        )
+    lines = [header]
+    for _module_name, tool_info in iter_registered_tools(tools_info):
+        callable_now = (not readonly) or tool_info.readonly
+        reason = ""
+        if not callable_now:
+            reason = "；本次不可调用，因为这次是只读查询"
+        description = (tool_info.description or "").strip()
+        lines.append(
+            f"- {tool_info.name}（exists=true, callable_now={str(callable_now).lower()}）"
+            f"{description}{reason}"
+        )
+    return "\n".join(lines)
+
+
+def scrub_false_capability_denial(
+    process_text: str,
+    code: str,
+    tools_info: ToolsInfoDict,
+    *,
+    readonly: bool,
+) -> tuple[str, bool]:
+    """Replace a generated claim that a registered tool does not exist.
+
+    A real tool result is left alone when the generated code actually called a
+    write tool. The false claim is the one printed after only read tools ran.
+    """
+    if not _FALSE_CAPABILITY_DENIAL.search(process_text):
+        return process_text, False
+    write_tools = [
+        tool_info
+        for _module_name, tool_info in iter_registered_tools(tools_info)
+        if not tool_info.readonly
+    ]
+    if not write_tools:
+        return process_text, False
+    if any(re.search(rf"\b{re.escape(tool.name)}\s*\(", code) for tool in write_tools):
+        return process_text, False
+    notice = format_registered_tool_catalog(tools_info, readonly=readonly)
+    return notice, True
 
 
 class RouterBase(ABC):
@@ -840,9 +935,11 @@ Your corrected response:
         if self._world_description is None:
             async with self._generate_world_description_lock:
                 if self._world_description is None:
-                    self._world_description = (
-                        await self.generate_world_description_from_tools()
-                    )
+                    description = await self.generate_world_description_from_tools()
+                    appendix = self.agent_tool_catalog_appendix()
+                    if appendix:
+                        description = f"{description.rstrip()}\n\n{appendix}"
+                    self._world_description = description
         return self._world_description
 
     async def generate_world_description_from_tools(
@@ -1072,6 +1169,10 @@ Generated world description:"""
                 )
 
         return filtered_info
+
+    def agent_tool_catalog_appendix(self) -> str:
+        """Authoritative tool list appended to the world description."""
+        return format_registered_tool_catalog(self._collect_tools_info(), readonly=False)
 
     def get_collected_pydantic_models(self) -> Dict[Type[BaseModel], str]:
         """

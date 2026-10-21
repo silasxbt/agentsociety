@@ -35,7 +35,12 @@ import faiss
 import numpy as np
 from agentsociety2.config import Config
 from agentsociety2.env.base import EnvBase
-from agentsociety2.env.router_base import RouterBase
+from agentsociety2.env.router_base import (
+    RouterBase,
+    format_registered_tool_catalog,
+    is_capability_question,
+    scrub_false_capability_denial,
+)
 from agentsociety2.logger import get_logger
 from litellm import AllMessageValues, aembedding
 
@@ -270,6 +275,7 @@ class AskContext:
     early_return: Optional[Tuple[dict, str]] = (
         None  # 非 None 表示提前返回，不再继续管道
     )
+    suppress_template_cache: bool = False
     token_usage_responses: List[Dict[str, int]] = field(
         default_factory=list
     )  # 每次 LLM 调用的 token 使用，供 observer 统计
@@ -348,7 +354,9 @@ def _get_env_class_type_key(env_modules: list) -> str:
         cls = m.__class__
         full_name = f"{cls.__module__}.{cls.__qualname__}"
         keys.append((m.name, full_name))
-    return json.dumps(sorted(keys), sort_keys=True, ensure_ascii=False)
+    # Bump when the tool-catalog contract changes so cached denials are not reused.
+    payload = {"modules": sorted(keys), "catalog": "tool-catalog-v1"}
+    return json.dumps(payload, sort_keys=True, ensure_ascii=False)
 
 
 def _strip_code_fence(text: str) -> str:
@@ -661,6 +669,8 @@ class CacheAddObserver:
             context.template_mode
             and not context.cache_entry
             and not context.is_observe_or_statistics
+            and not context.suppress_template_cache
+            and not is_capability_question(context.instruction)
         ):
             await self._add_to_cache(
                 self._router,
@@ -798,6 +808,33 @@ class CacheCodeProvider:
         return None
 
 
+def _readonly_catalog_note(router: "CodeGenRouter", readonly: bool) -> str:
+    """Tell the code generator that hidden write tools still exist."""
+    tools_info = getattr(router, "_all_tools_info", None)
+    if not readonly or not tools_info:
+        return ""
+    blocked = [
+        tool_info
+        for module in tools_info.values()
+        for tool_info in module.tools
+        if not tool_info.readonly
+    ]
+    if not blocked:
+        return ""
+    lines = [
+        "",
+        "## Registered tools that exist but must not be called in this read-only request",
+    ]
+    for tool_info in blocked:
+        description = (tool_info.description or "").strip()
+        lines.append(f"- {tool_info.name}: {description} (exists=true, callable_now=false)")
+    lines.append(
+        "If the instruction needs one of these, do not call it and do not say it is missing. "
+        "Print: 工具 <name> 存在，但本次是只读查询，不能执行。要行动请用 readonly=false 再请求。"
+    )
+    return "\n".join(lines) + "\n"
+
+
 class LLMCodegenProvider:
     """LLM 代码生成提供者，责任链最后一环，负责调用 LLM 生成代码"""
 
@@ -815,6 +852,7 @@ class LLMCodegenProvider:
     ) -> str:
         key = (readonly, kind)
         tools_pyi = router._tools_pyi_dict[key]
+        catalog_note = _readonly_catalog_note(router, readonly)
         template_note = ""
         if isinstance(ctx.get("variables"), dict) and ctx["variables"]:
             template_note = (
@@ -832,6 +870,7 @@ simulated agent, then reports what happened in plain language.
 ```python
 {tools_pyi}
 ```
+{catalog_note}
 ```python
 modules = {router._modules!r}
 ```
@@ -866,6 +905,7 @@ summary step). So write it the way you would explain the result to a person:
   `response:`. Narrate instead.
 - If the action failed or had no effect, say so plainly and give the reason.
 - Keep it concise — a few sentences, not a paragraph.
+- NEVER say a tool in the registered catalog does not exist, is unsupported, or that the environment only allows queries. If this request is read-only and the instruction needs a write tool, print that the tool exists but this call cannot run it, and that the caller must ask again with readonly=false.
 
 ## Status handling
 - Inspect each tool's return value for a `status` field.
@@ -1313,6 +1353,14 @@ class CodeStage:
             status = results.get("status", "unknown")
             error = execution_result.get("error", "")
             process_text = "\n".join(print_outputs) if print_outputs else "无输出"
+            process_text, denied = scrub_false_capability_denial(
+                process_text,
+                code,
+                getattr(router, "_all_tools_info", {}),
+                readonly=context.readonly,
+            )
+            if denied:
+                context.suppress_template_cache = True
             if error:
                 process_text += f"\n\nError: {error}"
             process_text = f"```\n{process_text}\n```"
@@ -1613,6 +1661,7 @@ class CodeGenRouter(RouterBase):
         all_tools_info = self._filter_tools_info(
             all_tools_info, readonly=None, kind=None
         )
+        self._all_tools_info = all_tools_info
         self._tools_pyi_dict[(False, None)] = self._get_tools_code(all_tools_info)
 
         readonly_tools_info = self._filter_tools_info(
@@ -1658,6 +1707,12 @@ class CodeGenRouter(RouterBase):
 
         :returns: (ctx, answer) 元组
         """
+        if is_capability_question(instruction):
+            catalog = format_registered_tool_catalog(
+                getattr(self, "_all_tools_info", {}),
+                readonly=readonly,
+            )
+            return {"status": "success", "capability_catalog": True}, catalog
         context = AskContext(
             ctx=ctx,
             instruction=instruction,
