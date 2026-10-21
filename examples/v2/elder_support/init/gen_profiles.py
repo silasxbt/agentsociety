@@ -29,8 +29,13 @@ DIST_PATH = (
     / "data_pipeline" / "out" / "clhls2021_dist.json"
 )
 
-# 规则层脚本的画像来源：placeholder（历史结果所用）或 calibrated（CLHLS 2021 分布）。
-PROFILE_SOURCES = ("placeholder", "calibrated")
+# 规则层脚本的画像来源：placeholder（历史结果所用）、calibrated（CLHLS 2021 边际分布）、
+# uniform（各锚定维度在同一取值范围内均匀随机，作“普通随机”基线）、
+# resample（从 CLHLS 2021 独居子样本按记录整条重抽，保留维度间相关；受限数据，不入 git）。
+PROFILE_SOURCES = ("placeholder", "calibrated", "uniform", "resample")
+RECORDS_PATH = (
+    Path(__file__).resolve().parents[4] / "data" / "restricted" / "clhls2021_alone_records.json"
+)
 PROFILE_ENV = "ELDER_PROFILES"
 
 
@@ -71,7 +76,22 @@ def make_elders(rng: random.Random, num: int, n_focal: int = 0,
     if source == "calibrated":
         dist = load_dist()
         return [gen_elder_calibrated(rng, i + 1, i < n_focal, dist) for i in range(num)]
+    if source == "uniform":
+        return [gen_elder_uniform(rng, i + 1, i < n_focal) for i in range(num)]
+    if source == "resample":
+        records = load_records()
+        return [gen_elder_resample(rng, i + 1, i < n_focal, records) for i in range(num)]
     return [gen_elder(rng, i + 1, i < n_focal) for i in range(num)]
+
+
+@lru_cache(maxsize=1)
+def load_records() -> list:
+    if not RECORDS_PATH.exists():
+        raise SystemExit(
+            f"找不到受限记录文件 {RECORDS_PATH}；先在数据机器上运行 "
+            "data_pipeline/extract_clhls2021_records.py。"
+        )
+    return json.loads(RECORDS_PATH.read_text(encoding="utf-8"))
 
 
 def result_path(path: Path, source: str | None = None) -> Path:
@@ -224,6 +244,73 @@ def gen_elder_calibrated(
         "ties": ties,
         "loneliness": loneliness,
     }
+
+
+def _elder_from_anchors(
+    rng: random.Random, idx: int, focal: bool, *, age: int, gender: str,
+    health_cat: str, lonely_cat: str, n_children: int, visits: list,
+) -> dict:
+    """给定调查锚定维度，生成其余（未锚定）维度；未锚定部分与校准模式同一套规则。"""
+    surname = rng.choice(SURNAMES)
+    name = f"{surname}{'奶奶' if gender == '女' else '爷爷'}（{idx}号）"
+    health = _trunc_gauss(rng, _HEALTH_MAP[health_cat], 0.06, 0.10, 0.95)
+    loneliness = _trunc_gauss(rng, _LONELY_MAP[lonely_cat], 0.06, 0.05, 0.9)
+    extroversion = _trunc_gauss(rng, 0.5, 0.2, 0.05, 0.95)
+    children = []
+    for c in range(min(n_children, 6)):
+        distance = rng.choices(
+            ["local", "same_city", "other_province"], weights=[28, 36, 36]
+        )[0]
+        if visits[c]:
+            base = {"local": 5.0, "same_city": 3.0, "other_province": 1.8}[distance]
+        else:
+            base = {"local": 1.5, "same_city": 0.8, "other_province": 0.4}[distance]
+        children.append({
+            "name": f"{'儿子' if rng.random() < 0.5 else '女儿'}{surname}{c + 1}",
+            "distance": distance,
+            "contact_per_month": round(base * rng.uniform(0.7, 1.3), 1),
+        })
+    n_ties = rng.choices([0, 1, 2, 3, 4], weights=[10, 25, 35, 20, 10])[0]
+    n_ties = min(4, n_ties + (1 if extroversion > 0.7 else 0))
+    ties = [
+        {
+            "name": f"{rng.choice(SURNAMES)}{rng.choice(NEIGHBOR_GIVEN)}",
+            "kind": rng.choice(["neighbor", "neighbor", "friend"]),
+            "strength": _trunc_gauss(rng, 0.5, 0.18, 0.1, 0.9),
+        }
+        for _ in range(n_ties)
+    ]
+    return {"id": idx, "name": name, "age": age, "gender": gender, "health": health,
+            "extroversion": extroversion, "focal": focal, "children": children,
+            "ties": ties, "loneliness": loneliness}
+
+
+def gen_elder_uniform(rng: random.Random, idx: int, focal: bool) -> dict:
+    """普通随机基线：锚定维度在与校准模式相同的取值范围内均匀抽取。"""
+    n_children = rng.randint(0, 6)
+    return _elder_from_anchors(
+        rng, idx, focal,
+        age=rng.randint(65, 99),
+        gender=rng.choice(["男", "女"]),
+        health_cat=rng.choice(list(_HEALTH_MAP)),
+        lonely_cat=rng.choice(list(_LONELY_MAP)),
+        n_children=n_children,
+        visits=[rng.random() < 0.5 for _ in range(n_children)],
+    )
+
+
+def gen_elder_resample(rng: random.Random, idx: int, focal: bool, records: list) -> dict:
+    """整条重抽一位 CLHLS 2021 独居受访者，保留年龄、性别、健康、孤独、子女之间的相关。"""
+    r = rng.choice(records)
+    visits = [bool(v) for v in r["visits"]][: r["n_children"]]
+    share = sum(visits) / len(visits) if visits else 0.79
+    visits += [rng.random() < share for _ in range(r["n_children"] - len(visits))]
+    return _elder_from_anchors(
+        rng, idx, focal,
+        age=int(r["age"]), gender="男" if r["sex"] == 1 else "女",
+        health_cat=str(r["b12"]), lonely_cat=str(r["b38"]),
+        n_children=int(r["n_children"]), visits=visits,
+    )
 
 
 def main() -> None:
