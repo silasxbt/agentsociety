@@ -1,0 +1,776 @@
+{
+  "months": 24,
+  "iv_window": [
+    7,
+    18
+  ],
+  "n_elders": 20,
+  "seeds": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10
+  ],
+  "profiles": "calibrated",
+  "note": "全部老人为规则层（无 LLM），只用于条件间对比方向",
+  "decay_scan": {
+    "d0.06_none": {
+      "final_isolation_rate": {
+        "mean": 0.175,
+        "sd": 0.0755
+      },
+      "iv_isolation_rate": {
+        "mean": 0.1883,
+        "sd": 0.0654
+      },
+      "post_isolation_rate": {
+        "mean": 0.1925,
+        "sd": 0.0642
+      },
+      "final_deep_isolation_rate": {
+        "mean": 0.12,
+        "sd": 0.0919
+      },
+      "iv_deep_isolation_rate": {
+        "mean": 0.1175,
+        "sd": 0.0522
+      },
+      "post_deep_isolation_rate": {
+        "mean": 0.1308,
+        "sd": 0.0649
+      },
+      "final_avg_loneliness": {
+        "mean": 0.3444,
+        "sd": 0.0456
+      },
+      "iv_avg_loneliness": {
+        "mean": 0.3061,
+        "sd": 0.0448
+      },
+      "post_avg_loneliness": {
+        "mean": 0.3394,
+        "sd": 0.0441
+      },
+      "final_avg_active_ties": {
+        "mean": 4.615,
+        "sd": 0.434
+      },
+      "iv_avg_active_ties": {
+        "mean": 4.8404,
+        "sd": 0.3813
+      },
+      "post_avg_active_ties": {
+        "mean": 4.6542,
+        "sd": 0.4211
+      }
+    },
+    "d0.06_casework": {
+      "final_isolation_rate": {
+        "mean": 0.14,
+        "sd": 0.0699
+      },
+      "iv_isolation_rate": {
+        "mean": 0.0358,
+        "sd": 0.0175
+      },
+      "post_isolation_rate": {
+        "mean": 0.1533,
+        "sd": 0.0533
+      },
+      "final_deep_isolation_rate": {
+        "mean": 0.065,
+        "sd": 0.0242
+      },
+      "iv_deep_isolation_rate": {
+        "mean": 0.0008,
+        "sd": 0.0018
+      },
+      "post_deep_isolation_rate": {
+        "mean": 0.05,
+        "sd": 0.0309
+      },
+      "final_avg_loneliness": {
+        "mean": 0.2884,
+        "sd": 0.0359
+      },
+      "iv_avg_loneliness": {
+        "mean": 0.2146,
+        "sd": 0.0334
+      },
+      "post_avg_loneliness": {
+        "mean": 0.2721,
+        "sd": 0.036
+      },
+      "final_avg_active_ties": {
+        "mean": 6.52,
+        "sd": 0.2898
+      },
+      "iv_avg_active_ties": {
+        "mean": 6.4975,
+        "sd": 0.3391
+      },
+      "post_avg_active_ties": {
+        "mean": 6.5758,
+        "sd": 0.3196
+      }
+    },
+    "d0.06_timebank": {
+      "final_isolation_rate": {
+        "mean": 0.14,
+        "sd": 0.0843
+      },
+      "iv_isolation_rate": {
+        "mean": 0.1188,
+        "sd": 0.0721
+      },
+      "post_isolation_rate": {
+        "mean": 0.1458,
+        "sd": 0.0775
+      },
+      "final_deep_isolation_rate": {
+        "mean": 0.075,
+        "sd": 0.0717
+      },
+      "iv_deep_isolation_rate": {
+        "mean": 0.0446,
+        "sd": 0.0652
+      },
+      "post_deep_isolation_rate": {
+        "mean": 0.0708,
+        "sd": 0.0683
+      },
+      "final_avg_loneliness": {
+        "mean": 0.3227,
+        "sd": 0.0427
+      },
+      "iv_avg_loneliness": {
+        "mean": 0.2725,
+        "sd": 0.0496
+      },
+      "post_avg_loneliness": {
+        "mean": 0.3102,
+        "sd": 0.0458
+      },
+      "final_avg_active_ties": {
+        "mean": 5.145,
+        "sd": 0.6094
+      },
+      "iv_avg_active_ties": {
+        "mean": 5.3471,
+        "sd": 0.5879
+      },
+      "post_avg_active_ties": {
+        "mean": 5.2033,
+        "sd": 0.6074
+      }
+    },
+    "d0.06_platform": {
+      "final_isolation_rate": {
+        "mean": 0.165,
+        "sd": 0.0709
+      },
+      "iv_isolation_rate": {
+        "mean": 0.1583,
+        "sd": 0.0562
+      },
+      "post_isolation_rate": {
+        "mean": 0.1667,
+        "sd": 0.0705
+      },
+      "final_deep_isolation_rate": {
+        "mean": 0.09,
+        "sd": 0.0568
+      },
+      "iv_deep_isolation_rate": {
+        "mean": 0.05,
+        "sd": 0.0307
+      },
+      "post_deep_isolation_rate": {
+        "mean": 0.08,
+        "sd": 0.0532
+      },
+      "final_avg_loneliness": {
+        "mean": 0.2982,
+        "sd": 0.0293
+      },
+      "iv_avg_loneliness": {
+        "mean": 0.2797,
+        "sd": 0.0359
+      },
+      "post_avg_loneliness": {
+        "mean": 0.2949,
+        "sd": 0.0339
+      },
+      "final_avg_active_ties": {
+        "mean": 6.375,
+        "sd": 0.2627
+      },
+      "iv_avg_active_ties": {
+        "mean": 5.8654,
+        "sd": 0.2633
+      },
+      "post_avg_active_ties": {
+        "mean": 6.4242,
+        "sd": 0.2615
+      }
+    },
+    "d0.15_none": {
+      "final_isolation_rate": {
+        "mean": 0.22,
+        "sd": 0.0978
+      },
+      "iv_isolation_rate": {
+        "mean": 0.2012,
+        "sd": 0.0689
+      },
+      "post_isolation_rate": {
+        "mean": 0.215,
+        "sd": 0.0678
+      },
+      "final_deep_isolation_rate": {
+        "mean": 0.15,
+        "sd": 0.0745
+      },
+      "iv_deep_isolation_rate": {
+        "mean": 0.135,
+        "sd": 0.0631
+      },
+      "post_deep_isolation_rate": {
+        "mean": 0.1525,
+        "sd": 0.0723
+      },
+      "final_avg_loneliness": {
+        "mean": 0.3892,
+        "sd": 0.0507
+      },
+      "iv_avg_loneliness": {
+        "mean": 0.319,
+        "sd": 0.0412
+      },
+      "post_avg_loneliness": {
+        "mean": 0.3769,
+        "sd": 0.0474
+      },
+      "final_avg_active_ties": {
+        "mean": 3.23,
+        "sd": 0.3327
+      },
+      "iv_avg_active_ties": {
+        "mean": 4.5492,
+        "sd": 0.3534
+      },
+      "post_avg_active_ties": {
+        "mean": 3.5033,
+        "sd": 0.3588
+      }
+    },
+    "d0.15_casework": {
+      "final_isolation_rate": {
+        "mean": 0.175,
+        "sd": 0.089
+      },
+      "iv_isolation_rate": {
+        "mean": 0.0333,
+        "sd": 0.0206
+      },
+      "post_isolation_rate": {
+        "mean": 0.185,
+        "sd": 0.0688
+      },
+      "final_deep_isolation_rate": {
+        "mean": 0.11,
+        "sd": 0.0699
+      },
+      "iv_deep_isolation_rate": {
+        "mean": 0.0017,
+        "sd": 0.0022
+      },
+      "post_deep_isolation_rate": {
+        "mean": 0.0733,
+        "sd": 0.0421
+      },
+      "final_avg_loneliness": {
+        "mean": 0.3295,
+        "sd": 0.0494
+      },
+      "iv_avg_loneliness": {
+        "mean": 0.2223,
+        "sd": 0.0322
+      },
+      "post_avg_loneliness": {
+        "mean": 0.3046,
+        "sd": 0.041
+      },
+      "final_avg_active_ties": {
+        "mean": 5.085,
+        "sd": 0.3028
+      },
+      "iv_avg_active_ties": {
+        "mean": 6.1571,
+        "sd": 0.3496
+      },
+      "post_avg_active_ties": {
+        "mean": 5.3808,
+        "sd": 0.2918
+      }
+    },
+    "d0.15_timebank": {
+      "final_isolation_rate": {
+        "mean": 0.175,
+        "sd": 0.1034
+      },
+      "iv_isolation_rate": {
+        "mean": 0.1333,
+        "sd": 0.0741
+      },
+      "post_isolation_rate": {
+        "mean": 0.1725,
+        "sd": 0.078
+      },
+      "final_deep_isolation_rate": {
+        "mean": 0.1,
+        "sd": 0.0816
+      },
+      "iv_deep_isolation_rate": {
+        "mean": 0.0583,
+        "sd": 0.0758
+      },
+      "post_deep_isolation_rate": {
+        "mean": 0.085,
+        "sd": 0.0727
+      },
+      "final_avg_loneliness": {
+        "mean": 0.3646,
+        "sd": 0.0548
+      },
+      "iv_avg_loneliness": {
+        "mean": 0.2858,
+        "sd": 0.0508
+      },
+      "post_avg_loneliness": {
+        "mean": 0.346,
+        "sd": 0.0534
+      },
+      "final_avg_active_ties": {
+        "mean": 3.77,
+        "sd": 0.5165
+      },
+      "iv_avg_active_ties": {
+        "mean": 5.1046,
+        "sd": 0.5567
+      },
+      "post_avg_active_ties": {
+        "mean": 4.08,
+        "sd": 0.5169
+      }
+    },
+    "d0.15_platform": {
+      "final_isolation_rate": {
+        "mean": 0.21,
+        "sd": 0.081
+      },
+      "iv_isolation_rate": {
+        "mean": 0.1621,
+        "sd": 0.0613
+      },
+      "post_isolation_rate": {
+        "mean": 0.1892,
+        "sd": 0.0661
+      },
+      "final_deep_isolation_rate": {
+        "mean": 0.11,
+        "sd": 0.0615
+      },
+      "iv_deep_isolation_rate": {
+        "mean": 0.0554,
+        "sd": 0.031
+      },
+      "post_deep_isolation_rate": {
+        "mean": 0.0967,
+        "sd": 0.0458
+      },
+      "final_avg_loneliness": {
+        "mean": 0.3519,
+        "sd": 0.0487
+      },
+      "iv_avg_loneliness": {
+        "mean": 0.2895,
+        "sd": 0.04
+      },
+      "post_avg_loneliness": {
+        "mean": 0.3255,
+        "sd": 0.0461
+      },
+      "final_avg_active_ties": {
+        "mean": 4.26,
+        "sd": 0.4408
+      },
+      "iv_avg_active_ties": {
+        "mean": 5.5075,
+        "sd": 0.3646
+      },
+      "post_avg_active_ties": {
+        "mean": 4.7983,
+        "sd": 0.3972
+      }
+    },
+    "d0.25_none": {
+      "final_isolation_rate": {
+        "mean": 0.23,
+        "sd": 0.0715
+      },
+      "iv_isolation_rate": {
+        "mean": 0.2112,
+        "sd": 0.0723
+      },
+      "post_isolation_rate": {
+        "mean": 0.2225,
+        "sd": 0.0737
+      },
+      "final_deep_isolation_rate": {
+        "mean": 0.18,
+        "sd": 0.0715
+      },
+      "iv_deep_isolation_rate": {
+        "mean": 0.1562,
+        "sd": 0.066
+      },
+      "post_deep_isolation_rate": {
+        "mean": 0.1775,
+        "sd": 0.0689
+      },
+      "final_avg_loneliness": {
+        "mean": 0.4286,
+        "sd": 0.0568
+      },
+      "iv_avg_loneliness": {
+        "mean": 0.3579,
+        "sd": 0.0469
+      },
+      "post_avg_loneliness": {
+        "mean": 0.4173,
+        "sd": 0.0523
+      },
+      "final_avg_active_ties": {
+        "mean": 2.575,
+        "sd": 0.2821
+      },
+      "iv_avg_active_ties": {
+        "mean": 3.4533,
+        "sd": 0.245
+      },
+      "post_avg_active_ties": {
+        "mean": 2.62,
+        "sd": 0.2585
+      }
+    },
+    "d0.25_casework": {
+      "final_isolation_rate": {
+        "mean": 0.2,
+        "sd": 0.108
+      },
+      "iv_isolation_rate": {
+        "mean": 0.0417,
+        "sd": 0.0232
+      },
+      "post_isolation_rate": {
+        "mean": 0.2133,
+        "sd": 0.0808
+      },
+      "final_deep_isolation_rate": {
+        "mean": 0.13,
+        "sd": 0.0856
+      },
+      "iv_deep_isolation_rate": {
+        "mean": 0.0029,
+        "sd": 0.0034
+      },
+      "post_deep_isolation_rate": {
+        "mean": 0.1008,
+        "sd": 0.0653
+      },
+      "final_avg_loneliness": {
+        "mean": 0.3572,
+        "sd": 0.0508
+      },
+      "iv_avg_loneliness": {
+        "mean": 0.2426,
+        "sd": 0.0369
+      },
+      "post_avg_loneliness": {
+        "mean": 0.3301,
+        "sd": 0.0496
+      },
+      "final_avg_active_ties": {
+        "mean": 3.91,
+        "sd": 0.3053
+      },
+      "iv_avg_active_ties": {
+        "mean": 5.0842,
+        "sd": 0.3013
+      },
+      "post_avg_active_ties": {
+        "mean": 4.2667,
+        "sd": 0.264
+      }
+    },
+    "d0.25_timebank": {
+      "final_isolation_rate": {
+        "mean": 0.165,
+        "sd": 0.053
+      },
+      "iv_isolation_rate": {
+        "mean": 0.1392,
+        "sd": 0.0764
+      },
+      "post_isolation_rate": {
+        "mean": 0.17,
+        "sd": 0.0733
+      },
+      "final_deep_isolation_rate": {
+        "mean": 0.095,
+        "sd": 0.0926
+      },
+      "iv_deep_isolation_rate": {
+        "mean": 0.0654,
+        "sd": 0.0814
+      },
+      "post_deep_isolation_rate": {
+        "mean": 0.0942,
+        "sd": 0.0909
+      },
+      "final_avg_loneliness": {
+        "mean": 0.3834,
+        "sd": 0.0564
+      },
+      "iv_avg_loneliness": {
+        "mean": 0.3167,
+        "sd": 0.0552
+      },
+      "post_avg_loneliness": {
+        "mean": 0.3745,
+        "sd": 0.0563
+      },
+      "final_avg_active_ties": {
+        "mean": 3.115,
+        "sd": 0.5706
+      },
+      "iv_avg_active_ties": {
+        "mean": 3.9592,
+        "sd": 0.521
+      },
+      "post_avg_active_ties": {
+        "mean": 3.145,
+        "sd": 0.5487
+      }
+    },
+    "d0.25_platform": {
+      "final_isolation_rate": {
+        "mean": 0.215,
+        "sd": 0.0474
+      },
+      "iv_isolation_rate": {
+        "mean": 0.1762,
+        "sd": 0.068
+      },
+      "post_isolation_rate": {
+        "mean": 0.2033,
+        "sd": 0.0686
+      },
+      "final_deep_isolation_rate": {
+        "mean": 0.15,
+        "sd": 0.0577
+      },
+      "iv_deep_isolation_rate": {
+        "mean": 0.0729,
+        "sd": 0.0449
+      },
+      "post_deep_isolation_rate": {
+        "mean": 0.1342,
+        "sd": 0.0638
+      },
+      "final_avg_loneliness": {
+        "mean": 0.4013,
+        "sd": 0.0443
+      },
+      "iv_avg_loneliness": {
+        "mean": 0.3227,
+        "sd": 0.0438
+      },
+      "post_avg_loneliness": {
+        "mean": 0.3815,
+        "sd": 0.0492
+      },
+      "final_avg_active_ties": {
+        "mean": 2.86,
+        "sd": 0.3557
+      },
+      "iv_avg_active_ties": {
+        "mean": 4.2467,
+        "sd": 0.324
+      },
+      "post_avg_active_ties": {
+        "mean": 3.2192,
+        "sd": 0.3989
+      }
+    }
+  },
+  "caseload_scan": {
+    "cl4": {
+      "final_isolation_rate": {
+        "mean": 0.18,
+        "sd": 0.0823
+      },
+      "iv_isolation_rate": {
+        "mean": 0.0683,
+        "sd": 0.0219
+      },
+      "post_isolation_rate": {
+        "mean": 0.1642,
+        "sd": 0.0659
+      },
+      "final_deep_isolation_rate": {
+        "mean": 0.08,
+        "sd": 0.0715
+      },
+      "iv_deep_isolation_rate": {
+        "mean": 0.0013,
+        "sd": 0.002
+      },
+      "post_deep_isolation_rate": {
+        "mean": 0.0575,
+        "sd": 0.042
+      },
+      "final_avg_loneliness": {
+        "mean": 0.2961,
+        "sd": 0.0395
+      },
+      "iv_avg_loneliness": {
+        "mean": 0.2459,
+        "sd": 0.0336
+      },
+      "post_avg_loneliness": {
+        "mean": 0.2845,
+        "sd": 0.0361
+      },
+      "final_avg_active_ties": {
+        "mean": 6.225,
+        "sd": 0.27
+      },
+      "iv_avg_active_ties": {
+        "mean": 6.0233,
+        "sd": 0.3135
+      },
+      "post_avg_active_ties": {
+        "mean": 6.2858,
+        "sd": 0.2751
+      }
+    },
+    "cl8": {
+      "final_isolation_rate": {
+        "mean": 0.14,
+        "sd": 0.0699
+      },
+      "iv_isolation_rate": {
+        "mean": 0.0358,
+        "sd": 0.0175
+      },
+      "post_isolation_rate": {
+        "mean": 0.1533,
+        "sd": 0.0533
+      },
+      "final_deep_isolation_rate": {
+        "mean": 0.065,
+        "sd": 0.0242
+      },
+      "iv_deep_isolation_rate": {
+        "mean": 0.0008,
+        "sd": 0.0018
+      },
+      "post_deep_isolation_rate": {
+        "mean": 0.05,
+        "sd": 0.0309
+      },
+      "final_avg_loneliness": {
+        "mean": 0.2884,
+        "sd": 0.0359
+      },
+      "iv_avg_loneliness": {
+        "mean": 0.2146,
+        "sd": 0.0334
+      },
+      "post_avg_loneliness": {
+        "mean": 0.2721,
+        "sd": 0.036
+      },
+      "final_avg_active_ties": {
+        "mean": 6.52,
+        "sd": 0.2898
+      },
+      "iv_avg_active_ties": {
+        "mean": 6.4975,
+        "sd": 0.3391
+      },
+      "post_avg_active_ties": {
+        "mean": 6.5758,
+        "sd": 0.3196
+      }
+    },
+    "cl12": {
+      "final_isolation_rate": {
+        "mean": 0.165,
+        "sd": 0.0914
+      },
+      "iv_isolation_rate": {
+        "mean": 0.0238,
+        "sd": 0.012
+      },
+      "post_isolation_rate": {
+        "mean": 0.1508,
+        "sd": 0.0678
+      },
+      "final_deep_isolation_rate": {
+        "mean": 0.055,
+        "sd": 0.055
+      },
+      "iv_deep_isolation_rate": {
+        "mean": 0.0013,
+        "sd": 0.0028
+      },
+      "post_deep_isolation_rate": {
+        "mean": 0.0492,
+        "sd": 0.035
+      },
+      "final_avg_loneliness": {
+        "mean": 0.2907,
+        "sd": 0.0454
+      },
+      "iv_avg_loneliness": {
+        "mean": 0.2094,
+        "sd": 0.0311
+      },
+      "post_avg_loneliness": {
+        "mean": 0.2703,
+        "sd": 0.0376
+      },
+      "final_avg_active_ties": {
+        "mean": 6.59,
+        "sd": 0.3479
+      },
+      "iv_avg_active_ties": {
+        "mean": 6.6387,
+        "sd": 0.3359
+      },
+      "post_avg_active_ties": {
+        "mean": 6.6292,
+        "sd": 0.3624
+      }
+    }
+  }
+}
