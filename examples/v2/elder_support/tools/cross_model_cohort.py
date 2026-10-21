@@ -176,7 +176,7 @@ def main():
     p.add_argument("--cohort-dir", type=Path, required=True)
     p.add_argument("--output", type=Path, required=True)
     p.add_argument("--extra-cohort", action="append", default=[],
-                   metavar="LABEL=DIR", help="额外模型，可重复，如 opus_medium=/path")
+                   metavar="LABEL=DIR", help="额外模型，可重复，如 label=/path")
     p.add_argument("--seeds", default="1,2")
     args = parser.parse_args()
     seeds = tuple(int(x) for x in args.seeds.split(",") if x.strip())

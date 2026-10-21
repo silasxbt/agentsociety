@@ -180,15 +180,14 @@ $PY $EXP/tools/harness_loop.py --profiles calibrated
 1. **预注册**（问题 5）：`CROSS_MODEL_PROTOCOL_V2.md` 已在本机起草（2026-10-20）。
    设计、收敛判据、静默处理、输出目录见该文件。开跑前只改勘误，不得改判据。
 2. **工程**（本机已完成，数据机器上验收）：
-   - `run_astra_single.py` 支持 `--model/--reasoning-effort/--provider/--run-dir`；
-     anthropic 审计 `/messages` 的 thinking / output_config。
+   - `run_astra_single.py` 支持 `--model/--reasoning-effort/--provider/--run-dir`。
    - `AGENTSOCIETY_LLM_ALLOW_REASONING_ALIAS=1` 已写入
      `packages/agentsociety2/.../panel_settings.py`，仅 openai 线生效。
    - `cross_model_cohort.py prepare/report` 支持任意模型、种子与 `--extra-cohort`。
-   数据机器上：Opus 先发一条真实 medium 小请求，确认审计与计费后再开跑。
+   2026-10-21：Claude 系列（Opus 5.5 / Fable 5.1）全部移出计划，只做 gpt-5.6-sol 与 gpt-6-astra 两模型。
 3. **资源**：e2-micro（1GB）串行太慢，换 4–8 核、约 16GB 机器同时跑 3–4 场；
    先小规模试并发，确认网关不致静默。费用估算每场约 \$100–130，以账单为准。
-4. **分析**：`cross_model_cohort.py report --extra-cohort opus_medium=... --seeds 1,2,3`；
+4. **分析**：`cross_model_cohort.py report --seeds 1,2,3`（sol vs astra）；
    结论按 `tab:prescribed` 逐条标注各模型下是否一致。
 
 ## 6. 任务 E：论文重构（与任务 D 并行开始，D 出数后定稿）

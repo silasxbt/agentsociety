@@ -9,7 +9,7 @@ provider 与 run 目录：
       --model gpt-6-astra --reasoning-effort medium --provider openai
 
   python tools/run_astra_single.py --run-dir <prepared_run> \\
-      --model claude-opus-5-5 --reasoning-effort medium --provider anthropic
+      --model gpt-6-astra --reasoning-effort medium --provider openai
 
 审计代理按 provider 校验请求：openai 走 /chat/completions 且须带
 reasoning_effort；anthropic 走 /messages，须带 thinking 或 output_config。

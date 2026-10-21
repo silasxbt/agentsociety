@@ -53,9 +53,8 @@
       工作区里还有两处正文引用改为指向 `app:params`。确认后与英文版一并完成、提交。
 - [x] 规则层扫描脚本加 `--profiles placeholder|calibrated`（默认占位，输出文件名区分），
       数据机器上用校准画像重跑。
-- [x] `tools/run_astra_single.py` 改为模型名、推理强度、provider 可配置
-      （Opus 5.5 走 Anthropic 格式）；跨模型报告扩到三个模型。
-- [x] 起草 `CROSS_MODEL_PROTOCOL_V2.md`：收敛判据、静默处理、3 模型 × 4 条件 × 3 种子，
+- [x] `tools/run_astra_single.py` 改为模型名、推理强度、provider 可配置；Claude 臂于 2026-10-21 取消，跨模型只做 sol 与 astra。
+- [x] 起草 `CROSS_MODEL_PROTOCOL_V2.md`：收敛判据、静默处理、2 模型 × 4 条件 × 3 种子，
       以及 LLM 层时机对照。
 - [ ] `EVIDENCE.md` 引用的 `tests/harness_loop_result.json`、`harness_loop_log.jsonl`、
       `cost_report.json`、`silence_diagnosis.json` 从未入库、本机也没有，
