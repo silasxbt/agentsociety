@@ -436,6 +436,52 @@ The table below compresses the discipline practised in this paper into checklist
 \end{tabular}
 \end{table}
 
+\section{Parameter Table and Rationale}\label{app:params}
+Table~\ref{tab:params} lists the parameters of the calibrated profile generator and the environment module. Environment and intervention parameters are centralised in \texttt{DEFAULT\_DYNAMICS} and \texttt{INTERVENTION\_DEFAULTS} and can be overridden by configuration; values shown are the defaults used by the main batch. ``Survey'' means sampled directly from a survey distribution; ``mapping'' maps survey categories to model values or thresholds; ``assumption'' means an author-set modelling choice without a point estimate from data or literature. ``Scan'' lists only completed sensitivity scans.
+
+\begin{table*}[t]
+\centering\footnotesize
+\caption{Parameter table ($s$: tie strength; $e$: extroversion; $h$: health).}
+\label{tab:params}
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.19\textwidth}>{\raggedright\arraybackslash}p{0.50\textwidth}>{\raggedright\arraybackslash}p{0.13\textwidth}>{\raggedright\arraybackslash}p{0.12\textwidth}@{}}
+\toprule
+Parameter & Value & Basis & Scan \\
+\midrule
+\multicolumn{4}{@{}l}{\textit{Profile generation}} \\
+Age, sex, self-rated health, loneliness, living children, frequent visits & Unweighted distributions of CLHLS 2021 living-alone subsample ($n=1707$) & Survey & No \\
+Child distance & Local / same city / farther $=28/36/36$ & Survey (CHARLS 2015) & No \\
+Numerical health / loneliness categories & Health centres 0.88--0.20; loneliness centres 0.85--0.15; within-category SD 0.06 & Mapping & No \\
+Child contacts per month & Frequent visitors 5/3/1.8, others 1.5/0.8/0.4 (local / same city / farther), times $U(0.7,1.3)$ & Assumption & No \\
+Extroversion & $N(0.5,0.2)$ truncated to $[0.05,0.95]$ & Assumption & No \\
+Neighbour / friend ties & Count 0--4 with weights 10/25/35/20/10, $+1$ if $e>0.7$; strength $N(0.5,0.18)$ & Assumption & No \\
+\midrule
+\multicolumn{4}{@{}l}{\textit{Environment dynamics}} \\
+Tie decay $\delta$ & 0.06; delete if $s<0.05$; child-tie initial strength 0.8 & Assumption & $\delta$ 0.06--0.25 \\
+Monthly events & Illness 0.10, fall 0.03, neighbour moves 0.02; annual-age factor $+3\%$ after 70; illness times $(2-h)\times0.6$; health loss 0.05/0.08 & Assumption & No \\
+A contact becomes emotional & In-person $0.25+0.35s$; phone $0.10+0.35s$ & Assumption & No \\
+Help seeking & Success $0.15+0.8s\times$reachability (children: 1.0/0.7/0.15); success $s{+}0.08$, loneliness $-0.06$; failure $s{-}0.05$, loneliness $+0.05$ & Assumption & No \\
+Rules-layer monthly behaviour & Expected child contacts $=$ monthly frequency $\times(0.5+0.5s)$; neighbour interaction $e(0.2+0.45s)$; no-help probability $0.25+0.5(1-e)$; at most 2 targets & Assumption & No \\
+Loneliness steady state & $0.90-0.12\min(\text{emotional},4)-0.05\min(\text{ties},5)-0.25h+0.10(1-e)$; halfway to target monthly & Assumption & relaxation 0.2--0.5; base 0.80--0.90 \\
+Monthly loneliness shock & Main-batch default 0; post-hoc calibration selected $N(0,0.20)$ & Assumption (train/hold-out calibration) & 0--0.20 \\
+Lonely threshold & $\ell\ge0.6$, mapped to CLHLS b38 often/always & Mapping & No \\
+Deep isolation (diagnostic) & 3 consecutive months without emotional contact and no instrumental support this month & Assumption & No \\
+Focal-elder tools & Call $s{+}0.04$; visit $s{+}0.05$; activity loneliness $-0.04$, new-friend probability $0.35+0.4e$, strength 0.25 & Assumption & No \\
+Risk score & Months without emotional contact 2.0; $(1-h)$ 1.5; tie deficit below 3: 1.0; events 0.8; loneliness 1.0 & Assumption & No \\
+\midrule
+\multicolumn{4}{@{}l}{\textit{Interventions (direction from literature; numerical values are modelling choices)}} \\
+Intervention window & Months 7--18 & Design & Start month \\
+Social-worker visits & 2 workers $\times$ caseload 8; tie strength 0.4; visit emotional 0.8, $s{+}0.05$; family reconnection 0.5, emotional 0.4, $s{+}0.05$ & Assumption & caseload 4/8/12 \\
+Mutual-aid pairing & Helper $h\ge0.6$, age $\le78$, max 2 recipients; monthly visit 0.85; strength 0.35; recipient emotional 0.6, instrumental 0.5, $s{+}0.06$; helper emotional 0.4, $s{+}0.04$ & Assumption & No \\
+Pairing after withdrawal & post\_persist 0.5; when persistent: recipient emotional 0.5, $s{+}0.03$; helper emotional 0.3, $s{+}0.02$ & Assumption & post\_persist 0--1 \\
+Volunteer matching & Event this month or 2 months without emotional contact; coverage 0.6; strength 0.2 capped 0.35; emotional 0.3; $s{+}0.03$ & Assumption & No \\
+\bottomrule
+\end{tabular}
+\smallskip
+
+{\footnotesize Initial loneliness is sampled from the survey, but the monthly steady-state update halves its influence each month; only $1/8$ remains after three months. Simulated loneliness therefore comes mainly from the assumed steady-state equation. Initial rules-layer scans used placeholder profiles; calibrated-profile reruns on 2026-10-21 kept the same directions. The formal LLM batch uses the default dynamics above; post-hoc calibrated values are not written back into its results.}
+\end{table*}
+
 \section{Validity-Gate Adjudication Rules}
 A run is valid if and only if: the DONE flag exists; monthly metrics for months 0--24 are complete; decision records are non-empty; the six focal elders' combined silence rate is $\le$10\% (strictly greater than 0.10 fails); and the LLM call error rate is $\le$5\%. Invalid runs are archived under timestamped directories (\texttt{*.invalid-<timestamp>}) with all traces and decision logs preserved for diagnosis---never deleted.
 
