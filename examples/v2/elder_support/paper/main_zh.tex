@@ -164,7 +164,7 @@
 \subsection{撤出期可持续性（H4）}
 撤出后社工探访孤立率反弹 \IsoRebCasework pp（同 seed 配对差 \PairRebCasework pp），干预期优势几乎清零；互助结对反弹 \IsoRebTimebank pp（图~\ref{fig:traj}、图~\ref{fig:paired}）。规则层 20 种子扫描给出同向形态（casework 反弹 \RulesRebCwLo\ 至 \RulesRebCwHi pp、timebank \RulesRebTb pp）。
 
-\textbf{必须说明：这是参数推演，不是发现。}两条机制都写在环境规则里——社工探访的情感接触由社工每月来访直接触发，撤出即消失；互助结对撤出后以 post\_persist（中点 0.5）概率延续互动，代码注释明示``延续概率是 H4 的关键机制假设''。LLM 焦点老人与规则老人处在同一环境、共用同一指标定义，规则层与 LLM 层因此\emph{不是}两条独立证据，两层结果同向不构成跨层互证。H4 的准确表述是：\textbf{在显式编码的机制假设下，模拟复现了预期的可持续性分化，并给出了灵敏度范围}（caseload 4--12 不改变反弹；post\_persist 扫描见下）。它的价值在于把``退出后依赖型支持消失、互惠型关系部分存续''这一实务直觉变成可参数化、可反驳的模型，而非证明它为真。
+\textbf{结果来源。}两条机制都写在环境规则里——社工探访的情感接触由社工每月来访直接触发，撤出即消失；互助结对撤出后以 post\_persist（中点 0.5）概率延续互动，代码注释明示``延续概率是 H4 的关键机制假设''。LLM 焦点老人与规则老人处在同一环境、共用同一指标定义，规则层与 LLM 层因此\emph{不是}两条独立证据，两层结果同向不构成跨层互证。H4 的准确表述是：\textbf{在显式编码的机制假设下，模拟复现了预期的可持续性分化，并给出了灵敏度范围}（caseload 4--12 不改变反弹；post\_persist 扫描见下）。它的价值在于把``退出后依赖型支持消失、互惠型关系部分存续''这一实务直觉变成可参数化、可反驳的模型，而非证明它为真。
 
 \textbf{post\_persist 置零对照（规则层，\PPSeeds\ 种子）。}为直接检验分化是否由该参数制造，我们在规则层扫描 post\_persist $\in\{0,0.3,0.5,0.7,1.0\}$（表~\ref{tab:pp}）。结果分两半：（1）\textbf{撤出后水平}——post\_persist $=0$ 时互助结对撤出期孤立率 \PPPostTbZero\%，与社工探访（\PPPostCw\%）完全相同，即\emph{一旦结对不延续，互助结对没有任何可持续性优势}；随 post\_persist 升至 0.5/0.7，撤出期降至 \PPPostTbMid\%/\PPPostTbHi\%，优势完全由该参数供给。（2）\textbf{反弹幅度}——即便 post\_persist $=0$，互助结对反弹（\PPRebTbZero pp）仍小于社工探访（\PPRebCw pp，\PPLtCwZero/\PPSeeds\ 种子），但这只是算术：互助结对干预期效果更弱（\PPIvTb\% 对 \PPIvCw\%），可反弹的空间更小，两者撤出后回到同一水平。因此\textbf{以``反弹幅度''比较可持续性会系统性偏向弱干预}，正确的比较量是撤出后水平或相对基线的残余效应；本文主表（表~\ref{tab:main}）同时给出两者。另一附带观察：两种干预撤出后水平（\PPPostCw\%）均低于从未干预（\PPPostNone\%），说明规则层中干预期建立的关系强度有缓慢衰减的残余，这同样是 $\delta$ 的直接推论。
 
@@ -289,7 +289,7 @@ platform & \multicolumn{2}{c}{\PFocIvPf\ / \PFocRebPf} & \multicolumn{2}{c}{\PFo
 \end{tabular}}
 \end{table}
 
-\subsection{关系衰减的结构性限制}
+\subsection{关系衰减的结构性限制}\label{sec:decay}
 以 Burt 口径实测本模型关系存活曲线（规则层 50 人 $\times$ 48 月）发现两点\textbf{机制层限制}：（1）模型关系流失显著慢于文献（4 年存活 \TieSurvFourYr\% 对 Burt 拟合 38.3\%）；（2）存在存活率地板：$\delta$ 从 0.06 扫至 \TieFloorDecay，4 年存活率触底于 \TieFloor\%（$\delta=\TieFloorDecay$ 时第 1 年即 \TieFloorYrOne\%，随后持平），仍高于 Burt 的 38.3\%——有固定联系频率的子女与高频邻里每月刷新联系时间，永不进入衰减分支，因此任何 $\delta$ 取值都无法复现 Burt 幂函数的持续下降（\texttt{tests/scan\_tie\_survival\_floor.py}）。我们据此\textbf{不将关系流失速率作为标定目标}，仅作敏感性维度。引用 Burt 时另有一处更正：其``家庭以外关系半衰期 2.63 年''为原文漏减常数项的算术错误，依原文方程重算应为 1.63 年\citep{burt2000decay}。深度孤立测度受存活率地板截断，故仅入敏感性分析。
 
 \subsection{建模选择的扫描化处理}
@@ -415,7 +415,7 @@ gpt-6-astra & none     & \McAstraSilNone\%$^\dagger$ & \McAstraIvNone & \McAstra
 2 & 效度门槛区分基础设施型与接口型失效，归因于模型前先排查环境回复 & 第~\ref{sec:failure}~节；第~\ref{sec:robust}~节 \\
 3 & 失效 run 归档不删除，逐个写根因；不``跑到通过为止'' & \texttt{*.invalid-*} 目录；\texttt{silence\_diagnosis} \texttt{.json} \\
 4 & 输入分布逐维锚定真实调查，写明口径差与未覆盖部分 & 第~\ref{sec:data}~节 \\
-5 & 输出侧至少一项外部效度检验，未通过者如实报告 & 第 7.1、7.2 节（Burt 不吻合） \\
+5 & 输出侧至少一项外部效度检验，未通过者如实报告 & 第~\ref{sec:calib}、\ref{sec:decay}~节 \\
 6 & 每项主要结果标注其来源（规则、参数或 LLM 层描述） & 表~\ref{tab:prescribed} \\
 7 & 混合架构须拆分各层对宏观结果的贡献，并给出剔除静默后的数字 & 表~\ref{tab:layers} \\
 8 & 指标性质说明：快照型 vs 动力学型，效应量以何者为准 & 第~\ref{sec:prereg}~节 \\

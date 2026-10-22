@@ -44,67 +44,52 @@
    - 验证：回归 20/20 一致；新增单测 5 项通过。
    - `.gitignore` 放行 `tests/*.json`。
 
-## 二、剩余工作
+## 二、当前状态（2026-10-22）
 
-### 本机可做（不需要原始数据）
+### 已完成
 
-- [ ] **论文附录参数表**：中文版已由另一位编辑者在 `main_zh.tex` 附录加了
-      “参数表与依据”（`app:params` / `tab:params`），**截至推送时未提交**，
-      工作区里还有两处正文引用改为指向 `app:params`。确认后与英文版一并完成、提交。
-- [x] 规则层扫描脚本加 `--profiles placeholder|calibrated`（默认占位，输出文件名区分），
-      数据机器上用校准画像重跑。
-- [x] `tools/run_astra_single.py` 改为模型名、推理强度、provider 可配置；Claude 臂于 2026-10-21 取消，跨模型只做 sol 与 astra。
-- [x] 起草 `CROSS_MODEL_PROTOCOL_V2.md`：收敛判据、静默处理、2 模型 × 4 条件 × 3 种子，
-      以及 LLM 层时机对照。
-- [ ] `EVIDENCE.md` 引用的 `tests/harness_loop_result.json`、`harness_loop_log.jsonl`、
-      `cost_report.json`、`silence_diagnosis.json` 从未入库、本机也没有，
-      须在数据机器上找回并提交。
-- [ ] 线上介绍页问答（“时机实验尚未完成”“harness 不会自动改配置”）在 GCP 部署副本
-      `/srv/agentsociety-panel/app`，不在本仓库，需在那边改。
-- [ ] 问题 3：从焦点老人决策日志提取 1–2 条完整模拟案例（需要 `tmp/batch`，在数据机器上做）。
+- [x] 中英文参数附录、论文新题目与三种干预名称统一（社工探访 / 互助结对 / 志愿匹配）。
+- [x] 主批次画像逐字节核对：seed 1--3 均为校准画像；CLHLS/CHARLS 汇总分布入库。
+- [x] 画像消融：校准 / 普通随机 / CLHLS 记录重抽，各 20 种子；逐种子保真表入库。
+- [x] 动力学校准：72 个预注册候选，B1--B3 训练、B4 留出；留出误差 43.1pp → 4.6pp，V1/V2 通过。
+- [x] 校准后重跑消融：调查锚定画像输出误差 4.3/4.2pp，普通随机 7.3pp。
+- [x] 校准画像重跑时机、衰减、post_persist 扫描，方向与历史结果一致。
+- [x] harness 按原预注册重跑并恢复证据文件：占位画像最优 casework start=4 dur=12（7.70%，4 轮提前停止）；校准画像同一最优（8.08%）。
+- [x] 路由事故查明并修复：旧只读路由把“本次不能写”说成“没有联系功能”；测试 5 项通过；论文撤回模型行为解读。
+- [x] 架构图、路由小节、Astra System Card 引用、事故记录、结果来源对照表。
+- [x] 论文重写：社工实务主线、核心结论与创新、局限后置、评审五维度与六问附录对照表。
+- [x] 中文/英文 PDF 编译（各 15 页），无未定义引用；PDF 已在 2026-10-22 部署到面板下载。
+- [x] Claude 模型臂取消；跨模型计划只保留 Sol / Astra。
 
-### 数据机器上做（详见 `DATA_MACHINE_RUNBOOK.md`）
+### 进行中
 
-- [ ] 核实正式批次是否用了校准画像：重新生成画像，与 `tmp/init/profiles_s*.json`
-      逐字节比对（手册 1.1）。
-- [ ] 提交 `clhls2021_dist.json`、`harmonized_charls.json` 等汇总分布。
-- [ ] 提取动态靶标，分训练集与留出集（手册任务 B）。
-- [ ] 规则层：校准 vs 占位画像消融、等服务人次对照、按 6.2 表数据校准、
-      干预强度对齐荟萃效应量（手册任务 C）。
-- [ ] 新环境上三个模型统一重跑 LLM 层（手册任务 D）。
-- [ ] 成文实务规则（民政探访关爱分级、机构开案标准）编码为策略，与仿真推荐策略、
-      “只按年龄排序”基线比较（问题 4 目的 A）。
-- [ ] 用 `tools/build_paper.sh` 重建 PDF（本机无 TeX，也没有 `tmp/`，`numbers.tex` 无法再生成）。
-- [ ] 论文重构：主线改为“调查锚定 → 自动校准与留出验证 → 策略搜索 → 与成文实务规则比较”。
+- [ ] 新路由 Astra seed 1 四条件：none 完成；casework 运行中；timebank / platform 排队。新路由结果只与旧路由 Astra seed 1 比较，不与旧路由 Sol 混合。
 
-### 待确认
+### 剩余工作
 
-- 决赛具体日期与材料截止。
-- CLHLS/CHARLS 原始微观数据的位置：本机全盘未找到；待查 GCP VM、移动硬盘或网盘，
-  必要时重新申请。
+- [ ] Astra 四场完成后做路由修复前后对照表与图，更新论文第 `sec:robust` 节和数字宏。
+- [ ] 把事故时间线压缩后加入论文附录（当前完整记录在 `ROUTER_INCIDENT_20261021.md`）。
+- [ ] 英文干预机制表仍有约 9pt 轻微溢出，排版收尾时修复。
+- [ ] 最终数据冻结后重新运行图表/数字生成、编译中英文 PDF，并更新面板下载。
+- [ ] 线上面板文案仍是旧干预名称；按用户要求暂不更新。
 
-## 三、今天新增或改动的文件
+### 不再做 / 降级
 
-| 文件 | 作用 |
+- Claude Opus / Fable 实验已取消；不再运行。
+- 不把 harness 写成“自我演进”；只写提案--评估回路及训练/留出校准。
+- 不主张老人行为层“涌现”；只保留方法层发现（多模型对照暴露路由缺陷）。
+- 成文实务规则策略对照、等服务人次、对齐荟萃效应量未进入当前论文主线，列为后续工作。
+
+## 三、关键产出索引（2026-10-22）
+
+| 产出 | 文件 |
 |---|---|
-| `FINAL_REVIEW_20261019.md`（新） | 六个问题的分类、依据、下一步与总体顺序，完成一项勾选一项 |
-| `DATA_MACHINE_RUNBOOK.md`（新） | 在有原始数据的机器上的操作手册：硬规则、盘点核验、任务 A–E、时间线 |
-| `todo.md`（新，本文） | 当天进度、剩余工作、文件索引 |
-| `tests/regress_dynamics.py`（新） | 环境动力学回归：默认参数下结果须与基准逐位一致；`--write` 重写基准 |
-| `tests/regress_dynamics_golden.json`（新） | 回归基准哈希（20 个 run），由参数外置前的代码生成 |
-| `tests/test_env_dynamics.py`（新） | 参数外置单测：覆盖生效、未知键报错、旧状态恢复、参数随状态保存 |
-| `custom/envs/elder_support_env.py`（改） | `DEFAULT_DYNAMICS`、`INTERVENTION_DEFAULTS` 与 `dynamics` 构造参数 |
-| `init/config_params.py`（改） | 新增 `--dynamics`、`--iv-params` |
-| `init/gen_profiles.py`（改） | 缺校准分布时报错，不再静默降级 |
-| `paper/main_zh.tex`、`paper/main_en.tex`（改） | 第 3.2–3.4、5.1 节、相关工作、预注册说明、局限 (4)(6)(9)(10)，表 `tab:mechanism` |
-| `paper/refs.bib`（改） | 新增 Cantor 1979、Gouldner 1960、Granovetter 1973 |
-| `data_pipeline/out/references_verified.md`（改） | 三篇新文献的核实记录；Antonucci support bank 未采用的原因 |
-| `panel/index.html`（改） | 条件名改为“社工探访”，提示文案补投入量与 `post_persist` 说明 |
-| 根目录 `.gitignore`（改） | 放行 `data_pipeline/out/*.json` 与 `tests/*.json` |
-
-路径均相对 `examples/v2/elder_support/`，`custom/envs/` 与 `.gitignore` 相对仓库根目录。
-
-本次推送不包含的未提交改动（非本次工作）：`main_zh.tex` 中另一位编辑者的参数表；
-`CROSS_MODEL_PROTOCOL.md`、`MIGRATION_KR_20261019.md`、`tools/run_astra_single.py`、
-`tools/cross_model_cohort.py`、`tools/check_ray_host.py` 及两个对应测试；
-仓库其他目录（rumor_spreader、benchmark、community）的改动。
+| 决赛计划 | `PLAN_FINALS_20261021.md` |
+| 数据机器手册 | `DATA_MACHINE_RUNBOOK.md` |
+| 路由事故 | `ROUTER_INCIDENT_20261021.md` |
+| 画像消融设计/结果 | `tests/scan_profile_ablation.py`、`profile_ablation_result*.json`、`profile_ablation_report.md` |
+| 逐种子保真 | `tests/profile_fidelity_by_seed.csv` / `.md` |
+| 动力学校准 | `tools/calibrate_dynamics.py`、`tests/calibrate_dynamics_*`、`init/dynamics_v2_tuned.json` |
+| harness 重跑 | `tests/harness_loop_result*.json`、`harness_loop_log*.jsonl` |
+| 校准画像扫描 | `tests/*_calibrated.json` |
+| 正本与 PDF | `paper/main_zh.tex` / `main_en.tex` / `main_zh.pdf` / `main_en.pdf` |
