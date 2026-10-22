@@ -276,6 +276,7 @@ platform & \multicolumn{2}{c}{\PFocIvPf\ / \PFocRebPf} & \multicolumn{2}{c}{\PFo
 \centering\small
 \caption{画像消融（规则层，20 种子 $\times$ 20 人）。TVD 越小越贴近调查边际分布；输出误差为四项靶标平均绝对误差（pp）。}
 \label{tab:ablation}
+\resizebox{\columnwidth}{!}{%
 \begin{tabular}{lccc}
 \toprule
  & 校准 & 普通随机 & 记录重抽 \\
@@ -285,7 +286,7 @@ platform & \multicolumn{2}{c}{\PFocIvPf\ / \PFocRebPf} & \multicolumn{2}{c}{\PFo
 输出误差（校准后） & 4.3 & 7.3 & 4.2 \\
 三年持续率（校准前 / 后） & 98\% / 59\% & 98\% / 56\% & 100\% / 49\% \\
 \bottomrule
-\end{tabular}
+\end{tabular}}
 \end{table}
 
 \subsection{关系衰减的结构性限制}
@@ -370,7 +371,7 @@ gpt-6-astra & none     & \McAstraSilNone\%$^\dagger$ & \McAstraIvNone & \McAstra
 \centering\small
 \caption{评审维度与决赛前提出的问题，及本文的回答位置。}
 \label{tab:review}
-\begin{tabular}{@{}p{0.30\columnwidth}p{0.47\columnwidth}p{0.17\columnwidth}@{}}
+\begin{tabular}{@{}p{0.28\columnwidth}p{0.45\columnwidth}p{0.16\columnwidth}@{}}
 \toprule
 关切 & 本文回答 & 位置 \\
 \midrule
