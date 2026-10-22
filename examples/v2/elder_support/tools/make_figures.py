@@ -41,8 +41,8 @@ CONDS = ["none", "casework", "timebank", "platform"]
 # 全部呈现文案集中于此；新增图表请两种语言同时补全
 TEXTS = {
     "zh": {
-        "labels": {"none": "基线", "casework": "个案管理",
-                   "timebank": "时间银行", "platform": "数字平台"},
+        "labels": {"none": "基线", "casework": "社工探访",
+                   "timebank": "互助结对", "platform": "志愿匹配"},
         "iv_window": f"干预窗 {IV_START}–{IV_END} 月",
         "xlabel_month": "模拟月份",
         "traj_title": "{ylabel}月度轨迹 · {tag}",
