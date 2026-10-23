@@ -299,38 +299,40 @@ platform & \multicolumn{2}{c}{\PFocIvPf\ / \PFocRebPf} & \multicolumn{2}{c}{\PFo
 按效度门槛（第~\ref{sec:prereg}~节）判无效的 run 全部归档并逐一诊断，识别出两类失效模式：（1）\textbf{基础设施型}——LLM 网关错误风暴导致整月决策黑洞（错误在 trace 中成簇可见），处置为重跑并调高重试次数（基础设施参数，非协议变更）；（2）\textbf{接口型}——LLM 调用正常、错误率为 0，但老人在只读询问中得到``不能联系他人''的错误回答后不再行动。早先把它归为``行为型静默''并解读为模型特性，经 trace 复核（\texttt{ROUTER\_INCIDENT\_20261021.md}）确认是路由设计问题，见第~\ref{sec:robust}~节。处置为修复路由；修复前的 run 按原门槛判定，不补进主结果，不改门槛。
 
 \subsection{模型与推理设定披露}
-正式批次使用单一模型（gpt-5.6-sol）与统一采样设置；思考强度未被运行脚本记录，如实标注``未记录''，后续以小样本对照补充。跨模型稳健性（gpt-6-astra 对照批次，seed~1 的 none 与 casework 两条 run）列为敏感性检验，不在主结果内，结果见第~\ref{sec:robust}~节。
+正式批次使用单一模型（gpt-5.6-sol）与统一采样设置；思考强度未被运行脚本记录，如实标注``未记录''，后续以小样本对照补充。跨模型稳健性（gpt-6-astra，seed~1，路由修复前后对照）列为敏感性检验，不在主结果内，结果见第~\ref{sec:robust}~节。
 
 \subsection{跨模型对照与路由事故}\label{sec:robust}
-以 gpt-6-astra 替换焦点老人的驱动模型，其余配置（画像、种子、干预参数、步数）与主批次 seed~1 完全一致，原计划比较 casework$-$none 的方向。这一对照受到下述路由事故影响，\textbf{目前没有可用的跨模型有效对照}。
+以 gpt-6-astra 替换焦点老人的驱动模型，其余配置（画像、种子、干预参数、步数）与主批次 seed~1 一致。这一对照先后跨越一次路由修复，因此只在 Astra 内部比较路由修复前后，\textbf{不与旧路由上的 gpt-5.6-sol 主批次混合比较}；它是单 seed、单 run 的描述性敏感性检验，不作统计推断。
 
-\textbf{路由事故。}老人模型不能直接调用环境工具，只能用一句自然语言向环境提问。问句被标为只读时，代码生成路由只把只读工具（观察自身状况、社区报告）交给另一个模型生成回答，原文再转给老人；写工具（打电话、串门、求助）虽已注册，但提示中没有要求区分``这一次不能写''与``世界上没有这个功能''，回答因此常说成``不能打电话、不能串门''。真实老人没有这一步。gpt-5.6-sol 多半不先询问、直接下令，因而在同一路由上静默率保持在 10\% 以内；gpt-6-astra 更常先询问，并把回答当作真实约束而停止行动；社工每月上门、任务变得明确时，同一模型又会写入决策。这与 OpenAI 系统卡对该模型的描述一致：Astra 更守安全与授权边界，在不设确认策略的真实工作环境评测中越权交易率为 6.8\%，GPT-5.6 Sol 为 38.0\%\citep{openai2026astracard}。同一系统卡还报告其思维链可监看性低于 Sol，本文没有测量这一点，只提示：对更守边界的模型，仅凭行动日志判断其是否``不愿行动''可能不够，需要同时检查环境告诉了它什么。多模型对照在这里起到了单一模型做不到的作用——Sol 直接下令，掩盖了路由缺陷；Astra 先问再停，把它暴露了出来。2026-10-20 修复路由：询问功能是否存在时由注册表直接回答``工具存在，本次只读不能调用，要行动请用 readonly=false''，生成结果若仍称功能不存在则被替换且不进入缓存。
+\textbf{路由事故。}老人模型不能直接调用环境工具，只能用一句自然语言向环境提问。问句被标为只读时，代码生成路由只把只读工具交给另一个模型生成回答；写工具（打电话、串门、求助）虽已注册，但提示中没有要求区分``这一次不能写''与``世界上没有这个功能''，回答因此常说成``不能打电话、不能串门''。gpt-5.6-sol 多半不先询问、直接下令，静默率保持在 10\% 以内；gpt-6-astra 更常先询问，并把回答当作真实约束而停止行动。这与系统卡对该模型更守授权边界的描述一致\citep{openai2026astracard}。多模型对照在这里起到了单一模型做不到的作用：Sol 直接下令，掩盖了路由缺陷；Astra 先问再停，把它暴露了出来。2026-10-20 修复路由：询问功能是否存在时由注册表直接回答``工具存在，本次只读不能调用，要行动请用 readonly=false''，生成结果若仍称功能不存在则被替换且不进入缓存。事故时间线与旧路由上全部 8 场 Astra 的处理见附录~\ref{app:router}。
 
-\textbf{对已有结果的影响。}旧路由上共有 8 场 gpt-6-astra：2026 年 9 月 none seed~1 两次（静默率 10.7\% 与 \McAstraSilNone\%，均判无效）、casework seed~1 一次（\McAstraSilCw\%，有效），以及 10 月 19 日的 5 场（静默率约 31--87\%，未凑成四条件齐全的一组）。按 10\% 门槛只有 9 月 casework seed~1 有效。同一``不能联系''回答也出现在 gpt-5.6-sol 的 platform seed~2 补跑中（静默率 60.7\%），说明它不是某个模型独有的倾向。此前把 astra 的高静默写成``无人上门时更不行动、有人来访才产出决策''的模型特征，这一解读撤回。表~\ref{tab:robust} 的 astra 行只作事故记录，不作跨模型比较。新路由上的 gpt-6-astra seed~1 四条件正在运行，只与旧路由上的 astra seed~1 比较路由前后，不与旧路由上的 Sol 批次混合比较。
+\textbf{修复后的结果。}新路由上 gpt-6-astra seed~1 四条件全部跑满 24 个月，焦点老人静默率分别为 \ArNewSilNone\%、\ArNewSilCw\%、\ArNewSilTb\%、\ArNewSilPf\%，LLM 调用错误率均为 0，全部通过效度门槛；旧路由上 none 为 \ArOldSilNone\%（无效）。静默基本消失，说明旧路由上的高静默来自环境回答，而非模型特征；此前``无人上门时更不行动''的解读继续撤回。casework$-$none 的配对差在修复前后同向：干预期压低（旧 \ArOldPIv{} pp，新 \ArNewPIv{} pp），撤出后回到接近不干预水平（反弹旧 \ArOldPReb{} pp，新 \ArNewPReb{} pp）。修复后幅度变小：旧路由下 none 的干预期孤立率更高（\ArOldIvNone{} 对 \ArNewIvNone），casework 更低（\ArOldIvCw{} 对 \ArNewIvCw）。互助结对与志愿匹配在新路由上干预期仅比 none 低约 3 pp，旧路由没有对应 run，不作前后比较。
 
 \textbf{对效度门槛的提示。}静默率门槛同时混合了故障、接口与模型差异；把``不行动''归因于模型之前，应先检查环境回复是否告诉了 agent 错误的能力边界。
 
 \begin{table}[t]
 \centering\small
-\caption{跨模型敏感性检验（seed~1，单 run）。孤立率为窗口均值（\%），反弹 $=$ 撤出期 $-$ 干预期（pp）；静默率为焦点老人无决策 agent-月占比（门槛 10\%）。}
+\caption{gpt-6-astra 路由修复前后对照（seed~1，单 run）。孤立率为窗口均值（\%），干预期为第 7--18 月，撤出期为第 19--24 月，反弹 $=$ 撤出期 $-$ 干预期（pp）；静默率为焦点老人无决策 agent-月占比（门槛 10\%）。}
 \label{tab:robust}
 \resizebox{\columnwidth}{!}{%
 \begin{tabular}{llcccc}
 \toprule
-模型 & 条件 & 静默率 & 干预期 & 撤出期 & 反弹 \\
+路由 & 条件 & 静默率 & 干预期 & 撤出期 & 反弹 \\
 \midrule
-gpt-5.6-sol & none     & \McSolSilNone\% & \McSolIvNone & \McSolPostNone & \McSolRebNone \\
-            & casework & \McSolSilCw\% & \McSolIvCw  & \McSolPostCw & \McSolRebCw \\
-gpt-6-astra & none     & \McAstraSilNone\%$^\dagger$ & \McAstraIvNone & \McAstraPostNone & \McAstraRebNone \\
-            & casework & \McAstraSilCw\% & \McAstraIvCw  & \McAstraPostCw & \McAstraRebCw \\
+修复前 & none     & \ArOldSilNone\%$^\dagger$ & \ArOldIvNone & \ArOldPostNone & \ArOldRebNone \\
+       & casework & \ArOldSilCw\% & \ArOldIvCw & \ArOldPostCw & \ArOldRebCw \\
+修复后 & none     & \ArNewSilNone\% & \ArNewIvNone & \ArNewPostNone & \ArNewRebNone \\
+       & casework & \ArNewSilCw\% & \ArNewIvCw & \ArNewPostCw & \ArNewRebCw \\
+       & timebank & \ArNewSilTb\% & \ArNewIvTb & \ArNewPostTb & \ArNewRebTb \\
+       & platform & \ArNewSilPf\% & \ArNewIvPf & \ArNewPostPf & \ArNewRebPf \\
 \midrule
-\multicolumn{2}{l}{配对差 casework$-$none：sol}   & & \McSolPIv & \McSolPPost & \McSolPReb \\
-\multicolumn{2}{l}{配对差 casework$-$none：astra} & & \McAstraPIv & \McAstraPPost & \McAstraPReb \\
+\multicolumn{2}{l}{配对差 casework$-$none：修复前} & & \ArOldPIv & \ArOldPPost & \ArOldPReb \\
+\multicolumn{2}{l}{配对差 casework$-$none：修复后} & & \ArNewPIv & \ArNewPPost & \ArNewPReb \\
 \bottomrule
 \end{tabular}}
 
 \smallskip
-{\footnotesize $^\dagger$ 旧路由，超过 10\% 门槛判无效（首次运行为 10.7\%）；astra 行均为路由修复前的运行，只作事故记录。}
+{\footnotesize $^\dagger$ 超过 10\% 门槛判无效，仅作事故记录。修复后 run 的完成凭证为运行链日志与程序成功结束记录（该批未使用 DONE 标志）。}
 \end{table}
 
 \section{成本核算}\label{sec:cost}
@@ -474,5 +476,14 @@ gpt-6-astra & none     & \McAstraSilNone\%$^\dagger$ & \McAstraIvNone & \McAstra
 
 \section{效度门槛判定细则}
 run 有效当且仅当：DONE 标志存在；月度指标 0--24 完整；决策记录非空；6 名焦点老人合计静默率 $\le$10\%（严格大于 0.10 判无效）；LLM 调用错误率 $\le$5\%。判无效的 run 以时间戳目录归档（\texttt{*.invalid-<timestamp>}），保留全部 trace 与决策日志供诊断，不删除。
+
+\section{路由事故时间线}\label{app:router}
+\begin{itemize}
+\item 2026-09：gpt-6-astra none seed~1 两次，静默率 10.7\% 与 \ArOldSilNone\%，均判无效；casework seed~1 静默率 \ArOldSilCw\%，有效。当时误写为模型行为特征。
+\item 2026-10-19：旧路由上又完成 5 场 Astra，静默率约 31--87\%，未凑成四条件齐全的一组；同一``不能联系''回答也出现在 gpt-5.6-sol platform seed~2 补跑（静默率 60.7\%）。
+\item 2026-10-20：定位并修复只读路由（见第~\ref{sec:robust}~节）；2 名焦点老人 $\times$ 2 个月冒烟测试出现真实打电话、串门行动，不计为有效 run。
+\item 2026-10-21 至 10-22：新路由上按主批次 seed~1 配置依次运行四条件。casework 首次启动约 1 分钟后异常退出，重启一次后完成；其余条件一次完成。
+\end{itemize}
+旧路由上的 Astra run 全部保留归档，不删除、不改写；表~\ref{tab:robust} 只引用 2026-09 的 seed~1 none 与 casework。
 
 \end{document}

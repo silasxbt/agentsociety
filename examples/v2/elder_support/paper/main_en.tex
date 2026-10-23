@@ -308,38 +308,40 @@ Three independent literature searches (the third via a multi-source aggregator c
 Every run failing the validity gates (Section~\ref{sec:prereg}) was archived and diagnosed, revealing two failure modes: (1) \textbf{infrastructure failures}---LLM gateway error storms blacking out whole months of decisions (errors visibly clustered in the trace), handled by rerunning with a higher retry count (an infrastructure parameter, not a protocol change); (2) \textbf{interface failures}---LLM calls succeed with zero errors, but after a read-only query returns a false ``you cannot contact anyone'', the elder stops acting. We earlier classified this as ``behavioural silence'' and read it as a model trait; a trace review (\texttt{ROUTER\_INCIDENT\_20261021.md}) confirms it is a routing design problem (Section~\ref{sec:robust}). The remedy is fixing the router; runs before the fix are judged by the original gate, are not folded into the main results, and the gate is unchanged.
 
 \subsection{Model and inference-setting disclosure}
-The formal batch uses a single model (gpt-5.6-sol) with uniform sampling settings; reasoning-effort level was not recorded by the run script and is disclosed as ``not recorded'', to be supplemented with a small-sample contrast. Cross-model robustness (a gpt-6-astra contrast batch: the none and casework runs at seed~1) is treated as a sensitivity check outside the main results; see Section~\ref{sec:robust}.
+The formal batch uses a single model (gpt-5.6-sol) with uniform sampling settings; reasoning-effort level was not recorded by the run script and is disclosed as ``not recorded'', to be supplemented with a small-sample contrast. Cross-model robustness (gpt-6-astra, seed~1, before vs.\ after a router fix) is treated as a sensitivity check outside the main results; see Section~\ref{sec:robust}.
 
-\subsection{Cross-model comparison and the routing incident}\label{sec:robust}
-We swap the focal elders' driving model for gpt-6-astra, keeping every other setting (profiles, seed, intervention parameters, horizon) identical to the seed-1 main-batch runs; the plan was to compare the casework$-$none direction. That comparison is compromised by the routing incident below, so \textbf{no valid cross-model contrast is currently available}.
+\subsection{Cross-model contrast and routing incident}\label{sec:robust}
+We swap the focal elders' driving model for gpt-6-astra, keeping profiles, seed, intervention parameters and horizon identical to the seed-1 main-batch runs. Because this contrast straddles a router fix, we compare only within Astra, before vs.\ after the fix, and \textbf{never mix it with the old-router gpt-5.6-sol main batch}. It is a single-seed, single-run descriptive sensitivity check, not a statistical test.
 
-\textbf{Routing incident.} Elder models cannot call environment tools directly; they can only ask the environment a natural-language question. When a question is marked read-only, the code-generation router hands only the read-only tools (observing one's own situation, the community report) to another model, which writes an answer that is passed back verbatim. The write tools (calling, visiting, asking for help) are registered, but the prompt never asked the generator to distinguish ``cannot write in this call'' from ``this function does not exist'', so answers often said ``you cannot call or visit anyone''. Real elders face no such step. gpt-5.6-sol mostly issues orders without asking first and so stays under 10\% silence on the same router; gpt-6-astra asks more often and treats the answer as a real constraint, yet writes decisions when a social worker visits monthly and the task becomes concrete. This matches OpenAI's system card for the model: Astra is stronger at respecting safety and authorization boundaries, with unauthorized transactions in 6.8\% of realistic work-environment cases without a confirmation policy versus 38.0\% for GPT-5.6 Sol\citep{openai2026astracard}. The same card reports lower chain-of-thought monitorability than Sol; we did not measure this, and only note that for more boundary-respecting models, judging ``unwillingness to act'' from action logs alone may be insufficient without checking what the environment told them. Here the cross-model comparison did what a single model could not: Sol issued orders directly and masked the router defect, while Astra asked first, stopped, and exposed it. The router was fixed on 2026-10-20: questions about whether a function exists are answered from the registry (``the tool exists; this read-only call cannot invoke it; use readonly=false to act''), and any generated answer still claiming the function is missing is replaced and not cached.
+\textbf{Routing incident.} Elder models cannot call environment tools directly; they can only ask the environment a natural-language question. When a question is marked read-only, the code-generation router hands only the read-only tools to another model, which writes the answer. The write tools (calling, visiting, asking for help) are registered, but the prompt never asked the generator to distinguish ``cannot write in this call'' from ``this function does not exist'', so answers often said ``you cannot call or visit anyone''. gpt-5.6-sol mostly issues orders without asking first and stays under 10\% silence; gpt-6-astra asks more often and treats the answer as a real constraint, then stops acting. This matches the system card's description of the model as more respectful of authorization boundaries\citep{openai2026astracard}. Here the cross-model comparison did what a single model could not: Sol issued orders directly and masked the router defect, while Astra asked first, stopped, and exposed it. The router was fixed on 2026-10-20: questions about whether a function exists are answered from the registry (``the tool exists; this read-only call cannot invoke it; use readonly=false to act''), and any generated answer still claiming the function is missing is replaced and not cached. The incident timeline and the handling of all eight old-router Astra runs are in Appendix~\ref{app:router}.
 
-\textbf{Effect on existing results.} Eight gpt-6-astra runs used the old router: none seed~1 twice in September 2026 (silence 10.7\% and \McAstraSilNone\%, both invalid), casework seed~1 once (\McAstraSilCw\%, valid), and five runs on 19 October (silence about 31--87\%, never a complete four-condition set). Under the 10\% gate only the September casework seed~1 is valid. The same ``cannot contact'' answer appears in the gpt-5.6-sol platform seed~2 rerun (60.7\% silence), so it is not a tendency unique to one model. We withdraw the earlier reading of astra's silence as a model trait (``less action without visitors, decisions pulled out by visits''). The astra rows of Table~\ref{tab:robust} are an incident record, not a cross-model comparison. New-router gpt-6-astra runs for the four seed-1 conditions are under way; they will be compared only with old-router astra seed~1 (before vs.\ after the fix), not mixed with the old-router Sol batch.
+\textbf{Results after the fix.} All four seed-1 conditions ran the full 24 months on the fixed router. Focal-elder silence was \ArNewSilNone\%, \ArNewSilCw\%, \ArNewSilTb\% and \ArNewSilPf\%, with zero LLM call errors, so every run passes the validity gate; old-router none was \ArOldSilNone\% (invalid). Silence essentially disappears, indicating that the high old-router silence came from the environment's answers, not from a model trait; the earlier reading (``less action without visitors'') stays withdrawn. The paired casework$-$none difference has the same direction before and after the fix: suppression during the intervention (old \ArOldPIv{} pp, new \ArNewPIv{} pp) and a return close to the no-intervention level after withdrawal (rebound old \ArOldPReb{} pp, new \ArNewPReb{} pp). The magnitude shrinks after the fix: old-router none had higher intervention-window isolation (\ArOldIvNone{} vs.\ \ArNewIvNone) and casework lower (\ArOldIvCw{} vs.\ \ArNewIvCw). On the fixed router, timebank and platform sit only about 3 pp below none during the intervention; there are no old-router counterparts, so no before/after comparison is made for them.
 
-\textbf{Note on validity gates.} A silence gate mixes faults, interface problems and model differences; before attributing ``doing nothing'' to a model, check whether environment replies told the agent a false capability boundary.
+\textbf{Implication for the validity gate.} The silence gate conflates faults, interface issues and model differences; before attributing ``doing nothing'' to the model, check whether the environment told the agent a wrong capability boundary.
 
 \begin{table}[t]
 \centering\small
-\caption{Cross-model sensitivity check (seed~1, single run). Isolation rates are window means (\%); rebound $=$ post $-$ in-window (pp); silence rate is the share of focal-elder agent-months with no decision (gate 10\%).}
+\caption{gpt-6-astra before vs.\ after the router fix (seed~1, single run). Isolation is the window mean (\%); intervention = months 7--18, post = months 19--24; rebound $=$ post $-$ intervention (pp). Silence is the share of focal-elder agent-months without a decision (gate 10\%).}
 \label{tab:robust}
 \resizebox{\columnwidth}{!}{%
 \begin{tabular}{llcccc}
 \toprule
-Model & Condition & Silence & In-window & Post & Rebound \\
+Router & Condition & Silence & Interv. & Post & Rebound \\
 \midrule
-gpt-5.6-sol & none     & \McSolSilNone\% & \McSolIvNone & \McSolPostNone & \McSolRebNone \\
-            & casework & \McSolSilCw\% & \McSolIvCw  & \McSolPostCw & \McSolRebCw \\
-gpt-6-astra & none     & \McAstraSilNone\%$^\dagger$ & \McAstraIvNone & \McAstraPostNone & \McAstraRebNone \\
-            & casework & \McAstraSilCw\% & \McAstraIvCw  & \McAstraPostCw & \McAstraRebCw \\
+Before & none     & \ArOldSilNone\%$^\dagger$ & \ArOldIvNone & \ArOldPostNone & \ArOldRebNone \\
+       & casework & \ArOldSilCw\% & \ArOldIvCw & \ArOldPostCw & \ArOldRebCw \\
+After  & none     & \ArNewSilNone\% & \ArNewIvNone & \ArNewPostNone & \ArNewRebNone \\
+       & casework & \ArNewSilCw\% & \ArNewIvCw & \ArNewPostCw & \ArNewRebCw \\
+       & timebank & \ArNewSilTb\% & \ArNewIvTb & \ArNewPostTb & \ArNewRebTb \\
+       & platform & \ArNewSilPf\% & \ArNewIvPf & \ArNewPostPf & \ArNewRebPf \\
 \midrule
-\multicolumn{2}{l}{Paired casework$-$none: sol}   & & \McSolPIv & \McSolPPost & \McSolPReb \\
-\multicolumn{2}{l}{Paired casework$-$none: astra} & & \McAstraPIv & \McAstraPPost & \McAstraPReb \\
+\multicolumn{2}{l}{Paired casework$-$none: before} & & \ArOldPIv & \ArOldPPost & \ArOldPReb \\
+\multicolumn{2}{l}{Paired casework$-$none: after} & & \ArNewPIv & \ArNewPPost & \ArNewPReb \\
 \bottomrule
 \end{tabular}}
 
 \smallskip
-{\footnotesize $^\dagger$ Old router; exceeds the 10\% gate and is ruled invalid (first attempt 10.7\%). All astra rows predate the router fix and are an incident record only.}
+{\footnotesize $^\dagger$ Exceeds the 10\% gate; incident record only. Completion evidence for the fixed-router runs is the run-chain log plus the program's success record (this cohort did not use DONE flags).}
 \end{table}
 
 \section{Cost Accounting}\label{sec:cost}
@@ -484,5 +486,14 @@ Volunteer matching & Event this month or 2 months without emotional contact; cov
 
 \section{Validity-Gate Adjudication Rules}
 A run is valid if and only if: the DONE flag exists; monthly metrics for months 0--24 are complete; decision records are non-empty; the six focal elders' combined silence rate is $\le$10\% (strictly greater than 0.10 fails); and the LLM call error rate is $\le$5\%. Invalid runs are archived under timestamped directories (\texttt{*.invalid-<timestamp>}) with all traces and decision logs preserved for diagnosis---never deleted.
+
+\section{Routing incident timeline}\label{app:router}
+\begin{itemize}
+\item 2026-09: gpt-6-astra none seed~1 twice, silence 10.7\% and \ArOldSilNone\%, both invalid; casework seed~1 at \ArOldSilCw\%, valid. At the time this was misread as a model trait.
+\item 2026-10-19: five more Astra runs on the old router, silence about 31--87\%, never a complete four-condition set; the same ``cannot contact'' answer also appears in the gpt-5.6-sol platform seed~2 rerun (60.7\% silence).
+\item 2026-10-20: the read-only router was diagnosed and fixed (Section~\ref{sec:robust}); a 2-elder $\times$ 2-month smoke test showed real calls and visits and is not counted as a valid run.
+\item 2026-10-21 to 10-22: the four conditions ran in sequence on the fixed router with the seed-1 main-batch configuration. Casework exited abnormally about one minute after its first start and completed after one restart; the other conditions completed on the first attempt.
+\end{itemize}
+All old-router Astra runs are archived unchanged; Table~\ref{tab:robust} cites only the September 2026 seed-1 none and casework runs.
 
 \end{document}

@@ -63,11 +63,11 @@
 
 ### 进行中
 
-- [ ] 新路由 Astra seed 1 四条件：none 完成；casework 运行中；timebank / platform 排队。新路由结果只与旧路由 Astra seed 1 比较，不与旧路由 Sol 混合。
+- [x] 新路由 Astra seed 1 四条件全部完成（2026-10-22，静默率 0–0.7%，LLM 错误率 0）。新路由结果只与旧路由 Astra seed 1 比较，不与旧路由 Sol 混合。
 
 ### 剩余工作
 
-- [ ] Astra 四场完成后做路由修复前后对照表与图，更新论文第 `sec:robust` 节和数字宏。
+- [x] 路由修复前后对照表（`tools/astra_router_compare.py` → `tests/astra_router_compare.json`、`\Ar*` 宏），`sec:robust` 中英文改写，事故时间线入附录，PDF 重编（2026-10-23）。对照图未做，表已足够。
 - [ ] 把事故时间线压缩后加入论文附录（当前完整记录在 `ROUTER_INCIDENT_20261021.md`）。
 - [ ] 英文干预机制表仍有约 9pt 轻微溢出，排版收尾时修复。
 - [ ] 最终数据冻结后重新运行图表/数字生成、编译中英文 PDF，并更新面板下载。

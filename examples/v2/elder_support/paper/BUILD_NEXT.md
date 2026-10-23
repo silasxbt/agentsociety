@@ -17,18 +17,18 @@
 
 ## 最终版依赖
 
-1. 等新路由 Astra seed 1 四条件完成；只做旧/新路由下 Astra 同模型对照，不与旧路由 Sol 混合。
-2. 更新第 `sec:robust` 节、对应表格/图和 `numbers.tex`。
-3. 把 `ROUTER_INCIDENT_20261021.md` 时间线压缩进附录。
-4. 修英文机制表轻微溢出。
-5. 在有完整 `tmp/batch` 的数据机器上运行：
+1. ✅ 2026-10-23 完成（见 `tools/astra_router_compare.py`）。原：等新路由 Astra seed 1 四条件完成；只做旧/新路由下 Astra 同模型对照，不与旧路由 Sol 混合。
+2. ✅ 更新第 `sec:robust` 节、对应表格/图和 `numbers.tex`。
+3. ✅（附录 `app:router`）把 `ROUTER_INCIDENT_20261021.md` 时间线压缩进附录。
+4. ✅ 英文稿 tectonic 编译无 Overfull（2026-10-23）。
+5. 未做：本机缺 `tmp/batch` 与部分 tests JSON，未跑全量 `build_paper.sh`（图与旧宏未重生成，只追加了 `ASTRA-ROUTER` 宏块）。需在有完整 `tmp/batch` 的数据机器上运行：
 
 ```bash
 cd examples/v2/elder_support
 tools/build_paper.sh all
 ```
 
-6. 验收：无硬错误、无未定义引用；`numbers.tex` 变化逐条可解释；抽查摘要、架构图、核心结论、评审表、参数表。
+6. ✅（tectonic，无错误/未定义引用；`numbers.tex` 只新增 `\Ar*` 宏块）验收：无硬错误、无未定义引用；`numbers.tex` 变化逐条可解释；抽查摘要、架构图、核心结论、评审表、参数表。
 7. 备份并更新面板 PDF；面板文案仍不动，除非用户另行授权。
 
 ## 冻结口径
