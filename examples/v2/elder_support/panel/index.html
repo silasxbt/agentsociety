@@ -116,6 +116,10 @@ tr[data-run]{cursor:pointer}
 .param .v{display:block;font-size:13px;font-weight:700;overflow-wrap:anywhere}
 .param.wide{grid-column:1/-1}
 .scale-detail{font-size:12px;line-height:1.55;color:var(--ink2);background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:9px 10px;margin-top:8px}
+.remote-conditions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin-top:8px}
+.remote-condition{display:flex;justify-content:space-between;gap:10px;font-size:12px;padding:7px 9px;background:var(--surface);border:1px solid var(--border);border-radius:8px}
+.remote-condition strong{font-weight:600}.remote-condition span{color:var(--ink2);text-align:right}
+@media (max-width:620px){.remote-conditions{grid-template-columns:1fr}}
 @media (max-width:420px){.param-grid{grid-template-columns:1fr}}
 .codex-box{font-size:12px;color:var(--ink2);background:var(--page);border:1px solid var(--border);
   border-radius:8px;padding:8px 10px;margin-top:8px;line-height:1.5}
@@ -219,9 +223,14 @@ tr[data-run]{cursor:pointer}
           </div>
           <div class="param"><span class="k" data-i18n="paramRun">当前轮次</span><span class="v" id="pRun">–</span></div>
           <div class="param wide"><span class="k" data-i18n="paramProgress">总进度</span><span class="v" id="pProgress">–</span></div>
+          <div class="param"><span class="k" data-i18n="paramStatusSource">状态来源</span><span class="v" id="pStatusSource">–</span></div>
+          <div class="param"><span class="k" data-i18n="paramCollectedAt">采集时间</span><span class="v" id="pCollectedAt">–</span></div>
+          <div class="param"><span class="k" data-i18n="paramFreshness">新鲜度</span><span class="v" id="pFreshness">–</span></div>
+          <div class="param"><span class="k" data-i18n="paramQueue">队列</span><span class="v" id="pQueue">–</span></div>
           <div class="param"><span class="k" data-i18n="paramTokens">消耗 tokens</span><span class="v" id="pTokens">–</span></div>
           <div class="param"><span class="k" data-i18n="paramCost">累计费用（含作废与模型对比）</span><span class="v" id="pCost">–</span></div>
         </div>
+        <div class="remote-conditions" id="remoteConditionProgress"></div>
         <div class="param-grid">
           <div class="param"><span class="k" data-i18n="paramScale">当前规模</span><span class="v" id="pScale">–</span></div>
           <div class="param"><span class="k" data-i18n="paramModel">当前模型</span><span class="v" id="pModel">–</span></div>
@@ -349,6 +358,7 @@ const I18N = {
   lblCost:['费用','Cost'], lblTokTotal:['消耗 tokens','Tokens used'],
   etaDone:['已完成','done'],
   statusRun:['运行中','Running'], statusIdle:['空闲','Idle'], statusDone:['已完成','Done'],
+  statusQueued:['排队中','Queued'], statusStalled:['停滞','Stalled'], statusFailed:['失败','Failed'], statusUnavailable:['状态不可用','Unavailable'], statusUnknown:['待核验','Unknown'],
   runQueued:['排队中','queued'],
   condNone:['基线','baseline'], condCasework:['社工探访','casework'],
   condTimebank:['互助结对','timebank'], condPlatform:['志愿匹配','platform'],
@@ -362,6 +372,8 @@ const I18N = {
   paramIntervention:['干预月','Intervention months'],
   scaleDetail:['规模说明','Scale details'], runRecordTitle:['运行记录','Run record'],
   paramStatus:['状态','Status'], paramRun:['当前轮次','Current run'], paramProgress:['总进度','Total progress'], paramTokens:['消耗 tokens','Tokens used'], paramCost:['累计费用（含作废与模型对比）','Total cost (incl. invalid & model-compare)'],
+  paramStatusSource:['状态来源','Status source'], paramCollectedAt:['采集时间','Collected at'], paramFreshness:['新鲜度','Freshness'], paramQueue:['队列','Queue'],
+  sourceKr:['韩国权威节点','Authoritative Korea node'], fresh:['新鲜','Fresh'], delayed:['延迟','Delayed'], stale:['过期','Stale'],
   btnRefresh:['刷新进度','Refresh progress'],
   scaleDetailText:['{scale}（{badge}）：目标配置为 {agents} 位老人、{focal} 个焦点、{months} 月、{seeds} 个种子、{reasoning}推理。{description}','{scale} ({badge}): target configuration is {agents} elders, {focal} focal agents, {months} months, {seeds} seeds, and {reasoning} reasoning. {description}'],
   noIntervention:['无干预','No intervention'],
@@ -574,7 +586,7 @@ function applyLang(){
 }
 $('btnLang').onclick = ()=>{ LANG = LANG==='en' ? 'zh' : 'en'; localStorage.setItem('lang', LANG); applyLang(); };
 
-let selectedRun = null, state = null, charts = {};
+let selectedRun = null, state = null, remoteStatus = null, charts = {};
 let panelCfg = null, activeScale = 'small';
 
 function baseOpts(){
@@ -875,24 +887,33 @@ $('btnStop').onclick = async ()=>{
 
 // ---- 轮询 ----
 async function poll(force){
+  if(panelCfg === null) return;
   const btn = $('btnRefresh');
   if(force && btn){ btn.disabled = true; btn.classList.add('spin'); }
   try{
     const params = new URLSearchParams();
     if(!force && selectedRun) params.set('run', selectedRun);
     if(force) params.set('_', String(Date.now()));
-    const r = await fetch('/api/state'+(params.toString()?('?'+params):''), {
-      cache: 'no-store',
-      headers: force ? {'Cache-Control':'no-cache'} : {}
-    });
-    if(!r.ok) return;
-    state = await r.json();
-    const live = state.totals && state.totals.current_run;
-    if(force && live) selectedRun = live;
-    else if(!selectedRun) selectedRun = state.run;
-    if(force && live && state.run !== live){
-      const r2 = await fetch('/api/state?run='+encodeURIComponent(live)+'&_='+Date.now(), {cache:'no-store'});
-      if(r2.ok) state = await r2.json();
+    const requests = [];
+    if(!panelCfg?.readonly) requests.push(fetch('/api/state'+(params.toString()?('?'+params):''), {
+      cache: 'no-store', headers: force ? {'Cache-Control':'no-cache'} : {}
+    }));
+    if(panelCfg?.readonly) requests.push(fetch('/api/remote-status'+(force?'?_='+Date.now():''), {cache:'no-store'}));
+    const responses = await Promise.all(requests);
+    const r = panelCfg?.readonly ? null : responses[0];
+    if(r?.ok){
+      state = await r.json();
+      const live = state.totals && state.totals.current_run;
+      if(force && live && !panelCfg?.readonly) selectedRun = live;
+      else if(!selectedRun) selectedRun = state.run;
+      if(force && live && state.run !== live && !panelCfg?.readonly){
+        const r2 = await fetch('/api/state?run='+encodeURIComponent(live)+'&_='+Date.now(), {cache:'no-store'});
+        if(r2.ok) state = await r2.json();
+      }
+    }
+    if(panelCfg?.readonly){
+      const rr = responses[0];
+      remoteStatus = rr?.ok ? await rr.json() : {display_state:'unavailable'};
     }
     renderRunRecord(); renderParameterOverview(); renderAgents(); renderFeed();
     if(!$('villageBox').hidden) drawVillage();
@@ -904,7 +925,6 @@ async function poll(force){
 }
 $('btnRefresh').onclick = ()=>poll(true);
 $('btnRefresh').title = t('btnRefresh');
-setInterval(poll, 5000); poll();
 setInterval(()=>{ if(!$('villageBox').hidden) drawVillage(true); }, 900);
 
 function fmtDur(s){
@@ -913,7 +933,45 @@ function fmtDur(s){
   const h = Math.floor(s/3600), m = Math.floor(s%3600/60);
   return h ? `${h}h${m}m` : `${m}m${s%60}s`;
 }
+function remoteStateLabel(value){
+  return ({active:t('statusRun'),running:t('statusRun'),starting:t('statusRun'),completed:t('statusDone'),queued:t('statusQueued'),stalled:t('statusStalled'),failed:t('statusFailed'),unavailable:t('statusUnavailable'),unknown:t('statusUnknown')})[value] || value || '–';
+}
+function escapeHtml(value){
+  const node = document.createElement('span');
+  node.textContent = String(value ?? '');
+  return node.innerHTML;
+}
+function formatAge(seconds){
+  if(seconds==null) return '–';
+  if(seconds < 60) return LANG==='en' ? `${seconds}s ago` : `${seconds}秒前`;
+  const minutes = Math.floor(seconds/60);
+  if(minutes < 60) return LANG==='en' ? `${minutes}m ago` : `${minutes}分钟前`;
+  const hours = Math.floor(minutes/60);
+  return LANG==='en' ? `${hours}h ago` : `${hours}小时前`;
+}
+function renderRemoteRunRecord(){
+  const rs = remoteStatus || {display_state:'unavailable'};
+  const status = $('pRunStatus');
+  const display = rs.display_state || 'unavailable';
+  status.className = 'v pill '+(display==='completed'?'done':(display==='running'?'run':'idle'));
+  status.textContent = remoteStateLabel(display);
+  overviewValue('pStatusSource', rs.source_region==='kr' ? t('sourceKr') : '–');
+  const collected = rs.collected_at ? new Date(rs.collected_at) : null;
+  overviewValue('pCollectedAt', collected && !Number.isNaN(collected.valueOf()) ? collected.toLocaleString(LANG==='en'?'en-US':'zh-CN') : '–');
+  overviewValue('pFreshness', rs.freshness ? `${t(rs.freshness)} · ${formatAge(rs.age_seconds)}` : t('statusUnavailable'));
+  const queue = rs.queue || {};
+  overviewValue('pQueue', remoteStateLabel(queue.state)+(queue.active_condition ? ` · ${queue.active_condition}` : ''));
+  const conditions = Array.isArray(rs.conditions) ? rs.conditions : [];
+  const active = conditions.find(item=>['running','starting','stalled'].includes(item.state));
+  overviewValue('pRun', active ? active.name : (display==='completed' ? `4/4 ${t('statusDone')}` : '–'));
+  const observed = conditions.reduce((sum,item)=>sum+(item.observed_months||0),0);
+  overviewValue('pProgress', conditions.length ? `${(100*observed/100).toFixed(1)}% · ${observed}/100 ${LANG==='en'?'months':'月'}` : '–');
+  const labels = {none_s1:t('condNone'),casework_s1:t('condCasework'),timebank_s1:t('condTimebank'),platform_s1:t('condPlatform')};
+  const box = $('remoteConditionProgress');
+  if(box) box.innerHTML = conditions.map(item=>`<div class="remote-condition"><strong>${escapeHtml(labels[item.name]||item.name)}</strong><span>${item.observed_months}/25 · ${escapeHtml(remoteStateLabel(item.state))}</span></div>`).join('');
+}
 function renderRunRecord(){
+  if(panelCfg?.readonly){ renderRemoteRunRecord(); return; }
   if(!state) return;
   $('btnStop').disabled = !state.running;
   $('btnStart').disabled = !!state.running;
@@ -1265,7 +1323,7 @@ async function loadPanelConfig(){
     renderScaleCards();
     renderParameterOverview();
     renderCodexInfo(panelCfg.codex);
-    await refreshModels();
+    if(!panelCfg.readonly) await refreshModels();
     if(panelCfg.readonly){
       $('btnStart').hidden = true; $('btnStop').hidden = true;
       const banner = document.createElement('p');
@@ -1277,8 +1335,13 @@ async function loadPanelConfig(){
   }catch(e){}
 }
 
-applyLang();
-loadPanelConfig();
+async function initializePanel(){
+  applyLang();
+  await loadPanelConfig();
+  await poll();
+  setInterval(poll, 5000);
+}
+initializePanel();
 </script>
 </body>
 </html>

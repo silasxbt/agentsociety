@@ -17,7 +17,7 @@ import re
 import signal
 import subprocess
 import time
-from datetime import datetime
+from datetime import UTC, datetime
 from pathlib import Path
 
 import sys
@@ -38,6 +38,7 @@ from presets import (
     save_settings,
 )
 from llm_probe import fetch_models, resolve_api_key, test_connection
+from remote_status import ConditionState, parse_snapshot  # noqa: E402
 
 EXP = Path(os.environ.get("PANEL_EXP_DIR", HERE.parent))   # examples/v2/elder_support
 REPO = Path(os.environ.get("PANEL_REPO_DIR", EXP.parent.parent.parent))  # AgentSociety 仓库根
@@ -47,8 +48,16 @@ PY = os.environ.get(
 )
 TMP = EXP / "tmp"
 PANEL_RUNS = TMP / "panel"
-# 只读模式（用于云端只读展示部署）：不接受 /api/start /api/stop，仅浏览已同步的 run 数据
+# 只读模式（用于云端只读展示部署）：拒绝所有写请求和外部模型探测。
 READONLY = os.environ.get("PANEL_READONLY", "0") == "1"
+REMOTE_STATUS_FILE = Path(
+    os.environ.get("PANEL_REMOTE_STATUS_FILE", HERE / "remote_status" / "status.json")
+)
+REMOTE_FRESH_SECONDS = int(os.environ.get("PANEL_REMOTE_FRESH_SECONDS", "600"))
+REMOTE_STALE_SECONDS = int(os.environ.get("PANEL_REMOTE_STALE_SECONDS", "1800"))
+REMOTE_FUTURE_TOLERANCE_SECONDS = int(
+    os.environ.get("PANEL_REMOTE_FUTURE_TOLERANCE_SECONDS", "120")
+)
 
 DEFAULT_ENV = {
     "AGENTSOCIETY_LLM_API_BASE": "https://tokenflux.dev/v1",
@@ -63,6 +72,17 @@ FORMAL_RUN = re.compile(r"^(none|casework|timebank|platform)_s(\d+)$")
 app = FastAPI()
 _proc: subprocess.Popen | None = None
 _proc_run: str | None = None  # 当前面板启动的 run 名
+
+
+@app.middleware("http")
+async def enforce_readonly(request, call_next):
+    if READONLY and request.method not in {"GET", "HEAD", "OPTIONS"}:
+        return JSONResponse(
+            {"error": "只读展示实例：不支持修改操作"},
+            status_code=403,
+            headers={"Cache-Control": "no-store"},
+        )
+    return await call_next(request)
 
 
 # ---------------- 工具 ----------------
@@ -552,6 +572,54 @@ def load_qa() -> dict:
         return {"principle": "", "items": []}
 
 
+def remote_status_payload(now: datetime | None = None) -> dict:
+    now = now or datetime.now(UTC)
+    try:
+        payload = REMOTE_STATUS_FILE.read_bytes()
+    except FileNotFoundError as exc:
+        raise RuntimeError("remote_status_missing") from exc
+    except OSError as exc:
+        raise RuntimeError("remote_status_unreadable") from exc
+    try:
+        snapshot = parse_snapshot(payload)
+    except ValueError as exc:
+        raise RuntimeError("remote_status_invalid") from exc
+    collected_at = snapshot.collected_at.astimezone(UTC)
+    age = (now.astimezone(UTC) - collected_at).total_seconds()
+    if age < -REMOTE_FUTURE_TOLERANCE_SECONDS:
+        raise RuntimeError("remote_status_from_future")
+    age = max(0.0, age)
+    if age <= REMOTE_FRESH_SECONDS:
+        freshness = "fresh"
+    elif age <= REMOTE_STALE_SECONDS:
+        freshness = "delayed"
+    else:
+        freshness = "stale"
+
+    states = [condition.state for condition in snapshot.conditions]
+    if freshness == "stale":
+        display_state = "unavailable"
+    elif any(state == ConditionState.FAILED for state in states):
+        display_state = "failed"
+    elif any(state == ConditionState.STALLED for state in states):
+        display_state = "stalled"
+    elif any(state in {ConditionState.RUNNING, ConditionState.STARTING} for state in states):
+        display_state = "running"
+    elif all(state == ConditionState.COMPLETED for state in states):
+        display_state = "completed"
+    elif any(state == ConditionState.QUEUED for state in states):
+        display_state = "queued"
+    else:
+        display_state = "unknown"
+    result = snapshot.model_dump(mode="json")
+    result.update(
+        age_seconds=round(age),
+        freshness=freshness,
+        display_state=display_state,
+    )
+    return result
+
+
 # ---------------- API ----------------
 
 @app.get("/")
@@ -638,6 +706,12 @@ def api_settings_scale(body: ScaleReq):
 
 @app.get("/api/models")
 def api_models(api_base: str | None = None):
+    if READONLY:
+        return JSONResponse(
+            {"error": "只读展示实例：模型枚举已禁用"},
+            status_code=403,
+            headers={"Cache-Control": "no-store"},
+        )
     base, key = _llm_base_and_key(api_base)
     result = fetch_models(base, key)
     settings = load_settings(EXP)
@@ -660,6 +734,21 @@ def api_models_test(body: ModelTestReq):
     if not result.get("ok"):
         return JSONResponse(result, status_code=502)
     return result
+
+
+@app.get("/api/remote-status")
+def api_remote_status():
+    try:
+        return JSONResponse(
+            remote_status_payload(),
+            headers={"Cache-Control": "no-store"},
+        )
+    except RuntimeError as exc:
+        return JSONResponse(
+            {"error": str(exc), "display_state": "unavailable"},
+            status_code=503,
+            headers={"Cache-Control": "no-store"},
+        )
 
 
 @app.get("/api/state")
