@@ -22,7 +22,7 @@
 3. ✅（附录 `app:router`）把 `ROUTER_INCIDENT_20261021.md` 时间线压缩进附录。
 4. ✅ 英文稿 tectonic 编译无 Overfull（2026-10-23）。
 5. ✅ 2026-10-23 全量复核：在韩国机完整 `tmp/batch` 上重生成 `cost_report`、`model_compare_report`、`layer_decomposition`、`behavior_signature`，本机重生成 `tie_survival_result` 与全部图表。图表逐字节不变；`numbers.tex` 除成本 5 个宏外全部逐位一致。
-   成本宏不一致：现存 trace 重算为 43,945 次调用、$1011（沉没 $364，41%），冻结值为 45,901 次、$1056（$409，44%）。两台机器上都已找不到冻结时计入的约 1,956 次调用对应的归档 trace，因此保留冻结值、不回写，`tests/cost_report.json` 不入库。原命令：
+   2026-10-23 起论文不再报告金额，只报 trace 实测调用次数（`tests/llm_calls_ledger.json`，含新路由 Astra 5,307 次）；冻结的 45,901 次按冻结值保留，现存 trace 只能复算 43,945 次，差额是已删除的无效归档。原命令：
 ```bash
 cd examples/v2/elder_support
 tools/build_paper.sh all
