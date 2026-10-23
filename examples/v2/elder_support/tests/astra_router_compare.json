@@ -1,0 +1,69 @@
+{
+  "old": {
+    "arms": {
+      "none": {
+        "silence_rate": 0.113,
+        "valid": false,
+        "months": 24,
+        "iso_iv": 0.295833,
+        "iso_post": 0.3,
+        "iso_rebound": 0.004167
+      },
+      "casework": {
+        "silence_rate": 0.02,
+        "valid": true,
+        "months": 24,
+        "iso_iv": 0.045833,
+        "iso_post": 0.3,
+        "iso_rebound": 0.254167
+      }
+    },
+    "paired_casework_minus_none": {
+      "iso_iv": -0.25,
+      "iso_post": 0.0,
+      "iso_rebound": 0.25
+    }
+  },
+  "new": {
+    "arms": {
+      "none": {
+        "silence_rate": 0.0,
+        "valid": true,
+        "months": 24,
+        "iso_iv": 0.2625,
+        "iso_post": 0.258333,
+        "iso_rebound": -0.004167
+      },
+      "casework": {
+        "silence_rate": 0.0,
+        "valid": true,
+        "months": 24,
+        "iso_iv": 0.075,
+        "iso_post": 0.225,
+        "iso_rebound": 0.15
+      },
+      "timebank": {
+        "silence_rate": 0.0,
+        "valid": true,
+        "months": 24,
+        "iso_iv": 0.233333,
+        "iso_post": 0.233333,
+        "iso_rebound": 0.0
+      },
+      "platform": {
+        "silence_rate": 0.007,
+        "valid": true,
+        "months": 24,
+        "iso_iv": 0.233333,
+        "iso_post": 0.225,
+        "iso_rebound": -0.008333
+      }
+    },
+    "paired_casework_minus_none": {
+      "iso_iv": -0.1875,
+      "iso_post": -0.033333,
+      "iso_rebound": 0.154167
+    }
+  },
+  "note": "gpt-6-astra seed 1，路由修复前后同模型描述性对照；不与 Sol 混合"
+}
