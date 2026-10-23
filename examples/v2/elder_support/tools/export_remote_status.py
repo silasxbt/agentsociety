@@ -197,6 +197,12 @@ def collect_snapshot(
         if complete:
             state = ConditionState.COMPLETED
             evidence = "verified"
+        elif not processes[name] and observed == EXPECTED_MONTHS and success and chain_event is None:
+            # Run outside the queue controller (e.g. none_s1 started before chain.sh):
+            # no chain record either way, so full months + success line + no live
+            # process is the strongest evidence available. Kept distinct from "verified".
+            state = ConditionState.COMPLETED
+            evidence = "verified_no_chain"
         elif processes[name]:
             evidence = "incomplete"
             if observed == 0:
