@@ -1,0 +1,123 @@
+{
+  "none": {
+    "n": 3,
+    "runs": [
+      "none_s1",
+      "none_s2",
+      "none_s3"
+    ],
+    "total_requests": 249,
+    "total_success": 183,
+    "success_rate": 0.7349,
+    "avg_requests_per_run": 83.0,
+    "per_run": [
+      {
+        "requests": 47,
+        "success": 33,
+        "months": 25,
+        "run": "none_s1"
+      },
+      {
+        "requests": 115,
+        "success": 88,
+        "months": 25,
+        "run": "none_s2"
+      },
+      {
+        "requests": 87,
+        "success": 62,
+        "months": 25,
+        "run": "none_s3"
+      }
+    ]
+  },
+  "timebank": {
+    "n": 3,
+    "runs": [
+      "timebank_s1",
+      "timebank_s2",
+      "timebank_s3"
+    ],
+    "total_requests": 247,
+    "total_success": 185,
+    "success_rate": 0.749,
+    "avg_requests_per_run": 82.3,
+    "per_run": [
+      {
+        "requests": 68,
+        "success": 53,
+        "months": 25,
+        "run": "timebank_s1"
+      },
+      {
+        "requests": 98,
+        "success": 76,
+        "months": 25,
+        "run": "timebank_s2"
+      },
+      {
+        "requests": 81,
+        "success": 56,
+        "months": 25,
+        "run": "timebank_s3"
+      }
+    ]
+  },
+  "casework": {
+    "n": 3,
+    "runs": [
+      "casework_s1",
+      "casework_s2",
+      "casework_s3"
+    ],
+    "total_requests": 412,
+    "total_success": 271,
+    "success_rate": 0.6578,
+    "avg_requests_per_run": 137.3,
+    "per_run": [
+      {
+        "requests": 128,
+        "success": 84,
+        "months": 25,
+        "run": "casework_s1"
+      },
+      {
+        "requests": 132,
+        "success": 85,
+        "months": 25,
+        "run": "casework_s2"
+      },
+      {
+        "requests": 152,
+        "success": 102,
+        "months": 25,
+        "run": "casework_s3"
+      }
+    ]
+  },
+  "platform": {
+    "n": 2,
+    "runs": [
+      "platform_s1",
+      "platform_s3"
+    ],
+    "total_requests": 159,
+    "total_success": 94,
+    "success_rate": 0.5912,
+    "avg_requests_per_run": 79.5,
+    "per_run": [
+      {
+        "requests": 74,
+        "success": 44,
+        "months": 25,
+        "run": "platform_s1"
+      },
+      {
+        "requests": 85,
+        "success": 50,
+        "months": 25,
+        "run": "platform_s3"
+      }
+    ]
+  }
+}
