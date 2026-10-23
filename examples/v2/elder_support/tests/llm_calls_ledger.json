@@ -1,0 +1,12 @@
+{
+  "note": "LLM 调用次数台账（trace 实测，只计次数，不估金额）。主批次与旧路由对比臂按 2026-09-13 冻结时的实测值；invalid 为冻结总数减去可复算的 valid 与 model_compare（冻结时计入的部分无效归档 trace 已不存在，2026-10-23 复算只得 15,822 次）。astra_router_v1 为新路由 Astra seed 1 四条件，2026-10-23 在韩国权威节点按 compare_conditions.trace_stats 实测。",
+  "main_batch": {"valid": 22987, "invalid": 17778},
+  "model_compare_old_router": 5136,
+  "frozen_total": 45901,
+  "astra_router_v1": {
+    "none_s1": {"calls": 1197, "errors": 0},
+    "casework_s1": {"calls": 1607, "errors": 0},
+    "timebank_s1": {"calls": 1258, "errors": 0},
+    "platform_s1": {"calls": 1245, "errors": 0}
+  }
+}

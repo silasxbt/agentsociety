@@ -10,7 +10,7 @@
 - tests/tie_survival_floor_result.json  存活率地板（decay 0.06--0.40 扫描）
 - tests/scan_post_persist_result.json  规则层 post_persist 扫描（含 0 对照）
 - tests/harness_loop_result.json harness 闭环
-- tests/cost_report.json         真实成本
+- tests/llm_calls_ledger.json    LLM 调用次数台账（不估金额）
 
 用法：python3 tools/gen_paper_numbers.py
 """
@@ -49,7 +49,6 @@ def main() -> int:
     comp = jload(EXP / "tmp" / "batch" / "comparison.json")
     timing = jload(EXP / "tests" / "scan_timing_result.json")
     loop = jload(EXP / "tests" / "harness_loop_result.json")
-    cost = jload(EXP / "tests" / "cost_report.json")
 
     L = ["% 自动生成（tools/gen_paper_numbers.py），勿手改",
          f"% 生成日期 {date.today().isoformat()}",
@@ -236,16 +235,18 @@ def main() -> int:
             L.append(f"\\newcommand{{\\BsRate{nm}}}{{{b['success_rate']*100:.1f}}}")
             L.append(f"\\newcommand{{\\BsPerRun{nm}}}{{{b['avg_requests_per_run']:.1f}}}")
 
-    # 成本
-    t = cost["totals"]
-    L.append(f"\\newcommand{{\\CostTotal}}{{{cost['grand_total_usd']:.0f}}}")
-    L.append(f"\\newcommand{{\\CostValid}}{{{t['valid']['est_cost_usd']:.0f}}}")
-    L.append(f"\\newcommand{{\\CostWasted}}{{{t['invalid']['est_cost_usd']:.0f}}}")
-    mc = t.get("model_compare", {"est_cost_usd": 0.0})
-    L.append(f"\\newcommand{{\\CostModelCompare}}{{{mc['est_cost_usd']:.0f}}}")
-    L.append(f"\\newcommand{{\\WasteShare}}{{{cost['waste_share']*100:.0f}\\%}}")
-    tot_calls = sum(t[k]["llm_calls"] for k in t)
-    L.append(f"\\newcommand{{\\TotalCalls}}{{{tot_calls:,}}}")
+    # LLM 调用台账（只报次数，不估金额；tests/llm_calls_ledger.json）
+    led = jload(EXP / "tests" / "llm_calls_ledger.json")
+    mb = led["main_batch"]
+    assert mb["valid"] + mb["invalid"] + led["model_compare_old_router"] == led["frozen_total"]
+    L.append(f"\\newcommand{{\\TotalCalls}}{{{led['frozen_total']:,}}}")
+    L.append(f"\\newcommand{{\\CallsValid}}{{{mb['valid']:,}}}")
+    L.append(f"\\newcommand{{\\CallsWasted}}{{{mb['invalid']:,}}}")
+    L.append(f"\\newcommand{{\\WasteShare}}{{{mb['invalid'] / (mb['valid'] + mb['invalid']) * 100:.0f}\\%}}")
+    L.append(f"\\newcommand{{\\CallsModelCompare}}{{{led['model_compare_old_router']:,}}}")
+    ar = led["astra_router_v1"]
+    L.append(f"\\newcommand{{\\CallsAstraRouter}}{{{sum(v['calls'] for v in ar.values()):,}}}")
+    L.append(f"\\newcommand{{\\ErrorsAstraRouter}}{{{sum(v['errors'] for v in ar.values())}}}")
 
     OUT.parent.mkdir(exist_ok=True)
     OUT.write_text("\n".join(L) + "\n", encoding="utf-8")

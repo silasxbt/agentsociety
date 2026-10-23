@@ -36,7 +36,7 @@
 \begin{minipage}{\textwidth}
 \begin{center}\textbf{摘\quad 要}\end{center}
 \small
-独居老人的孤独与社会隔离是社会工作、社会保障与社会管理共同面对的问题。社区为独居老人提供支持主要有三条渠道：专业社工上门探访、低龄老人与高龄老人互助结对（时间银行）、经数字平台按需匹配志愿者。实务中最难回答的是两个问题：服务撤出后关系能否留下，以及何时介入代价最小——真实世界里同一批老人无法既接受又不接受干预。本文在 AgentSociety2 上构建分层智能体模拟作为政策沙盒：6 名大模型驱动的焦点老人嵌入 20 人规则层支持网络，画像按 CLHLS 2021 与 CHARLS 调查分布生成，三种干预在第 7--18 月实施、其后撤出 6 个月。方法上，本文给出一套可迁移的科学性纪律：预注册与效度门槛、失效根因分类、含沉没成本的成本核算、逐条标明结果由规则还是参数决定的来源对照，以及以留出靶标验收的动力学校准。主要结果有三：（1）\textbf{数据锚定有效}——按调查生成的画像在输入侧优于普通随机；孤独动力学经校准后，留出的三年持续率误差由 43.1 降至 4.6 个百分点，调查锚定画像的输出误差（4.3pp）也低于普通随机（7.3pp）；（2）\textbf{情景推演}——干预期社工探访效果最强（孤立率 \IsoIvCasework\% 对基线 \IsoIvNone\%），撤出后回到从未干预水平；互助结对撤出后的优势完全取决于结对延续参数，置零即消失；三种画像来源下干预排序一致；（3）\textbf{多模型对照暴露了环境缺陷}——一款更守边界的模型在旧路由上大量``不行动''，追查发现路由把``这次不能写''说成``不能联系人''，修复后恢复。案例结果是显式参数下的推演，用于生成可检验的实务假设，不作为真实人群的效应估计；全部数字可由公开脚本复现。\par\vspace{0.4em}
+独居老人的孤独与社会隔离是社会工作、社会保障与社会管理共同面对的问题。社区为独居老人提供支持主要有三条渠道：专业社工上门探访、低龄老人与高龄老人互助结对（时间银行）、经数字平台按需匹配志愿者。实务中最难回答的是两个问题：服务撤出后关系能否留下，以及何时介入代价最小——真实世界里同一批老人无法既接受又不接受干预。本文在 AgentSociety2 上构建分层智能体模拟作为政策沙盒：6 名大模型驱动的焦点老人嵌入 20 人规则层支持网络，画像按 CLHLS 2021 与 CHARLS 调查分布生成，三种干预在第 7--18 月实施、其后撤出 6 个月。方法上，本文给出一套可迁移的科学性纪律：预注册与效度门槛、失效根因分类、含失效 run 的调用量核算、逐条标明结果由规则还是参数决定的来源对照，以及以留出靶标验收的动力学校准。主要结果有三：（1）\textbf{数据锚定有效}——按调查生成的画像在输入侧优于普通随机；孤独动力学经校准后，留出的三年持续率误差由 43.1 降至 4.6 个百分点，调查锚定画像的输出误差（4.3pp）也低于普通随机（7.3pp）；（2）\textbf{情景推演}——干预期社工探访效果最强（孤立率 \IsoIvCasework\% 对基线 \IsoIvNone\%），撤出后回到从未干预水平；互助结对撤出后的优势完全取决于结对延续参数，置零即消失；三种画像来源下干预排序一致；（3）\textbf{多模型对照暴露了环境缺陷}——一款更守边界的模型在旧路由上大量``不行动''，追查发现路由把``这次不能写''说成``不能联系人''，修复后恢复。案例结果是显式参数下的推演，用于生成可检验的实务假设，不作为真实人群的效应估计；全部数字可由公开脚本复现。\par\vspace{0.4em}
 \noindent\textbf{关键词}：独居老人；社会支持；互助结对；智能体模拟；科学性纪律
 \end{minipage}
 \vspace{1.2em}
@@ -54,7 +54,7 @@
 本文以独居老人社会支持为案例，围绕第三问建立方法，再用它推演前两问。贡献有三：
 
 \begin{enumerate}
-  \item \textbf{可迁移的科学性纪律}：预注册假设与效度门槛、失效 run 归档与根因分类、含沉没成本的成本核算，以及\textbf{结果来源对照表}——逐条标明哪些结果是规则与参数的直接推论（表~\ref{tab:prescribed}）。
+  \item \textbf{可迁移的科学性纪律}：预注册假设与效度门槛、失效 run 归档与根因分类、含失效 run 的调用量核算，以及\textbf{结果来源对照表}——逐条标明哪些结果是规则与参数的直接推论（表~\ref{tab:prescribed}）。
   \item \textbf{数据锚定与留出验证}：画像按调查分布生成，并以预注册消融证明它比普通随机更贴近现实；孤独动力学由提案--评估回路在训练靶标上校准、以留出靶标验收（第~\ref{sec:calib}~节）。
   \item \textbf{分层政策沙盒}：LLM 焦点层嵌入零 API 成本的规则层，干预机制、强度、时机与撤出后延续均为外置参数，支持大样本情景扫描与置零检验；分层拆解量化两层对宏观结果的贡献（表~\ref{tab:layers}）。
 \end{enumerate}
@@ -346,8 +346,8 @@ Astra & none     & \ArOldSilNone\%$^\dagger$ & \ArOldIvNone & \ArOldPostNone & \
 {\footnotesize $^\dagger$ 超过 10\% 门槛判无效，仅作事故记录。B 块反映模型对同一路由缺陷的敏感性，不是任务行为差异；A、B 两块中 Astra 修复前的数据相同。修复后 run 的完成凭证为运行链日志与程序成功结束记录（该批未使用 DONE 标志）。}
 \end{table}
 
-\section{成本核算}\label{sec:cost}
-多智能体 LLM 实验的成本报告必须计入被质量门槛淘汰的 run。本项目累计 LLM 调用 \TotalCalls\ 次（trace 实测，含归档失效 run），估算总成本 \$\CostTotal：主批次有效 run \$\CostValid、无效沉没 \$\CostWasted（占主批次 \WasteShare），另有跨模型对比臂 \$\CostModelCompare（第~\ref{sec:robust}~节）。token 用量为文档化假设（trace 未记录逐调用用量）、单价按公开定价，口径随数据文件公开。分层设计的意义在此具体化：规则层扫描（\TimingSeeds\ 种子 $\times$ 45 配置）与 harness 回路全部零 API 成本；若以 LLM 层完成同等扫描，成本将超出主批次一个数量级。
+\section{调用量核算}\label{sec:cost}
+多智能体 LLM 实验的资源报告必须计入被质量门槛淘汰的 run。我们只报告 trace 实测的调用次数，不估算金额（trace 未记录逐调用 token 用量，金额只能靠假设推算）。主批次与旧路由对比臂累计 LLM 调用 \TotalCalls\ 次：有效 run \CallsValid\ 次，判无效后归档的 run \CallsWasted\ 次（占主批次 \WasteShare），旧路由跨模型对比臂 \CallsModelCompare\ 次。路由修复后的 gpt-6-astra 四条件另计 \CallsAstraRouter\ 次，调用错误 \ErrorsAstraRouter\ 次（第~\ref{sec:robust}~节）。焦点层实测调用密度约 13.8 次/焦点老人$\cdot$月。分层设计的意义在此具体化：规则层扫描（\TimingSeeds\ 种子 $\times$ 45 配置）与 harness 回路不调用 LLM；若以 LLM 层完成同等扫描，调用量将超出主批次一个数量级。台账见 \texttt{tests/llm\_calls\_ledger.json}。
 
 \section{核心结论与创新}\label{sec:core}
 \textbf{核心结论。}（1）按调查分布生成画像是必要的，但不充分：只锚定画像时，输出端并不比普通随机更贴近现实，误差主要来自孤独动力学；动力学经预注册校准、以留出靶标验收后，调查锚定画像在输出端优于普通随机（第~\ref{sec:calib}~节）。（2）在本模型的参数下，三种干预的干预期排序为社工探访 $>$ 互助结对 $>$ 志愿匹配，这一方向对画像来源稳健，量级依赖输入；社工探访撤出后回到从未干预水平，互助结对撤出后的优势完全由结对延续参数决定（第~\ref{sec:results}~节）。（3）介入时机在规则层机制下表现为按月线性累积的延迟成本，而非``错过关键窗口''（第~\ref{sec:mechanism}~节）。
@@ -368,7 +368,7 @@ Astra & none     & \ArOldSilNone\%$^\dagger$ & \ArOldIvNone & \ArOldPostNone & \
 以上均为模型推演，用于生成可检验的实务假设，\textbf{不宣称真实人群的因果效应}。
 
 \section{结论}
-本文提出并演示了一套面向社会工作干预研究的分层智能体模拟方法：LLM 焦点层嵌入规则层网络、画像锚定调查并经留出验证、关键机制参数外置，并配套预注册、效度门槛、失效根因分类、成本核算与结果来源对照。独居老人案例展示了沙盒的用法：社工探访、互助结对与志愿匹配的在场效应、撤出后的回落、结对延续对单一参数的依赖与介入时机的延迟成本，都可在显式参数下推演并接受置零或扫描检验。全部数字由脚本自动生成，欢迎按附录复现。
+本文提出并演示了一套面向社会工作干预研究的分层智能体模拟方法：LLM 焦点层嵌入规则层网络、画像锚定调查并经留出验证、关键机制参数外置，并配套预注册、效度门槛、失效根因分类、调用量核算与结果来源对照。独居老人案例展示了沙盒的用法：社工探访、互助结对与志愿匹配的在场效应、撤出后的回落、结对延续对单一参数的依赖与介入时机的延迟成本，都可在显式参数下推演并接受置零或扫描检验。全部数字由脚本自动生成，欢迎按附录复现。
 
 \section{局限与伦理}\label{sec:limits}
 \textbf{局限。}（1）$n=3$ 种子（志愿匹配臂 $n=\NPlatform$），只支持描述性对比；（2）画像只对齐调查的边际分布；孤独动力学只在规则层做了事后校准（选中点在网格边界），接触频率与关系衰减仍为建模选择，关系存活曲线未通过 Burt 检验，LLM 主批次运行在校准前的动力学上；（3）三种干预的强度与投入量为建模选择、未与文献效应量或服务人次对齐，干预间排序由参数决定；（4）主结局孤立率是月度接触快照，孤独感由稳态公式决定，二者均非独立结局；（5）宏观结果主要来自 6 名焦点老人，对模型行为与静默敏感，撤出期仅 6 个月；（6）规则层时机扫描与 harness 回路只在固定规则下搜索，不修改模型参数；（7）主批次运行在修复前的路由上：主动询问环境的焦点老人可能得到``不能联系''的错误回答，Sol 有效 run 的静默率虽在 4.0--10.0\%，部分静默月与少行动月可能由此造成，焦点层结果应按此理解；新路由上未重跑 Sol，因此没有路由修复后的干净模型对照。后续工作见附录~\ref{app:params} 与仓库 \texttt{DATA\_MACHINE\_RUNBOOK.md}。
@@ -390,7 +390,7 @@ Astra & none     & \ArOldSilNone\%$^\dagger$ & \ArOldIvNone & \ArOldPostNone & \
 \midrule
 社会科学价值 & 回答服务撤出后与介入时机两个实务难题；以三条政策渠道组织比较 & 第 1、\ref{sec:discussion} 节 \\
 研究问题创新性 & 把``模拟是否只是规则回声''变成可检验问题 & 第~\ref{sec:core}~节 \\
-方法设计严谨性 & 预注册、效度门槛、根因分类、成本核算、结果来源对照 & 第 3、\ref{sec:honest}、\ref{sec:cost} 节 \\
+方法设计严谨性 & 预注册、效度门槛、根因分类、调用量核算、结果来源对照 & 第 3、\ref{sec:honest}、\ref{sec:cost} 节 \\
 科学发现与理论贡献 & 数据锚定需配合动力学校准；多模型对照暴露环境缺陷 & 第~\ref{sec:core}~节 \\
 研究影响与拓展潜力 & 参数外置的沙盒；可迁移检查清单 & 附录~\ref{app:checklist} \\
 \midrule
@@ -411,7 +411,7 @@ Astra & none     & \ArOldSilNone\%$^\dagger$ & \ArOldIvNone & \ArOldPostNone & \
   \item \textbf{正式批次}：\texttt{run\_batch.sh 24 1 2 3}（断点自动续跑；效度门槛与归档逻辑内置）。
   \item \textbf{分析与图表}：\texttt{tools/compare\_conditions.py} $\rightarrow$ \texttt{comparison.json}；\texttt{tools/make\_figures.py}（每图配同名 CSV）；\texttt{tools/gen\_paper\_numbers.py}（本文全部数字的唯一来源）。
   \item \textbf{机制扫描与回路}：\texttt{tests/scan\_timing.py}、\texttt{tests/scan\_post\_persist.py}、\texttt{tests/scan\_tie\_survival\_floor.py}、\texttt{tools/harness\_loop.py}（预注册头部 + 逐轮 JSONL 审计日志）。
-  \item \textbf{成本与诊断}：\texttt{tools/cost\_report.py}、\texttt{tests/silence\_diagnosis.json}。
+  \item \textbf{调用量与诊断}：\texttt{tests/llm\_calls\_ledger.json}、\texttt{tests/silence\_diagnosis.json}。
   \item \textbf{校准文档}：\texttt{data\_pipeline/out/} 下 \texttt{calibration\_targets.md} 与 \texttt{references\_verified.md}（含已否决条目与核实方法）。
   \item \textbf{实时面板}：\url{https://agentsociety.shangdian.me}（批次进度、结论卡片、机制证据、成本与失效诊断）。
 \end{itemize}
@@ -433,7 +433,7 @@ Astra & none     & \ArOldSilNone\%$^\dagger$ & \ArOldIvNone & \ArOldPostNone & \
 7 & 混合架构须拆分各层对宏观结果的贡献，并给出剔除静默后的数字 & 表~\ref{tab:layers} \\
 8 & 指标性质说明：快照型 vs 动力学型，效应量以何者为准 & 第~\ref{sec:prereg}~节 \\
 9 & 无干预基线静默率按模型报告，作为选型指标 & 第~\ref{sec:robust}~节 \\
-10 & 成本含作废与对比 run 的沉没成本，报告调用量 & 第~\ref{sec:cost}~节 \\
+10 & 调用量含作废与对比 run，只报实测次数 & 第~\ref{sec:cost}~节 \\
 11 & 正文数字全部由脚本生成，不手抄 & \texttt{numbers.tex} \\
 12 & 提案--评估回路有预注册搜索空间、轮数与资源上限、逐轮审计日志 & 第~\ref{sec:harness}~节 \\
 \bottomrule
