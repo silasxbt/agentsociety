@@ -27,6 +27,7 @@
 \author{惠栋帅 \quad 王才厚 \quad 李聪煜\\ \small AISS 2026 挑战赛参赛论文}
 \date{}
 
+\raggedbottom
 \begin{document}
 \twocolumn[
 \maketitle
@@ -440,6 +441,18 @@ Astra & none     & \ArOldSilNone\%$^\dagger$ & \ArOldIvNone & \ArOldPostNone & \
 \end{tabular}
 \end{table}
 
+\section{效度门槛判定细则}
+run 有效当且仅当：DONE 标志存在；月度指标 0--24 完整；决策记录非空；6 名焦点老人合计静默率 $\le$10\%（严格大于 0.10 判无效）；LLM 调用错误率 $\le$5\%。判无效的 run 以时间戳目录归档（\texttt{*.invalid-<timestamp>}），保留全部 trace 与决策日志供诊断，不删除。
+
+\section{路由事故时间线}\label{app:router}
+\begin{itemize}
+\item 2026-09：gpt-6-astra none seed~1 两次，静默率 10.7\% 与 \ArOldSilNone\%，均判无效；casework seed~1 静默率 \ArOldSilCw\%，有效。当时误写为模型行为特征。
+\item 2026-10-19：旧路由上又完成 5 场 Astra，静默率约 31--87\%，未凑成四条件齐全的一组；同一``不能联系''回答也出现在 gpt-5.6-sol platform seed~2 补跑（静默率 60.7\%）。
+\item 2026-10-20：定位并修复只读路由（见第~\ref{sec:robust}~节）；2 名焦点老人 $\times$ 2 个月冒烟测试出现真实打电话、串门行动，不计为有效 run。
+\item 2026-10-21 至 10-22：新路由上按主批次 seed~1 配置依次运行四条件。casework 首次启动约 1 分钟后异常退出，重启一次后完成；其余条件一次完成。
+\end{itemize}
+旧路由上的 Astra run 全部保留归档，不删除、不改写；表~\ref{tab:robust} 只引用 2026-09 的 seed~1 none 与 casework。
+
 \section{参数表与依据}\label{app:params}
 表~\ref{tab:params} 列出画像生成器（校准模式）与环境模块的全部参数。环境与干预参数在代码中集中于 \texttt{DEFAULT\_DYNAMICS} 与 \texttt{INTERVENTION\_DEFAULTS}，可经配置覆盖；表中取值即正式批次所用的默认值。``依据''一列区分三类：\textbf{调查}指直接取自调查分布；\textbf{口径}指把调查类别映射为模型数值或阈值；\textbf{假设}指没有数据或文献点估计、由作者设定的建模选择。``扫描''一列只标出做过敏感性扫描的参数。
 
@@ -484,17 +497,5 @@ Astra & none     & \ArOldSilNone\%$^\dagger$ & \ArOldIvNone & \ArOldPostNone & \
 
 {\footnotesize 孤独感初值虽按调查分布抽样，但每月向稳态回归一半，初值的影响按 $0.5^t$ 衰减，3 个月后只剩 1/8；模拟中的孤独水平因此主要由``孤独感稳态''一行的假设公式决定。规则层扫描使用占位画像，其分布参数与本表画像部分不同（第~\ref{sec:data}~节）。}
 \end{table*}
-
-\section{效度门槛判定细则}
-run 有效当且仅当：DONE 标志存在；月度指标 0--24 完整；决策记录非空；6 名焦点老人合计静默率 $\le$10\%（严格大于 0.10 判无效）；LLM 调用错误率 $\le$5\%。判无效的 run 以时间戳目录归档（\texttt{*.invalid-<timestamp>}），保留全部 trace 与决策日志供诊断，不删除。
-
-\section{路由事故时间线}\label{app:router}
-\begin{itemize}
-\item 2026-09：gpt-6-astra none seed~1 两次，静默率 10.7\% 与 \ArOldSilNone\%，均判无效；casework seed~1 静默率 \ArOldSilCw\%，有效。当时误写为模型行为特征。
-\item 2026-10-19：旧路由上又完成 5 场 Astra，静默率约 31--87\%，未凑成四条件齐全的一组；同一``不能联系''回答也出现在 gpt-5.6-sol platform seed~2 补跑（静默率 60.7\%）。
-\item 2026-10-20：定位并修复只读路由（见第~\ref{sec:robust}~节）；2 名焦点老人 $\times$ 2 个月冒烟测试出现真实打电话、串门行动，不计为有效 run。
-\item 2026-10-21 至 10-22：新路由上按主批次 seed~1 配置依次运行四条件。casework 首次启动约 1 分钟后异常退出，重启一次后完成；其余条件一次完成。
-\end{itemize}
-旧路由上的 Astra run 全部保留归档，不删除、不改写；表~\ref{tab:robust} 只引用 2026-09 的 seed~1 none 与 casework。
 
 \end{document}

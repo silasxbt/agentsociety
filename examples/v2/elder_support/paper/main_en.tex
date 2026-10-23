@@ -36,6 +36,7 @@
 \author{Dongshuai Hui (惠栋帅) \quad Caihou Wang (王才厚) \quad Congyu Li (李聪煜)\\ \small AISS 2026 Challenge Submission}
 \date{}
 
+\raggedbottom
 \begin{document}
 \twocolumn[
 \maketitle
@@ -111,7 +112,7 @@ The environment module (ElderSupportEnv) maintains a relationship ledger for eve
 \caption{Need, action and mechanism of the three interventions (the action column follows the actual implementation in \texttt{custom/envs/elder\_support\_env.py}).}
 \label{tab:mechanism}
 \setlength{\tabcolsep}{4pt}
-\begin{tabular}{@{}p{0.08\textwidth}p{0.14\textwidth}p{0.25\textwidth}p{0.11\textwidth}p{0.16\textwidth}p{0.16\textwidth}@{}}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.08\textwidth}>{\raggedright\arraybackslash}p{0.14\textwidth}>{\raggedright\arraybackslash}p{0.25\textwidth}>{\raggedright\arraybackslash}p{0.11\textwidth}>{\raggedright\arraybackslash}p{0.16\textwidth}>{\raggedright\arraybackslash}p{0.16\textwidth}@{}}
 \toprule
 Condition & \shortstack{Need /\\ barrier} & \shortstack{Service actions\\ (as implemented)} & \shortstack{Relational\\ mechanism} & \shortstack{After\\ withdrawal} & Implementation \\
 \midrule
@@ -260,7 +261,7 @@ Input distributions are aligned with the survey data dimension by dimension (Sec
 \caption{Result-source ledger: what each result in this paper is determined by.}
 \label{tab:prescribed}
 \resizebox{\columnwidth}{!}{%
-\begin{tabular}{@{}p{0.50\columnwidth}p{0.19\columnwidth}p{0.40\columnwidth}@{}}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.50\columnwidth}>{\raggedright\arraybackslash}p{0.19\columnwidth}>{\raggedright\arraybackslash}p{0.40\columnwidth}@{}}
 \toprule
 Result & Nature & Source \\
 \midrule
@@ -393,7 +394,7 @@ We propose and demonstrate a layered agent-based simulation method for research 
 \centering\small
 \caption{Review criteria and questions raised before the finals, with where this paper answers them.}
 \label{tab:review}
-\begin{tabular}{@{}p{0.27\columnwidth}p{0.46\columnwidth}p{0.16\columnwidth}@{}}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.27\columnwidth}>{\raggedright\arraybackslash}p{0.46\columnwidth}>{\raggedright\arraybackslash}p{0.16\columnwidth}@{}}
 \toprule
 Concern & Answer & Where \\
 \midrule
@@ -449,6 +450,18 @@ The table below compresses the discipline practised in this paper into checklist
 \end{tabular}
 \end{table}
 
+\section{Validity-Gate Adjudication Rules}
+A run is valid if and only if: the DONE flag exists; monthly metrics for months 0--24 are complete; decision records are non-empty; the six focal elders' combined silence rate is $\le$10\% (strictly greater than 0.10 fails); and the LLM call error rate is $\le$5\%. Invalid runs are archived under timestamped directories (\texttt{*.invalid-<timestamp>}) with all traces and decision logs preserved for diagnosis---never deleted.
+
+\section{Routing incident timeline}\label{app:router}
+\begin{itemize}
+\item 2026-09: gpt-6-astra none seed~1 twice, silence 10.7\% and \ArOldSilNone\%, both invalid; casework seed~1 at \ArOldSilCw\%, valid. At the time this was misread as a model trait.
+\item 2026-10-19: five more Astra runs on the old router, silence about 31--87\%, never a complete four-condition set; the same ``cannot contact'' answer also appears in the gpt-5.6-sol platform seed~2 rerun (60.7\% silence).
+\item 2026-10-20: the read-only router was diagnosed and fixed (Section~\ref{sec:robust}); a 2-elder $\times$ 2-month smoke test showed real calls and visits and is not counted as a valid run.
+\item 2026-10-21 to 10-22: the four conditions ran in sequence on the fixed router with the seed-1 main-batch configuration. Casework exited abnormally about one minute after its first start and completed after one restart; the other conditions completed on the first attempt.
+\end{itemize}
+All old-router Astra runs are archived unchanged; Table~\ref{tab:robust} cites only the September 2026 seed-1 none and casework runs.
+
 \section{Parameter Table and Rationale}\label{app:params}
 Table~\ref{tab:params} lists the parameters of the calibrated profile generator and the environment module. Environment and intervention parameters are centralised in \texttt{DEFAULT\_DYNAMICS} and \texttt{INTERVENTION\_DEFAULTS} and can be overridden by configuration; values shown are the defaults used by the main batch. ``Survey'' means sampled directly from a survey distribution; ``mapping'' maps survey categories to model values or thresholds; ``assumption'' means an author-set modelling choice without a point estimate from data or literature. ``Scan'' lists only completed sensitivity scans.
 
@@ -494,17 +507,5 @@ Volunteer matching & Event this month or 2 months without emotional contact; cov
 
 {\footnotesize Initial loneliness is sampled from the survey, but the monthly steady-state update halves its influence each month; only $1/8$ remains after three months. Simulated loneliness therefore comes mainly from the assumed steady-state equation. Initial rules-layer scans used placeholder profiles; calibrated-profile reruns on 2026-10-21 kept the same directions. The formal LLM batch uses the default dynamics above; post-hoc calibrated values are not written back into its results.}
 \end{table*}
-
-\section{Validity-Gate Adjudication Rules}
-A run is valid if and only if: the DONE flag exists; monthly metrics for months 0--24 are complete; decision records are non-empty; the six focal elders' combined silence rate is $\le$10\% (strictly greater than 0.10 fails); and the LLM call error rate is $\le$5\%. Invalid runs are archived under timestamped directories (\texttt{*.invalid-<timestamp>}) with all traces and decision logs preserved for diagnosis---never deleted.
-
-\section{Routing incident timeline}\label{app:router}
-\begin{itemize}
-\item 2026-09: gpt-6-astra none seed~1 twice, silence 10.7\% and \ArOldSilNone\%, both invalid; casework seed~1 at \ArOldSilCw\%, valid. At the time this was misread as a model trait.
-\item 2026-10-19: five more Astra runs on the old router, silence about 31--87\%, never a complete four-condition set; the same ``cannot contact'' answer also appears in the gpt-5.6-sol platform seed~2 rerun (60.7\% silence).
-\item 2026-10-20: the read-only router was diagnosed and fixed (Section~\ref{sec:robust}); a 2-elder $\times$ 2-month smoke test showed real calls and visits and is not counted as a valid run.
-\item 2026-10-21 to 10-22: the four conditions ran in sequence on the fixed router with the seed-1 main-batch configuration. Casework exited abnormally about one minute after its first start and completed after one restart; the other conditions completed on the first attempt.
-\end{itemize}
-All old-router Astra runs are archived unchanged; Table~\ref{tab:robust} cites only the September 2026 seed-1 none and casework runs.
 
 \end{document}
