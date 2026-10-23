@@ -92,14 +92,40 @@ def test_complete_requires_all_three_artifact_proofs(cohort: tuple[Path, Path]):
     assert item.completion_evidence == "verified"
 
 
-def test_full_metrics_without_chain_proof_stays_unknown(cohort: tuple[Path, Path]):
+def test_run_outside_chain_completes_with_distinct_evidence(cohort: tuple[Path, Path]):
     root, proc = cohort
     _write_metrics(root, "none_s1", 25)
     _write_output(root, "none_s1", "[2026-10-21 09:32:20] INFO    Experiment completed successfully")
     snapshot = EXPORTER.collect_snapshot(root, proc)
     item = snapshot.conditions[0]
-    assert item.state == ConditionState.UNKNOWN
-    assert "completion_evidence_missing" in item.warnings
+    assert item.state == ConditionState.COMPLETED
+    assert item.completion_evidence == "verified_no_chain"
+
+
+def test_full_metrics_without_success_line_stays_unknown(cohort: tuple[Path, Path]):
+    root, proc = cohort
+    _write_metrics(root, "none_s1", 25)
+    snapshot = EXPORTER.collect_snapshot(root, proc)
+    assert snapshot.conditions[0].state == ConditionState.UNKNOWN
+
+
+def test_chain_start_without_done_is_not_completed(cohort: tuple[Path, Path]):
+    root, proc = cohort
+    _write_metrics(root, "none_s1", 25)
+    _write_output(root, "none_s1", "[2026-10-21 09:32:20] INFO    Experiment completed successfully")
+    (root / "chain.log").write_text("2026-10-21T01:00:00Z start none_s1\n")
+    snapshot = EXPORTER.collect_snapshot(root, proc)
+    assert snapshot.conditions[0].state == ConditionState.UNKNOWN
+    assert "completion_evidence_missing" in snapshot.conditions[0].warnings
+
+
+def test_live_process_with_full_months_is_not_completed(cohort: tuple[Path, Path]):
+    root, proc = cohort
+    _write_metrics(root, "none_s1", 25)
+    _write_output(root, "none_s1", "[2026-10-21 09:32:20] INFO    Experiment completed successfully")
+    _make_proc(proc, 101, _cli_argv(root / "none_s1"))
+    snapshot = EXPORTER.collect_snapshot(root, proc)
+    assert snapshot.conditions[0].state != ConditionState.COMPLETED
 
 
 def test_live_process_and_queue_are_derived_from_exact_argv(cohort: tuple[Path, Path]):

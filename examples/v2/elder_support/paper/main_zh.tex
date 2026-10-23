@@ -302,23 +302,26 @@ platform & \multicolumn{2}{c}{\PFocIvPf\ / \PFocRebPf} & \multicolumn{2}{c}{\PFo
 正式批次使用单一模型（gpt-5.6-sol）与统一采样设置；思考强度未被运行脚本记录，如实标注``未记录''，后续以小样本对照补充。跨模型稳健性（gpt-6-astra，seed~1，路由修复前后对照）列为敏感性检验，不在主结果内，结果见第~\ref{sec:robust}~节。
 
 \subsection{跨模型对照与路由事故}\label{sec:robust}
-以 gpt-6-astra 替换焦点老人的驱动模型，其余配置（画像、种子、干预参数、步数）与主批次 seed~1 一致。这一对照先后跨越一次路由修复，因此只在 Astra 内部比较路由修复前后，\textbf{不与旧路由上的 gpt-5.6-sol 主批次混合比较}；它是单 seed、单 run 的描述性敏感性检验，不作统计推断。
+以 gpt-6-astra 替换焦点老人的驱动模型，其余配置（画像、种子、干预参数、步数）与主批次 seed~1 一致。由于对照先后跨越一次路由修复，我们只做两组各变一个因素的比较：\textbf{路由对照}固定模型（Astra），比较修复前后；\textbf{模型对照}固定路由（旧路由），比较 Sol 与 Astra。新路由上的 Astra 不与旧路由上的 Sol 比较。两组都是单 seed、单 run 的描述性检验，不作统计推断。
 
 \textbf{路由事故。}老人模型不能直接调用环境工具，只能用一句自然语言向环境提问。问句被标为只读时，代码生成路由只把只读工具交给另一个模型生成回答；写工具（打电话、串门、求助）虽已注册，但提示中没有要求区分``这一次不能写''与``世界上没有这个功能''，回答因此常说成``不能打电话、不能串门''。gpt-5.6-sol 多半不先询问、直接下令，静默率保持在 10\% 以内；gpt-6-astra 更常先询问，并把回答当作真实约束而停止行动。这与系统卡对该模型更守授权边界的描述一致\citep{openai2026astracard}。多模型对照在这里起到了单一模型做不到的作用：Sol 直接下令，掩盖了路由缺陷；Astra 先问再停，把它暴露了出来。2026-10-20 修复路由：询问功能是否存在时由注册表直接回答``工具存在，本次只读不能调用，要行动请用 readonly=false''，生成结果若仍称功能不存在则被替换且不进入缓存。事故时间线与旧路由上全部 8 场 Astra 的处理见附录~\ref{app:router}。
 
 \textbf{修复后的结果。}新路由上 gpt-6-astra seed~1 四条件全部跑满 24 个月，焦点老人静默率分别为 \ArNewSilNone\%、\ArNewSilCw\%、\ArNewSilTb\%、\ArNewSilPf\%，LLM 调用错误率均为 0，全部通过效度门槛；旧路由上 none 为 \ArOldSilNone\%（无效）。静默基本消失，说明旧路由上的高静默来自环境回答，而非模型特征；此前``无人上门时更不行动''的解读继续撤回。casework$-$none 的配对差在修复前后同向：干预期压低（旧 \ArOldPIv{} pp，新 \ArNewPIv{} pp），撤出后回到接近不干预水平（反弹旧 \ArOldPReb{} pp，新 \ArNewPReb{} pp）。修复后幅度变小：旧路由下 none 的干预期孤立率更高（\ArOldIvNone{} 对 \ArNewIvNone），casework 更低（\ArOldIvCw{} 对 \ArNewIvCw）。互助结对与志愿匹配在新路由上干预期仅比 none 低约 3 pp，旧路由没有对应 run，不作前后比较。
 
+\textbf{旧路由上的模型对照。}同一旧路由下，Sol 的静默率为 \McSolSilNone\%（none）与 \McSolSilCw\%（casework），均有效；Astra 为 \ArOldSilNone\%（无效）与 \ArOldSilCw\%。二者的差别主要不是任务行为的差别，而是对同一环境缺陷的敏感性：Sol 直接下令，绕开了错误回答；Astra 先问，就被它挡住。Astra 的 none 无效，旧路由上的 casework$-$none 配对差（Sol \McSolPIv{} pp，Astra \ArOldPIv{} pp）只作事故记录，不作为有效的模型差异。要得到干净的模型对照需在新路由上重跑 Sol，属新增付费实验，本文未做（第~\ref{sec:limits}~节）。
+
 \textbf{对效度门槛的提示。}静默率门槛同时混合了故障、接口与模型差异；把``不行动''归因于模型之前，应先检查环境回复是否告诉了 agent 错误的能力边界。
 
 \begin{table}[t]
 \centering\small
-\caption{gpt-6-astra 路由修复前后对照（seed~1，单 run）。孤立率为窗口均值（\%），干预期为第 7--18 月，撤出期为第 19--24 月，反弹 $=$ 撤出期 $-$ 干预期（pp）；静默率为焦点老人无决策 agent-月占比（门槛 10\%）。}
+\caption{路由对照（A：同一模型 Astra，修复前后）与模型对照（B：同一旧路由，Sol 与 Astra），seed~1，单 run。孤立率为窗口均值（\%），干预期为第 7--18 月，撤出期为第 19--24 月，反弹 $=$ 撤出期 $-$ 干预期（pp）；静默率为焦点老人无决策 agent-月占比（门槛 10\%）。}
 \label{tab:robust}
 \resizebox{\columnwidth}{!}{%
 \begin{tabular}{llcccc}
 \toprule
 路由 & 条件 & 静默率 & 干预期 & 撤出期 & 反弹 \\
 \midrule
+\multicolumn{6}{l}{\textit{A. 路由对照（gpt-6-astra）}} \\
 修复前 & none     & \ArOldSilNone\%$^\dagger$ & \ArOldIvNone & \ArOldPostNone & \ArOldRebNone \\
        & casework & \ArOldSilCw\% & \ArOldIvCw & \ArOldPostCw & \ArOldRebCw \\
 修复后 & none     & \ArNewSilNone\% & \ArNewIvNone & \ArNewPostNone & \ArNewRebNone \\
@@ -328,11 +331,19 @@ platform & \multicolumn{2}{c}{\PFocIvPf\ / \PFocRebPf} & \multicolumn{2}{c}{\PFo
 \midrule
 \multicolumn{2}{l}{配对差 casework$-$none：修复前} & & \ArOldPIv & \ArOldPPost & \ArOldPReb \\
 \multicolumn{2}{l}{配对差 casework$-$none：修复后} & & \ArNewPIv & \ArNewPPost & \ArNewPReb \\
+\midrule
+\multicolumn{6}{l}{\textit{B. 模型对照（同一旧路由）}} \\
+Sol   & none     & \McSolSilNone\% & \McSolIvNone & \McSolPostNone & \McSolRebNone \\
+      & casework & \McSolSilCw\% & \McSolIvCw & \McSolPostCw & \McSolRebCw \\
+Astra & none     & \ArOldSilNone\%$^\dagger$ & \ArOldIvNone & \ArOldPostNone & \ArOldRebNone \\
+      & casework & \ArOldSilCw\% & \ArOldIvCw & \ArOldPostCw & \ArOldRebCw \\
+\multicolumn{2}{l}{配对差 casework$-$none： Sol} & & \McSolPIv & \McSolPPost & \McSolPReb \\
+\multicolumn{2}{l}{配对差 casework$-$none： Astra} & & \ArOldPIv & \ArOldPPost & \ArOldPReb \\
 \bottomrule
 \end{tabular}}
 
 \smallskip
-{\footnotesize $^\dagger$ 超过 10\% 门槛判无效，仅作事故记录。修复后 run 的完成凭证为运行链日志与程序成功结束记录（该批未使用 DONE 标志）。}
+{\footnotesize $^\dagger$ 超过 10\% 门槛判无效，仅作事故记录。B 块反映模型对同一路由缺陷的敏感性，不是任务行为差异；A、B 两块中 Astra 修复前的数据相同。修复后 run 的完成凭证为运行链日志与程序成功结束记录（该批未使用 DONE 标志）。}
 \end{table}
 
 \section{成本核算}\label{sec:cost}
@@ -360,7 +371,7 @@ platform & \multicolumn{2}{c}{\PFocIvPf\ / \PFocRebPf} & \multicolumn{2}{c}{\PFo
 本文提出并演示了一套面向社会工作干预研究的分层智能体模拟方法：LLM 焦点层嵌入规则层网络、画像锚定调查并经留出验证、关键机制参数外置，并配套预注册、效度门槛、失效根因分类、成本核算与结果来源对照。独居老人案例展示了沙盒的用法：社工探访、互助结对与志愿匹配的在场效应、撤出后的回落、结对延续对单一参数的依赖与介入时机的延迟成本，都可在显式参数下推演并接受置零或扫描检验。全部数字由脚本自动生成，欢迎按附录复现。
 
 \section{局限与伦理}\label{sec:limits}
-\textbf{局限。}（1）$n=3$ 种子（志愿匹配臂 $n=\NPlatform$），只支持描述性对比；（2）画像只对齐调查的边际分布；孤独动力学只在规则层做了事后校准（选中点在网格边界），接触频率与关系衰减仍为建模选择，关系存活曲线未通过 Burt 检验，LLM 主批次运行在校准前的动力学上；（3）三种干预的强度与投入量为建模选择、未与文献效应量或服务人次对齐，干预间排序由参数决定；（4）主结局孤立率是月度接触快照，孤独感由稳态公式决定，二者均非独立结局；（5）宏观结果主要来自 6 名焦点老人，对模型行为与静默敏感，撤出期仅 6 个月；（6）规则层时机扫描与 harness 回路只在固定规则下搜索，不修改模型参数；（7）主批次运行在修复前的路由上：主动询问环境的焦点老人可能得到``不能联系''的错误回答，Sol 有效 run 的静默率虽在 4.0--10.0\%，部分静默月与少行动月可能由此造成，焦点层结果应按此理解。后续工作见附录~\ref{app:params} 与仓库 \texttt{DATA\_MACHINE\_RUNBOOK.md}。
+\textbf{局限。}（1）$n=3$ 种子（志愿匹配臂 $n=\NPlatform$），只支持描述性对比；（2）画像只对齐调查的边际分布；孤独动力学只在规则层做了事后校准（选中点在网格边界），接触频率与关系衰减仍为建模选择，关系存活曲线未通过 Burt 检验，LLM 主批次运行在校准前的动力学上；（3）三种干预的强度与投入量为建模选择、未与文献效应量或服务人次对齐，干预间排序由参数决定；（4）主结局孤立率是月度接触快照，孤独感由稳态公式决定，二者均非独立结局；（5）宏观结果主要来自 6 名焦点老人，对模型行为与静默敏感，撤出期仅 6 个月；（6）规则层时机扫描与 harness 回路只在固定规则下搜索，不修改模型参数；（7）主批次运行在修复前的路由上：主动询问环境的焦点老人可能得到``不能联系''的错误回答，Sol 有效 run 的静默率虽在 4.0--10.0\%，部分静默月与少行动月可能由此造成，焦点层结果应按此理解；新路由上未重跑 Sol，因此没有路由修复后的干净模型对照。后续工作见附录~\ref{app:params} 与仓库 \texttt{DATA\_MACHINE\_RUNBOOK.md}。
 
 \textbf{伦理。}全部智能体为模拟实体，不涉及真实个人；调查数据仅使用公开微观数据的聚合分布；LLM 生成的``老人理由''是机制探针而非真实老人话语，论文避免将其拟人化引用。模拟结论若被直接当作资源分配依据存在误用风险，故本文反复强调其假设生成属性。
 

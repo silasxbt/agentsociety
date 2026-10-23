@@ -52,7 +52,7 @@ class ConditionStatus(StrictModel):
     observed_months: int = Field(ge=0, le=EXPECTED_MONTHS)
     latest_month: int | None = Field(default=None, ge=0, le=24)
     last_progress_at: datetime | None = None
-    completion_evidence: Literal["verified", "incomplete"] = "incomplete"
+    completion_evidence: Literal["verified", "verified_no_chain", "incomplete"] = "incomplete"
     warnings: list[WarningCode] = Field(default_factory=list)
 
     @model_validator(mode="after")
@@ -61,9 +61,9 @@ class ConditionStatus(StrictModel):
         if self.latest_month != expected_latest:
             raise ValueError("latest_month must match contiguous observed_months")
         if self.state == ConditionState.COMPLETED:
-            if self.observed_months != EXPECTED_MONTHS or self.completion_evidence != "verified":
+            if self.observed_months != EXPECTED_MONTHS or self.completion_evidence not in {"verified", "verified_no_chain"}:
                 raise ValueError("completed requires 25 months and verified evidence")
-        elif self.completion_evidence == "verified":
+        elif self.completion_evidence != "incomplete":
             raise ValueError("verified evidence is only valid for completed conditions")
         if self.state in {ConditionState.QUEUED, ConditionState.STARTING} and self.observed_months:
             raise ValueError("queued/starting conditions cannot contain metrics")

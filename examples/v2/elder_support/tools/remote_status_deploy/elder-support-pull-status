@@ -1,0 +1,45 @@
+#!/srv/agentsociety-panel/venv/bin/python
+"""Pull the sanitized KR status snapshot over the internal VPC and install it atomically.
+
+KR_STATUS_SSH_TARGET (statusread@<KR internal IP>) comes from the systemd unit."""
+import os
+import subprocess
+import sys
+from datetime import UTC, datetime, timedelta
+from pathlib import Path
+
+APP = Path("/srv/agentsociety-panel/app")
+sys.path.insert(0, str(APP / "panel"))
+from remote_status import parse_snapshot  # noqa: E402
+
+TARGET = APP / "remote_status" / "status.json"
+MAX_BYTES = 65536
+raw = subprocess.run(
+    ["ssh", "-i", "/etc/elder-support-remote-status/id_ed25519", "-o", "BatchMode=yes",
+     "-o", "StrictHostKeyChecking=yes", "-o", "UserKnownHostsFile=/etc/elder-support-remote-status/known_hosts",
+     "-o", "ConnectTimeout=15", os.environ["KR_STATUS_SSH_TARGET"]],
+    check=True, capture_output=True, timeout=60,
+).stdout
+if not 0 < len(raw) <= MAX_BYTES:
+    raise SystemExit(f"invalid snapshot size: {len(raw)}")
+new = parse_snapshot(raw)
+now = datetime.now(UTC)
+if new.collected_at > now + timedelta(minutes=2):
+    raise SystemExit("snapshot collection time is in the future")
+if TARGET.exists():
+    old = parse_snapshot(TARGET.read_bytes())
+    if new.collected_at <= old.collected_at:
+        raise SystemExit("snapshot collection time did not advance")
+TARGET.parent.mkdir(parents=True, exist_ok=True)
+tmp = TARGET.with_name(".status.incoming.json")
+with tmp.open("wb") as stream:
+    stream.write(new.canonical_json().encode("utf-8"))
+    stream.flush()
+    os.fsync(stream.fileno())
+os.replace(tmp, TARGET)
+os.chmod(TARGET, 0o644)
+fd = os.open(TARGET.parent, os.O_RDONLY)
+try:
+    os.fsync(fd)
+finally:
+    os.close(fd)
