@@ -92,3 +92,61 @@ def test_saved_dynamics_survive_restore(tmp_path):
     restored = ElderSupportEnv(elders=_elders(), seed=3)
     assert asyncio.run(restored.restore(ws))
     assert restored._dyn["help_base"] == 0.3
+
+
+# ---------------------------------------------------------------- 组合干预
+def _single(t: str, start: int = 7, end: int = 18) -> dict:
+    return {"type": t, "start_month": start, "end_month": end, "params": {}}
+
+
+def _combo(*components: dict, boost: float = 0.0) -> dict:
+    return {"type": "combo", "components": list(components), "coupling": {"handover_boost": boost}}
+
+
+def _metrics(tmp_path: Path, name: str, iv: dict | None, months: int = 24) -> list[dict]:
+    env = ElderSupportEnv(elders=_elders(), seed=1, intervention=iv)
+    return asyncio.run(_run(env, tmp_path / name, months))
+
+
+@pytest.mark.parametrize("kind", ["casework", "timebank", "platform"])
+def test_single_component_combo_matches_single_type(tmp_path, kind):
+    assert _metrics(tmp_path, "a", _single(kind)) == _metrics(tmp_path, "b", _combo(_single(kind)))
+
+
+@pytest.mark.parametrize(
+    "iv",
+    [
+        {"type": "combo", "components": []},
+        _combo(_single("casework"), _single("casework")),
+        _combo(_single("none")),
+        _combo(_single("casework", 12, 7)),
+        _combo(_single("casework"), boost=1.5),
+        {"type": "combo", "components": [_single("casework")], "coupling": {"unknown": 1}},
+    ],
+)
+def test_invalid_combo_rejected(iv):
+    with pytest.raises(ValueError):
+        ElderSupportEnv(elders=_elders(), seed=1, intervention=iv)
+
+
+def test_handover_boost_only_affects_referred_pairs(tmp_path):
+    # 互助先、社工后：结对时受助者尚未被探访，转介加成不应改变任何结果
+    late_cw = (_single("timebank", 7, 12), _single("casework", 13, 18))
+    assert _metrics(tmp_path, "a", _combo(*late_cw, boost=0.0)) == _metrics(
+        tmp_path, "b", _combo(*late_cw, boost=1.0)
+    )
+    # 社工先、互助后：加成为 1 时撤出后结对每月必定延续，结果应改变
+    seq = (_single("casework", 7, 12), _single("timebank", 13, 18))
+    assert _metrics(tmp_path, "c", _combo(*seq, boost=0.0)) != _metrics(
+        tmp_path, "d", _combo(*seq, boost=1.0)
+    )
+
+
+def test_combo_state_survives_restore(tmp_path):
+    iv = _combo(_single("casework", 7, 12), _single("timebank", 13, 18), boost=0.5)
+    env = ElderSupportEnv(elders=_elders(), seed=1, intervention=iv)
+    asyncio.run(_run(env, tmp_path / "ws", 15))
+    again = ElderSupportEnv(elders=_elders(), seed=1, intervention=iv)
+    assert asyncio.run(again.restore(tmp_path / "ws"))
+    assert again._casework_visited == env._casework_visited
+    assert again._referred_pairs == env._referred_pairs and env._referred_pairs
