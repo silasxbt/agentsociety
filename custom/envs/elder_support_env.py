@@ -135,6 +135,17 @@ INTERVENTION_DEFAULTS: Dict[str, Dict[str, Any]] = {
 }
 
 
+# 组合干预（type="combo"）的耦合参数。默认 0：组合只是各成分按时间窗叠加，
+# 不引入任何额外的“接续”机制。
+COMBO_COUPLING_DEFAULTS: Dict[str, Any] = {
+    # 社工转介加成 b∈[0,1]：结对建立时（或之前）受助老人已被社工探访过，
+    # 则该结对撤出后的延续概率由 p 提高为 p + b·(1−p)。
+    # 这是“社工开路、互助接续”的显式假设，没有文献点估计，只作扫描。
+    "handover_boost": 0.0,
+}
+COMBO_COMPONENT_TYPES = ("casework", "timebank", "platform")
+
+
 def _merge_params(defaults: Dict[str, Any], override: Optional[Dict[str, Any]], what: str) -> Dict[str, Any]:
     unknown = set(override or {}) - set(defaults)
     if unknown:
@@ -214,12 +225,39 @@ class ElderSupportEnv(EnvBase):
         #           "start_month": int, "end_month": int, "params": {...}}
         self._intervention: Dict[str, Any] = intervention or {"type": "none"}
         iv_type = self._intervention.get("type", "none")
-        if iv_type != "none":
+        if iv_type == "combo":
+            self._validate_combo(self._intervention)
+        elif iv_type != "none":
             if iv_type not in INTERVENTION_DEFAULTS:
                 raise ValueError(f"未知的干预类型：{iv_type}")
             _merge_params(INTERVENTION_DEFAULTS[iv_type], self._intervention.get("params"), iv_type)
         self._timebank_credits: Dict[int, float] = {}
         self._timebank_pairs: List[List[int]] = []
+        # 组合干预用：曾被社工探访的老人；结对时受助者已被探访过的结对
+        self._casework_visited: set = set()
+        self._referred_pairs: set = set()
+
+    @staticmethod
+    def _validate_combo(iv: Dict[str, Any]) -> None:
+        """组合干预：{"type": "combo", "components": [{type,start_month,end_month,params}, ...],
+        "coupling": {...}}。同月内按 components 顺序执行；同一类型只能出现一次。"""
+        comps = iv.get("components")
+        if not isinstance(comps, list) or not comps:
+            raise ValueError("combo 干预需要非空 components 列表")
+        seen = set()
+        for c in comps:
+            t = c.get("type")
+            if t not in COMBO_COMPONENT_TYPES:
+                raise ValueError(f"combo 成分类型无效：{t}")
+            if t in seen:
+                raise ValueError(f"combo 成分重复：{t}")
+            seen.add(t)
+            if int(c["start_month"]) > int(c["end_month"]):
+                raise ValueError(f"combo 成分时间窗无效：{t}")
+            _merge_params(INTERVENTION_DEFAULTS[t], c.get("params"), t)
+        coupling = _merge_params(COMBO_COUPLING_DEFAULTS, iv.get("coupling"), "combo 耦合")
+        if not 0.0 <= float(coupling["handover_boost"]) <= 1.0:
+            raise ValueError("handover_boost 须在 [0, 1]")
 
     # ------------------------------------------------------------------
     # 初始化与状态
@@ -286,7 +324,8 @@ class ElderSupportEnv(EnvBase):
 - decay_rate: float 关系月衰减率（默认 0.06）
 - event_rates: dict 月度事件概率（illness/fall/neighbor_move）
 - intervention: dict 干预配置 {"type": none|casework|timebank|platform,
-  "start_month": int, "end_month": int, "params": {...}}。
+  "start_month": int, "end_month": int, "params": {...}}；或组合
+  {"type": "combo", "components": [单一干预配置, ...], "coupling": {"handover_boost": 0-1}}。
   casework=风险导向的社工外展探访；timebank=时间银行互助；platform=数字平台志愿匹配。
   params 可覆盖的键及默认值见 INTERVENTION_DEFAULTS（如 n_workers/caseload、
   max_per_helper/post_persist、coverage），未知键报错
@@ -319,6 +358,14 @@ stay_home（宅家并说明原因）。统计工具：community_report。
                     "intervention": self._intervention,
                     "timebank_credits": {str(k): v for k, v in self._timebank_credits.items()},
                     "timebank_pairs": self._timebank_pairs,
+                    **(
+                        {
+                            "casework_visited": sorted(self._casework_visited),
+                            "referred_pairs": sorted(list(p) for p in self._referred_pairs),
+                        }
+                        if self._intervention.get("type") == "combo"
+                        else {}
+                    ),
                 },
                 ensure_ascii=False,
                 indent=2,
@@ -345,6 +392,8 @@ stay_home（宅家并说明原因）。统计工具：community_report。
             int(k): v for k, v in data.get("timebank_credits", {}).items()
         }
         self._timebank_pairs = [list(p) for p in data.get("timebank_pairs", [])]
+        self._casework_visited = set(data.get("casework_visited", []))
+        self._referred_pairs = {tuple(p) for p in data.get("referred_pairs", [])}
         self._rng = random.Random(self._seed)
         self._noise_rng = random.Random(self._seed * 1000003 + 17)
         try:
@@ -603,6 +652,18 @@ stay_home（宅家并说明原因）。统计工具：community_report。
         elif iv_type == "platform":
             self._iv_platform(params)
 
+    def _apply_combo_month(self) -> None:
+        """组合干预：按 components 顺序，窗口内执行该成分，时间银行窗口结束后进入延续期。"""
+        iv = self._intervention
+        boost = float(_merge_params(COMBO_COUPLING_DEFAULTS, iv.get("coupling"), "combo 耦合")["handover_boost"])
+        for c in iv["components"]:
+            t = c["type"]
+            params = _merge_params(INTERVENTION_DEFAULTS[t], c.get("params"), t)
+            if int(c["start_month"]) <= self._month <= int(c["end_month"]):
+                getattr(self, f"_iv_{t}")(params)
+            elif t == "timebank" and self._month > int(c["end_month"]):
+                self._timebank_afterglow(params, boost)
+
     def _iv_casework(self, params: dict) -> None:
         """风险导向的社工外展探访：风险排序 → 高风险者每月探访 + 家庭联结。
 
@@ -628,6 +689,7 @@ stay_home（宅家并说明原因）。统计工具：community_report。
                     "casework_link", {"elder": e["id"], "family": target}
                 )
             self._log_intervention("casework_visit", {"elder": e["id"], "worker": worker})
+            self._casework_visited.add(e["id"])
         # 干预后风险重排在下月自然发生；工具性支持走正常求助渠道（社工是强可达 tie）
 
     def _iv_timebank(self, params: dict) -> None:
@@ -657,6 +719,8 @@ stay_home（宅家并说明原因）。统计工具：community_report。
             self._timebank_pairs.append([h["id"], e["id"]])
             load[h["id"]] += 1
             paired_recipients.add(e["id"])
+            if e["id"] in self._casework_visited:
+                self._referred_pairs.add((h["id"], e["id"]))
             self._log_intervention("timebank_match", {"helper": h["id"], "elder": e["id"]})
         # 每月互动：上门陪伴/搭手，帮扶者赚积分且自身也获益（互惠）
         for hid, rid in self._timebank_pairs:
@@ -677,17 +741,21 @@ stay_home（宅家并说明原因）。统计工具：community_report。
                 self._timebank_credits[hid] = self._timebank_credits.get(hid, 0) + 1
                 r["month_events"].append(f"{hname}本月来陪伴帮忙")
 
-    def _timebank_afterglow(self) -> None:
+    def _timebank_afterglow(self, params: Optional[Dict[str, Any]] = None,
+                            handover_boost: float = 0.0) -> None:
         """时间银行撤出后：不再新结对、不再计积分，但已建立的人际结对
         （非机构服务，而是真实互惠关系）以较低概率延续互动。
         延续概率是 H4 的关键机制假设，报告中做敏感性分析。"""
-        params = self._iv_params()
+        params = params if params is not None else self._iv_params()
         post_p = float(params["post_persist"])
         for hid, rid in self._timebank_pairs:
             h, r = self._elders.get(hid), self._elders.get(rid)
             if h is None or r is None:
                 continue
-            if self._rng.random() < post_p:
+            p = post_p
+            if handover_boost and (hid, rid) in self._referred_pairs:
+                p = post_p + handover_boost * (1.0 - post_p)
+            if self._rng.random() < p:
                 hname, rname = f"互助伙伴{h['name']}", f"互助对象{r['name']}"
                 if hname in r["ties"]:
                     self._touch_tie(r, hname,
@@ -926,7 +994,9 @@ stay_home（宅家并说明原因）。统计工具：community_report。
             e["month_emotional"] = 0
             e["month_instrumental"] = 0
         # 干预（若在窗口内）；时间银行撤出后已结对关系以较低概率延续
-        if self._intervention_active():
+        if self._intervention.get("type") == "combo":
+            self._apply_combo_month()
+        elif self._intervention_active():
             self._apply_intervention()
         elif (
             self._intervention.get("type") == "timebank"
