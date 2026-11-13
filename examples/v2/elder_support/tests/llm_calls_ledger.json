@@ -1,12 +1,41 @@
 {
-  "note": "LLM 调用次数台账（trace 实测，只计次数，不估金额）。主批次与旧路由对比臂按 2026-09-13 冻结时的实测值；invalid 为冻结总数减去可复算的 valid 与 model_compare（冻结时计入的部分无效归档 trace 已不存在，2026-10-23 复算只得 15,822 次）。astra_router_v1 为新路由 Astra seed 1 四条件，2026-10-23 在韩国权威节点按 compare_conditions.trace_stats 实测。",
-  "main_batch": {"valid": 22987, "invalid": 17778},
+  "note": "LLM 调用次数台账（trace 实测，只计次数，不估金额）。主批次与旧路由对比臂按 2026-09-13 冻结时的实测值；invalid 为冻结总数减去可复算的 valid 与 model_compare（冻结时计入的部分无效归档 trace 已不存在，2026-10-23 复算只得 15,822 次）。astra_router_v1 为新路由 Astra seed 1 四条件，2026-10-23 在韩国权威节点按 compare_conditions.trace_stats 实测。 astra_router_combo_v1 为新路由 Astra seed 1 组合干预 D、E 两场，2026-11-13 在韩国节点按 trace_stats 实测（另有 embedding 请求被审计代理拒绝，与 astra_router_v1 一样走无 embedding 路径，不计入）。harness_combo_designer 为组合排期闭环的设计师调用（6 轮，无重询）。",
+  "main_batch": {
+    "valid": 22987,
+    "invalid": 17778
+  },
   "model_compare_old_router": 5136,
   "frozen_total": 45901,
   "astra_router_v1": {
-    "none_s1": {"calls": 1197, "errors": 0},
-    "casework_s1": {"calls": 1607, "errors": 0},
-    "timebank_s1": {"calls": 1258, "errors": 0},
-    "platform_s1": {"calls": 1245, "errors": 0}
+    "none_s1": {
+      "calls": 1197,
+      "errors": 0
+    },
+    "casework_s1": {
+      "calls": 1607,
+      "errors": 0
+    },
+    "timebank_s1": {
+      "calls": 1258,
+      "errors": 0
+    },
+    "platform_s1": {
+      "calls": 1245,
+      "errors": 0
+    }
+  },
+  "astra_router_combo_v1": {
+    "D_s1": {
+      "calls": 1195,
+      "errors": 9
+    },
+    "E_s1": {
+      "calls": 1654,
+      "errors": 0
+    }
+  },
+  "harness_combo_designer": {
+    "calls": 6,
+    "errors": 0
   }
 }

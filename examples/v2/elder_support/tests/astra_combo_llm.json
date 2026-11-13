@@ -1,0 +1,60 @@
+{
+  "runs": {
+    "A": {
+      "silence_rate": 0.0,
+      "months": 24,
+      "valid": true,
+      "iso_iv": 0.2625,
+      "iso_post": 0.258333,
+      "lon_iv": 0.391917,
+      "lon_post": 0.41195
+    },
+    "B": {
+      "silence_rate": 0.0,
+      "months": 24,
+      "valid": true,
+      "iso_iv": 0.075,
+      "iso_post": 0.225,
+      "lon_iv": 0.283342,
+      "lon_post": 0.339917
+    },
+    "C": {
+      "silence_rate": 0.0,
+      "months": 24,
+      "valid": true,
+      "iso_iv": 0.233333,
+      "iso_post": 0.233333,
+      "lon_iv": 0.363967,
+      "lon_post": 0.394167
+    },
+    "D": {
+      "silence_rate": 0.027,
+      "months": 24,
+      "valid": true,
+      "iso_iv": 0.1375,
+      "iso_post": 0.275,
+      "lon_iv": 0.323433,
+      "lon_post": 0.381433
+    },
+    "E": {
+      "silence_rate": 0.007,
+      "months": 24,
+      "valid": true,
+      "iso_iv": 0.079167,
+      "iso_post": 0.3,
+      "lon_iv": 0.28945,
+      "lon_post": 0.3579
+    }
+  },
+  "contrasts": {
+    "interaction_iso_iv": 0.033334,
+    "D_minus_C_iso_iv": -0.095833,
+    "interaction_iso_post": 0.1,
+    "D_minus_C_iso_post": 0.041667,
+    "interaction_lon_iv": 0.034058,
+    "D_minus_C_lon_iv": -0.040534,
+    "interaction_lon_post": 0.035766,
+    "D_minus_C_lon_post": -0.012734
+  },
+  "note": "gpt-6-astra seed 1，新路由，单 run 描述性；A/B/C 复用 astra_router_v1，D/E 为 astra_router_combo_v1；干预期 7–18，撤出后 19–24"
+}
