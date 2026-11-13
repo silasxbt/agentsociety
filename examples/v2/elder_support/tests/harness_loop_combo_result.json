@@ -1,0 +1,457 @@
+{
+  "preregistered": {
+    "objective": "min overall_isolation_rate (months 1-30, 20 seeds)",
+    "space": {
+      "start": [
+        3,
+        18
+      ],
+      "duration": [
+        0,
+        12
+      ],
+      "end_max": 24,
+      "service_months_max": 12
+    },
+    "max_iter": 6,
+    "patience": 3,
+    "seeds": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "designer_model": "gpt-5.6-sol",
+    "profiles": "calibrated",
+    "post_persist": 0.5,
+    "handover_boost": 0.0
+  },
+  "iterations": [
+    {
+      "iter": 1,
+      "ts": "2026-11-13T05:46:02.796928+00:00",
+      "candidate": {
+        "casework_start": 3,
+        "casework_duration": 12,
+        "timebank_start": 3,
+        "timebank_duration": 0
+      },
+      "rationale": "将全部12个服务月用于已评估单项服务中平均孤立率更低的社工探访，并提前至第3月启动，以检验减少早期无干预月份的收益能否抵消更早撤出后的反弹。",
+      "result": {
+        "overall_isolation_rate": {
+          "mean": 0.09167,
+          "sd": 0.03608
+        },
+        "iv_isolation_rate": {
+          "mean": 0.05688,
+          "sd": 0.02385
+        },
+        "post_isolation_rate": {
+          "mean": 0.13542,
+          "sd": 0.0565
+        },
+        "overall_avg_loneliness": {
+          "mean": 0.24639,
+          "sd": 0.0322
+        },
+        "intervention": {
+          "type": "combo",
+          "components": [
+            {
+              "type": "casework",
+              "start_month": 3,
+              "end_month": 14,
+              "params": {}
+            }
+          ],
+          "coupling": {
+            "handover_boost": 0.0
+          }
+        }
+      },
+      "score": 0.09167,
+      "best_so_far": {
+        "casework_start": 3,
+        "casework_duration": 12,
+        "timebank_start": 3,
+        "timebank_duration": 0
+      }
+    },
+    {
+      "iter": 2,
+      "ts": "2026-11-13T05:46:12.154692+00:00",
+      "candidate": {
+        "casework_start": 9,
+        "casework_duration": 6,
+        "timebank_start": 3,
+        "timebank_duration": 6
+      },
+      "rationale": "将已有较优的“先互助、后社工”顺序前移至第3月启动，检验早期结对的潜在延续效应能否与后续社工探访的即时支持共同降低第1至30月平均孤立率。",
+      "result": {
+        "overall_isolation_rate": {
+          "mean": 0.08808,
+          "sd": 0.04124
+        },
+        "iv_isolation_rate": {
+          "mean": 0.06062,
+          "sd": 0.03223
+        },
+        "post_isolation_rate": {
+          "mean": 0.09917,
+          "sd": 0.04665
+        },
+        "overall_avg_loneliness": {
+          "mean": 0.24673,
+          "sd": 0.03244
+        },
+        "intervention": {
+          "type": "combo",
+          "components": [
+            {
+              "type": "timebank",
+              "start_month": 3,
+              "end_month": 8,
+              "params": {
+                "post_persist": 0.5
+              }
+            },
+            {
+              "type": "casework",
+              "start_month": 9,
+              "end_month": 14,
+              "params": {}
+            }
+          ],
+          "coupling": {
+            "handover_boost": 0.0
+          }
+        }
+      },
+      "score": 0.08808,
+      "best_so_far": {
+        "casework_start": 9,
+        "casework_duration": 6,
+        "timebank_start": 3,
+        "timebank_duration": 6
+      }
+    },
+    {
+      "iter": 3,
+      "ts": "2026-11-13T05:46:19.529435+00:00",
+      "candidate": {
+        "casework_start": 7,
+        "casework_duration": 8,
+        "timebank_start": 3,
+        "timebank_duration": 4
+      },
+      "rationale": "在第2轮有效的先互助后社工结构上，将互助缩至第3–6月、社工提前并延长至第7–14月，检验互助结对的延续效应能否配合更长的专业支持进一步降低第1–30月平均孤立率。",
+      "result": {
+        "overall_isolation_rate": {
+          "mean": 0.08467,
+          "sd": 0.03921
+        },
+        "iv_isolation_rate": {
+          "mean": 0.04458,
+          "sd": 0.02522
+        },
+        "post_isolation_rate": {
+          "mean": 0.10667,
+          "sd": 0.05125
+        },
+        "overall_avg_loneliness": {
+          "mean": 0.24098,
+          "sd": 0.03229
+        },
+        "intervention": {
+          "type": "combo",
+          "components": [
+            {
+              "type": "timebank",
+              "start_month": 3,
+              "end_month": 6,
+              "params": {
+                "post_persist": 0.5
+              }
+            },
+            {
+              "type": "casework",
+              "start_month": 7,
+              "end_month": 14,
+              "params": {}
+            }
+          ],
+          "coupling": {
+            "handover_boost": 0.0
+          }
+        }
+      },
+      "score": 0.08467,
+      "best_so_far": {
+        "casework_start": 7,
+        "casework_duration": 8,
+        "timebank_start": 3,
+        "timebank_duration": 4
+      }
+    },
+    {
+      "iter": 4,
+      "ts": "2026-11-13T05:46:29.834974+00:00",
+      "candidate": {
+        "casework_start": 6,
+        "casework_duration": 9,
+        "timebank_start": 3,
+        "timebank_duration": 3
+      },
+      "rationale": "在保持第3月启动、第14月结束及12个服务月总量不变的条件下，将早期互助缩短至3个月并把社工延长至9个月，检验能否兼顾结对延续效应与更强的干预期降孤立作用，进一步降低第1–30月平均孤立率。",
+      "result": {
+        "overall_isolation_rate": {
+          "mean": 0.08167,
+          "sd": 0.03964
+        },
+        "iv_isolation_rate": {
+          "mean": 0.04437,
+          "sd": 0.02494
+        },
+        "post_isolation_rate": {
+          "mean": 0.10521,
+          "sd": 0.05269
+        },
+        "overall_avg_loneliness": {
+          "mean": 0.2392,
+          "sd": 0.03449
+        },
+        "intervention": {
+          "type": "combo",
+          "components": [
+            {
+              "type": "timebank",
+              "start_month": 3,
+              "end_month": 5,
+              "params": {
+                "post_persist": 0.5
+              }
+            },
+            {
+              "type": "casework",
+              "start_month": 6,
+              "end_month": 14,
+              "params": {}
+            }
+          ],
+          "coupling": {
+            "handover_boost": 0.0
+          }
+        }
+      },
+      "score": 0.08167,
+      "best_so_far": {
+        "casework_start": 6,
+        "casework_duration": 9,
+        "timebank_start": 3,
+        "timebank_duration": 3
+      }
+    },
+    {
+      "iter": 5,
+      "ts": "2026-11-13T05:46:39.682691+00:00",
+      "candidate": {
+        "casework_start": 5,
+        "casework_duration": 10,
+        "timebank_start": 3,
+        "timebank_duration": 2
+      },
+      "rationale": "沿着近三轮改善方向，将互助结对前置为第3–4月、社工探访扩展为第5–14月，在保持12个服务月和相同撤出时点的条件下，检验早期结对的延续效应能否配合更早开始且更长的专业支持进一步降低30个月平均孤立率。",
+      "result": {
+        "overall_isolation_rate": {
+          "mean": 0.079,
+          "sd": 0.03774
+        },
+        "iv_isolation_rate": {
+          "mean": 0.04792,
+          "sd": 0.02292
+        },
+        "post_isolation_rate": {
+          "mean": 0.10187,
+          "sd": 0.05418
+        },
+        "overall_avg_loneliness": {
+          "mean": 0.2354,
+          "sd": 0.03408
+        },
+        "intervention": {
+          "type": "combo",
+          "components": [
+            {
+              "type": "timebank",
+              "start_month": 3,
+              "end_month": 4,
+              "params": {
+                "post_persist": 0.5
+              }
+            },
+            {
+              "type": "casework",
+              "start_month": 5,
+              "end_month": 14,
+              "params": {}
+            }
+          ],
+          "coupling": {
+            "handover_boost": 0.0
+          }
+        }
+      },
+      "score": 0.079,
+      "best_so_far": {
+        "casework_start": 5,
+        "casework_duration": 10,
+        "timebank_start": 3,
+        "timebank_duration": 2
+      }
+    },
+    {
+      "iter": 6,
+      "ts": "2026-11-13T05:46:45.839030+00:00",
+      "candidate": {
+        "casework_start": 4,
+        "casework_duration": 11,
+        "timebank_start": 3,
+        "timebank_duration": 1
+      },
+      "rationale": "沿近期评估中缩短前置互助、提前并延长社工服务持续降低平均孤立率的趋势，先用1个月互助尝试建立可延续结对，再以11个月社工服务覆盖第4至14月，检验进一步减少早期孤立暴露能否改善30个月平均表现。",
+      "result": {
+        "overall_isolation_rate": {
+          "mean": 0.08042,
+          "sd": 0.03358
+        },
+        "iv_isolation_rate": {
+          "mean": 0.04667,
+          "sd": 0.0217
+        },
+        "post_isolation_rate": {
+          "mean": 0.11229,
+          "sd": 0.04907
+        },
+        "overall_avg_loneliness": {
+          "mean": 0.23177,
+          "sd": 0.03112
+        },
+        "intervention": {
+          "type": "combo",
+          "components": [
+            {
+              "type": "timebank",
+              "start_month": 3,
+              "end_month": 3,
+              "params": {
+                "post_persist": 0.5
+              }
+            },
+            {
+              "type": "casework",
+              "start_month": 4,
+              "end_month": 14,
+              "params": {}
+            }
+          ],
+          "coupling": {
+            "handover_boost": 0.0
+          }
+        }
+      },
+      "score": 0.08042,
+      "best_so_far": {
+        "casework_start": 5,
+        "casework_duration": 10,
+        "timebank_start": 3,
+        "timebank_duration": 2
+      }
+    }
+  ],
+  "best": {
+    "iter": 5,
+    "ts": "2026-11-13T05:46:39.682691+00:00",
+    "candidate": {
+      "casework_start": 5,
+      "casework_duration": 10,
+      "timebank_start": 3,
+      "timebank_duration": 2
+    },
+    "rationale": "沿着近三轮改善方向，将互助结对前置为第3–4月、社工探访扩展为第5–14月，在保持12个服务月和相同撤出时点的条件下，检验早期结对的延续效应能否配合更早开始且更长的专业支持进一步降低30个月平均孤立率。",
+    "result": {
+      "overall_isolation_rate": {
+        "mean": 0.079,
+        "sd": 0.03774
+      },
+      "iv_isolation_rate": {
+        "mean": 0.04792,
+        "sd": 0.02292
+      },
+      "post_isolation_rate": {
+        "mean": 0.10187,
+        "sd": 0.05418
+      },
+      "overall_avg_loneliness": {
+        "mean": 0.2354,
+        "sd": 0.03408
+      },
+      "intervention": {
+        "type": "combo",
+        "components": [
+          {
+            "type": "timebank",
+            "start_month": 3,
+            "end_month": 4,
+            "params": {
+              "post_persist": 0.5
+            }
+          },
+          {
+            "type": "casework",
+            "start_month": 5,
+            "end_month": 14,
+            "params": {}
+          }
+        ],
+        "coupling": {
+          "handover_boost": 0.0
+        }
+      }
+    },
+    "score": 0.079,
+    "best_so_far": {
+      "casework_start": 5,
+      "casework_duration": 10,
+      "timebank_start": 3,
+      "timebank_duration": 2
+    }
+  },
+  "grid_best_for_reference": {
+    "name": "B",
+    "overall": 0.0975
+  },
+  "designer_calls_upper_bound": 12,
+  "caveats": [
+    "规则层机制探索，不进主结果",
+    "LLM 仅提案，评估为确定性规则层",
+    "handover_boost = 0，顺序优势只来自现有规则",
+    "全部轮次已落盘（harness_loop_combo_log.jsonl），无选择性报告"
+  ],
+  "generated_at": "2026-11-13T05:46:46.220432+00:00"
+}

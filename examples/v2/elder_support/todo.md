@@ -93,3 +93,12 @@
 | harness 重跑 | `tests/harness_loop_result*.json`、`harness_loop_log*.jsonl` |
 | 校准画像扫描 | `tests/*_calibrated.json` |
 | 正本与 PDF | `paper/main_zh.tex` / `main_en.tex` / `main_zh.pdf` / `main_en.pdf` |
+
+## 干预组合与接续（2026-11-10 至 11-13）
+
+- [x] 预注册组合扫描 `tests/scan_combo.py`（A–F、接续参数 b、撤出后 12 个月、20 种子），跑前提交。
+- [x] 环境模块 `combo` 干预类型，默认关闭；单一干预结果逐位不变（回归测试）。
+- [x] 规则层：校准与占位画像、post_persist 0.5/0；报告 `tests/scan_combo_report.md`。
+- [x] LLM 层第 2 档：新路由 Astra seed 1 的 D、E（韩国节点升至 2GB 后完成）；第 3 档按预设不触发。
+- [x] 组合排期回路 `tools/harness_loop_combo.py`（预注册先提交，设计师 6 次调用）。
+- [x] 论文第 6.3 节（中英文）、结果来源表 3 行、摘要/核心结论/讨论/局限各补一句；PDF 重编部署。
