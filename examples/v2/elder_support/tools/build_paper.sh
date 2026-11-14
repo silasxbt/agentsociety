@@ -27,6 +27,7 @@ python3 "$EXP/tools/gen_paper_numbers.py"
 # 追加块：新路由 Astra 前后对照、干预组合（需 tmp/astra_router_v1 与 tmp/astra_router_combo_v1 的本地副本）
 python3 "$EXP/tools/astra_router_compare.py" >/dev/null
 python3 "$EXP/tools/combo_numbers.py" >/dev/null
+python3 "$EXP/tools/layer_numbers.py" >/dev/null
 
 build_one() {
   local base="$1"
