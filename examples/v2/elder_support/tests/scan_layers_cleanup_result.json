@@ -1,0 +1,200 @@
+{
+ "preregistered": {
+  "clean_at_month_end": 18,
+  "arms": {
+   "casework": "social_worker",
+   "platform": "volunteer",
+   "timebank_pp0": "timebank"
+  },
+  "seeds": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12,
+   13,
+   14,
+   15,
+   16,
+   17,
+   18,
+   19,
+   20
+  ],
+  "profiles": "placeholder"
+ },
+ "arms": {
+  "casework": {
+   "removed_kind": "social_worker",
+   "baseline_no_clean": {
+    "layer_emotional_post": {
+     "mean": 0.17813,
+     "sd": 0.03773,
+     "ci95": [
+      0.16187,
+      0.19437
+     ]
+    },
+    "isolation_post": {
+     "mean": 0.12375,
+     "sd": 0.04056,
+     "ci95": [
+      0.10729,
+      0.14146
+     ]
+    },
+    "loneliness_post": {
+     "mean": 0.30742,
+     "sd": 0.03093,
+     "ci95": [
+      0.29477,
+      0.32126
+     ]
+    }
+   },
+   "clean_minus_no_clean": {
+    "layer_emotional_post": {
+     "mean": -0.17813,
+     "sd": 0.03773,
+     "ci95": [
+      -0.19437,
+      -0.16187
+     ]
+    },
+    "isolation_post": {
+     "mean": 0.03021,
+     "sd": 0.01731,
+     "ci95": [
+      0.02292,
+      0.03792
+     ]
+    },
+    "loneliness_post": {
+     "mean": 0.0689,
+     "sd": 0.01155,
+     "ci95": [
+      0.064,
+      0.07393
+     ]
+    }
+   }
+  },
+  "platform": {
+   "removed_kind": "volunteer",
+   "baseline_no_clean": {
+    "layer_emotional_post": {
+     "mean": 0.05917,
+     "sd": 0.02088,
+     "ci95": [
+      0.05042,
+      0.06813
+     ]
+    },
+    "isolation_post": {
+     "mean": 0.13104,
+     "sd": 0.04274,
+     "ci95": [
+      0.11229,
+      0.14938
+     ]
+    },
+    "loneliness_post": {
+     "mean": 0.33874,
+     "sd": 0.03173,
+     "ci95": [
+      0.32518,
+      0.35251
+     ]
+    }
+   },
+   "clean_minus_no_clean": {
+    "layer_emotional_post": {
+     "mean": -0.05917,
+     "sd": 0.02088,
+     "ci95": [
+      -0.06792,
+      -0.05
+     ]
+    },
+    "isolation_post": {
+     "mean": 0.01812,
+     "sd": 0.02087,
+     "ci95": [
+      0.00937,
+      0.02708
+     ]
+    },
+    "loneliness_post": {
+     "mean": 0.04303,
+     "sd": 0.01672,
+     "ci95": [
+      0.03594,
+      0.05024
+     ]
+    }
+   }
+  },
+  "timebank_pp0": {
+   "removed_kind": "timebank",
+   "baseline_no_clean": {
+    "layer_emotional_post": {
+     "mean": 0.185,
+     "sd": 0.03588,
+     "ci95": [
+      0.16958,
+      0.20042
+     ]
+    },
+    "isolation_post": {
+     "mean": 0.12437,
+     "sd": 0.03951,
+     "ci95": [
+      0.1075,
+      0.14146
+     ]
+    },
+    "loneliness_post": {
+     "mean": 0.32451,
+     "sd": 0.03254,
+     "ci95": [
+      0.31052,
+      0.33864
+     ]
+    }
+   },
+   "clean_minus_no_clean": {
+    "layer_emotional_post": {
+     "mean": -0.185,
+     "sd": 0.03588,
+     "ci95": [
+      -0.20083,
+      -0.16979
+     ]
+    },
+    "isolation_post": {
+     "mean": 0.03083,
+     "sd": 0.02735,
+     "ci95": [
+      0.01937,
+      0.04312
+     ]
+    },
+    "loneliness_post": {
+     "mean": 0.055,
+     "sd": 0.01317,
+     "ci95": [
+      0.04943,
+      0.06052
+     ]
+    }
+   }
+  }
+ }
+}
