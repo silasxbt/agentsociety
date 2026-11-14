@@ -1,0 +1,4815 @@
+{
+ "preregistered": {
+  "seeds": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12,
+   13,
+   14,
+   15,
+   16,
+   17,
+   18,
+   19,
+   20
+  ],
+  "months": 30,
+  "windows": {
+   "pre": [
+    1,
+    6
+   ],
+   "iv": [
+    7,
+    18
+   ],
+   "post": [
+    19,
+    30
+   ],
+   "post6": [
+    19,
+    24
+   ]
+  },
+  "layers": {
+   "family": [
+    "family"
+   ],
+   "middle": [
+    "friend",
+    "neighbor",
+    "timebank"
+   ],
+   "peer": [
+    "friend",
+    "neighbor"
+   ],
+   "timebank": [
+    "timebank"
+   ],
+   "volunteer": [
+    "volunteer"
+   ],
+   "social_worker": [
+    "social_worker"
+   ]
+  },
+  "arms": {
+   "none": null,
+   "casework": {
+    "type": "casework",
+    "start_month": 7,
+    "end_month": 18,
+    "params": {}
+   },
+   "timebank": {
+    "type": "timebank",
+    "start_month": 7,
+    "end_month": 18,
+    "params": {}
+   },
+   "platform": {
+    "type": "platform",
+    "start_month": 7,
+    "end_month": 18,
+    "params": {}
+   },
+   "casework_nolink": {
+    "type": "casework",
+    "start_month": 7,
+    "end_month": 18,
+    "params": {
+     "family_link_p": 0.0
+    }
+   },
+   "timebank_pp0": {
+    "type": "timebank",
+    "start_month": 7,
+    "end_month": 18,
+    "params": {
+     "post_persist": 0.0
+    }
+   }
+  },
+  "decay": 0.06,
+  "profiles": "calibrated",
+  "bootstrap": {
+   "n": 10000,
+   "seed": 20261114
+  }
+ },
+ "arms": {
+  "none": {
+   "family.emotional_per_elder.pre": {
+    "mean": 3.335,
+    "sd": 0.40755,
+    "ci95": [
+     3.15958,
+     3.50417
+    ]
+   },
+   "family.emotional_per_elder.iv": {
+    "mean": 3.61042,
+    "sd": 0.48644,
+    "ci95": [
+     3.40062,
+     3.81667
+    ]
+   },
+   "family.emotional_per_elder.post": {
+    "mean": 3.60771,
+    "sd": 0.44764,
+    "ci95": [
+     3.41354,
+     3.79354
+    ]
+   },
+   "family.emotional_per_elder.post6": {
+    "mean": 3.64792,
+    "sd": 0.44818,
+    "ci95": [
+     3.45708,
+     3.83708
+    ]
+   },
+   "family.share_with_emotional.pre": {
+    "mean": 0.80375,
+    "sd": 0.0764,
+    "ci95": [
+     0.77083,
+     0.835
+    ]
+   },
+   "family.share_with_emotional.iv": {
+    "mean": 0.81958,
+    "sd": 0.07176,
+    "ci95": [
+     0.78812,
+     0.84917
+    ]
+   },
+   "family.share_with_emotional.post": {
+    "mean": 0.81979,
+    "sd": 0.06878,
+    "ci95": [
+     0.79042,
+     0.84917
+    ]
+   },
+   "family.share_with_emotional.post6": {
+    "mean": 0.82083,
+    "sd": 0.06778,
+    "ci95": [
+     0.79208,
+     0.84958
+    ]
+   },
+   "family.ties_per_elder.pre": {
+    "mean": 3.045,
+    "sd": 0.3383,
+    "ci95": [
+     2.9,
+     3.1875
+    ]
+   },
+   "family.ties_per_elder.iv": {
+    "mean": 3.045,
+    "sd": 0.3383,
+    "ci95": [
+     2.905,
+     3.19
+    ]
+   },
+   "family.ties_per_elder.post": {
+    "mean": 3.045,
+    "sd": 0.3383,
+    "ci95": [
+     2.9,
+     3.1925
+    ]
+   },
+   "family.ties_per_elder.post6": {
+    "mean": 3.045,
+    "sd": 0.3383,
+    "ci95": [
+     2.9025,
+     3.19
+    ]
+   },
+   "family.mean_strength.pre": {
+    "mean": 0.91603,
+    "sd": 0.0126,
+    "ci95": [
+     0.91029,
+     0.92093
+    ]
+   },
+   "family.mean_strength.iv": {
+    "mean": 0.95378,
+    "sd": 0.02259,
+    "ci95": [
+     0.9436,
+     0.96275
+    ]
+   },
+   "family.mean_strength.post": {
+    "mean": 0.94291,
+    "sd": 0.03013,
+    "ci95": [
+     0.92938,
+     0.95489
+    ]
+   },
+   "family.mean_strength.post6": {
+    "mean": 0.94569,
+    "sd": 0.02873,
+    "ci95": [
+     0.93235,
+     0.95716
+    ]
+   },
+   "middle.emotional_per_elder.pre": {
+    "mean": 0.18833,
+    "sd": 0.05363,
+    "ci95": [
+     0.16542,
+     0.21083
+    ]
+   },
+   "middle.emotional_per_elder.iv": {
+    "mean": 0.14021,
+    "sd": 0.03749,
+    "ci95": [
+     0.12458,
+     0.15646
+    ]
+   },
+   "middle.emotional_per_elder.post": {
+    "mean": 0.105,
+    "sd": 0.03076,
+    "ci95": [
+     0.09187,
+     0.11771
+    ]
+   },
+   "middle.emotional_per_elder.post6": {
+    "mean": 0.11208,
+    "sd": 0.04122,
+    "ci95": [
+     0.09458,
+     0.12958
+    ]
+   },
+   "middle.share_with_emotional.pre": {
+    "mean": 0.17292,
+    "sd": 0.04367,
+    "ci95": [
+     0.15458,
+     0.19167
+    ]
+   },
+   "middle.share_with_emotional.iv": {
+    "mean": 0.13042,
+    "sd": 0.03142,
+    "ci95": [
+     0.11708,
+     0.14396
+    ]
+   },
+   "middle.share_with_emotional.post": {
+    "mean": 0.09938,
+    "sd": 0.02984,
+    "ci95": [
+     0.08667,
+     0.11208
+    ]
+   },
+   "middle.share_with_emotional.post6": {
+    "mean": 0.10625,
+    "sd": 0.04072,
+    "ci95": [
+     0.08917,
+     0.12417
+    ]
+   },
+   "middle.ties_per_elder.pre": {
+    "mean": 2.045,
+    "sd": 0.25401,
+    "ci95": [
+     1.94,
+     2.15458
+    ]
+   },
+   "middle.ties_per_elder.iv": {
+    "mean": 1.90396,
+    "sd": 0.26507,
+    "ci95": [
+     1.79271,
+     2.01875
+    ]
+   },
+   "middle.ties_per_elder.post": {
+    "mean": 1.68,
+    "sd": 0.28776,
+    "ci95": [
+     1.56354,
+     1.80354
+    ]
+   },
+   "middle.ties_per_elder.post6": {
+    "mean": 1.73625,
+    "sd": 0.29235,
+    "ci95": [
+     1.61083,
+     1.85833
+    ]
+   },
+   "middle.mean_strength.pre": {
+    "mean": 0.45206,
+    "sd": 0.02257,
+    "ci95": [
+     0.4423,
+     0.46163
+    ]
+   },
+   "middle.mean_strength.iv": {
+    "mean": 0.34154,
+    "sd": 0.0237,
+    "ci95": [
+     0.3317,
+     0.35165
+    ]
+   },
+   "middle.mean_strength.post": {
+    "mean": 0.23945,
+    "sd": 0.02838,
+    "ci95": [
+     0.22769,
+     0.25191
+    ]
+   },
+   "middle.mean_strength.post6": {
+    "mean": 0.25847,
+    "sd": 0.0277,
+    "ci95": [
+     0.24687,
+     0.27016
+    ]
+   },
+   "peer.emotional_per_elder.pre": {
+    "mean": 0.18833,
+    "sd": 0.05363,
+    "ci95": [
+     0.16583,
+     0.21167
+    ]
+   },
+   "peer.emotional_per_elder.iv": {
+    "mean": 0.14021,
+    "sd": 0.03749,
+    "ci95": [
+     0.12458,
+     0.15667
+    ]
+   },
+   "peer.emotional_per_elder.post": {
+    "mean": 0.105,
+    "sd": 0.03076,
+    "ci95": [
+     0.09208,
+     0.11812
+    ]
+   },
+   "peer.emotional_per_elder.post6": {
+    "mean": 0.11208,
+    "sd": 0.04122,
+    "ci95": [
+     0.09417,
+     0.12958
+    ]
+   },
+   "peer.share_with_emotional.pre": {
+    "mean": 0.17292,
+    "sd": 0.04367,
+    "ci95": [
+     0.15417,
+     0.19167
+    ]
+   },
+   "peer.share_with_emotional.iv": {
+    "mean": 0.13042,
+    "sd": 0.03142,
+    "ci95": [
+     0.11688,
+     0.14375
+    ]
+   },
+   "peer.share_with_emotional.post": {
+    "mean": 0.09938,
+    "sd": 0.02984,
+    "ci95": [
+     0.08708,
+     0.11229
+    ]
+   },
+   "peer.share_with_emotional.post6": {
+    "mean": 0.10625,
+    "sd": 0.04072,
+    "ci95": [
+     0.08917,
+     0.12375
+    ]
+   },
+   "peer.ties_per_elder.pre": {
+    "mean": 2.045,
+    "sd": 0.25401,
+    "ci95": [
+     1.9375,
+     2.1525
+    ]
+   },
+   "peer.ties_per_elder.iv": {
+    "mean": 1.90396,
+    "sd": 0.26507,
+    "ci95": [
+     1.79354,
+     2.01792
+    ]
+   },
+   "peer.ties_per_elder.post": {
+    "mean": 1.68,
+    "sd": 0.28776,
+    "ci95": [
+     1.55583,
+     1.80438
+    ]
+   },
+   "peer.ties_per_elder.post6": {
+    "mean": 1.73625,
+    "sd": 0.29235,
+    "ci95": [
+     1.61292,
+     1.85958
+    ]
+   },
+   "peer.mean_strength.pre": {
+    "mean": 0.45206,
+    "sd": 0.02257,
+    "ci95": [
+     0.44211,
+     0.46158
+    ]
+   },
+   "peer.mean_strength.iv": {
+    "mean": 0.34154,
+    "sd": 0.0237,
+    "ci95": [
+     0.33149,
+     0.35188
+    ]
+   },
+   "peer.mean_strength.post": {
+    "mean": 0.23945,
+    "sd": 0.02838,
+    "ci95": [
+     0.2277,
+     0.25163
+    ]
+   },
+   "peer.mean_strength.post6": {
+    "mean": 0.25847,
+    "sd": 0.0277,
+    "ci95": [
+     0.2468,
+     0.27027
+    ]
+   },
+   "timebank.emotional_per_elder.pre": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "timebank.emotional_per_elder.iv": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "timebank.emotional_per_elder.post": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "timebank.emotional_per_elder.post6": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "timebank.share_with_emotional.pre": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "timebank.share_with_emotional.iv": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "timebank.share_with_emotional.post": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "timebank.share_with_emotional.post6": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "timebank.ties_per_elder.pre": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "timebank.ties_per_elder.iv": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "timebank.ties_per_elder.post": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "timebank.ties_per_elder.post6": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "timebank.mean_strength.pre": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "timebank.mean_strength.iv": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "timebank.mean_strength.post": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "timebank.mean_strength.post6": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "volunteer.emotional_per_elder.pre": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "volunteer.emotional_per_elder.iv": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "volunteer.emotional_per_elder.post": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "volunteer.emotional_per_elder.post6": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "volunteer.share_with_emotional.pre": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "volunteer.share_with_emotional.iv": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "volunteer.share_with_emotional.post": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "volunteer.share_with_emotional.post6": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "volunteer.ties_per_elder.pre": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "volunteer.ties_per_elder.iv": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "volunteer.ties_per_elder.post": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "volunteer.ties_per_elder.post6": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "volunteer.mean_strength.pre": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "volunteer.mean_strength.iv": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "volunteer.mean_strength.post": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "volunteer.mean_strength.post6": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "social_worker.emotional_per_elder.pre": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "social_worker.emotional_per_elder.iv": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "social_worker.emotional_per_elder.post": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "social_worker.emotional_per_elder.post6": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "social_worker.share_with_emotional.pre": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "social_worker.share_with_emotional.iv": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "social_worker.share_with_emotional.post": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "social_worker.share_with_emotional.post6": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "social_worker.ties_per_elder.pre": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "social_worker.ties_per_elder.iv": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "social_worker.ties_per_elder.post": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "social_worker.ties_per_elder.post6": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "social_worker.mean_strength.pre": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "social_worker.mean_strength.iv": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "social_worker.mean_strength.post": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "social_worker.mean_strength.post6": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   }
+  },
+  "casework": {
+   "family.emotional_per_elder.pre": {
+    "mean": 3.335,
+    "sd": 0.40755,
+    "ci95": [
+     3.1575,
+     3.50542
+    ]
+   },
+   "family.emotional_per_elder.iv": {
+    "mean": 3.78604,
+    "sd": 0.46353,
+    "ci95": [
+     3.58479,
+     3.98292
+    ]
+   },
+   "family.emotional_per_elder.post": {
+    "mean": 3.6175,
+    "sd": 0.50889,
+    "ci95": [
+     3.39687,
+     3.83271
+    ]
+   },
+   "family.emotional_per_elder.post6": {
+    "mean": 3.67292,
+    "sd": 0.54242,
+    "ci95": [
+     3.4425,
+     3.90292
+    ]
+   },
+   "family.share_with_emotional.pre": {
+    "mean": 0.80375,
+    "sd": 0.0764,
+    "ci95": [
+     0.77042,
+     0.835
+    ]
+   },
+   "family.share_with_emotional.iv": {
+    "mean": 0.83292,
+    "sd": 0.06888,
+    "ci95": [
+     0.80312,
+     0.86229
+    ]
+   },
+   "family.share_with_emotional.post": {
+    "mean": 0.81896,
+    "sd": 0.06814,
+    "ci95": [
+     0.78958,
+     0.84708
+    ]
+   },
+   "family.share_with_emotional.post6": {
+    "mean": 0.82292,
+    "sd": 0.06471,
+    "ci95": [
+     0.79458,
+     0.85042
+    ]
+   },
+   "family.ties_per_elder.pre": {
+    "mean": 3.045,
+    "sd": 0.3383,
+    "ci95": [
+     2.9025,
+     3.1875
+    ]
+   },
+   "family.ties_per_elder.iv": {
+    "mean": 3.045,
+    "sd": 0.3383,
+    "ci95": [
+     2.9,
+     3.1875
+    ]
+   },
+   "family.ties_per_elder.post": {
+    "mean": 3.045,
+    "sd": 0.3383,
+    "ci95": [
+     2.9025,
+     3.1925
+    ]
+   },
+   "family.ties_per_elder.post6": {
+    "mean": 3.045,
+    "sd": 0.3383,
+    "ci95": [
+     2.9025,
+     3.1875
+    ]
+   },
+   "family.mean_strength.pre": {
+    "mean": 0.91603,
+    "sd": 0.0126,
+    "ci95": [
+     0.9102,
+     0.92096
+    ]
+   },
+   "family.mean_strength.iv": {
+    "mean": 0.95377,
+    "sd": 0.02282,
+    "ci95": [
+     0.94321,
+     0.96285
+    ]
+   },
+   "family.mean_strength.post": {
+    "mean": 0.94511,
+    "sd": 0.03061,
+    "ci95": [
+     0.93162,
+     0.95706
+    ]
+   },
+   "family.mean_strength.post6": {
+    "mean": 0.94782,
+    "sd": 0.02921,
+    "ci95": [
+     0.93443,
+     0.9595
+    ]
+   },
+   "middle.emotional_per_elder.pre": {
+    "mean": 0.18833,
+    "sd": 0.05363,
+    "ci95": [
+     0.16625,
+     0.21125
+    ]
+   },
+   "middle.emotional_per_elder.iv": {
+    "mean": 0.14729,
+    "sd": 0.04052,
+    "ci95": [
+     0.12979,
+     0.165
+    ]
+   },
+   "middle.emotional_per_elder.post": {
+    "mean": 0.09438,
+    "sd": 0.02339,
+    "ci95": [
+     0.08479,
+     0.10458
+    ]
+   },
+   "middle.emotional_per_elder.post6": {
+    "mean": 0.09542,
+    "sd": 0.03004,
+    "ci95": [
+     0.08333,
+     0.10833
+    ]
+   },
+   "middle.share_with_emotional.pre": {
+    "mean": 0.17292,
+    "sd": 0.04367,
+    "ci95": [
+     0.15458,
+     0.19167
+    ]
+   },
+   "middle.share_with_emotional.iv": {
+    "mean": 0.13521,
+    "sd": 0.03601,
+    "ci95": [
+     0.12,
+     0.15021
+    ]
+   },
+   "middle.share_with_emotional.post": {
+    "mean": 0.09021,
+    "sd": 0.02218,
+    "ci95": [
+     0.08104,
+     0.09979
+    ]
+   },
+   "middle.share_with_emotional.post6": {
+    "mean": 0.09167,
+    "sd": 0.02677,
+    "ci95": [
+     0.08042,
+     0.10333
+    ]
+   },
+   "middle.ties_per_elder.pre": {
+    "mean": 2.045,
+    "sd": 0.25401,
+    "ci95": [
+     1.93708,
+     2.15417
+    ]
+   },
+   "middle.ties_per_elder.iv": {
+    "mean": 1.91187,
+    "sd": 0.26138,
+    "ci95": [
+     1.80229,
+     2.02417
+    ]
+   },
+   "middle.ties_per_elder.post": {
+    "mean": 1.68229,
+    "sd": 0.28932,
+    "ci95": [
+     1.55958,
+     1.80771
+    ]
+   },
+   "middle.ties_per_elder.post6": {
+    "mean": 1.73917,
+    "sd": 0.28717,
+    "ci95": [
+     1.61417,
+     1.85708
+    ]
+   },
+   "middle.mean_strength.pre": {
+    "mean": 0.45206,
+    "sd": 0.02257,
+    "ci95": [
+     0.44234,
+     0.46176
+    ]
+   },
+   "middle.mean_strength.iv": {
+    "mean": 0.3469,
+    "sd": 0.02335,
+    "ci95": [
+     0.33678,
+     0.35689
+    ]
+   },
+   "middle.mean_strength.post": {
+    "mean": 0.24501,
+    "sd": 0.01915,
+    "ci95": [
+     0.23686,
+     0.25327
+    ]
+   },
+   "middle.mean_strength.post6": {
+    "mean": 0.26537,
+    "sd": 0.02037,
+    "ci95": [
+     0.25654,
+     0.27393
+    ]
+   },
+   "peer.emotional_per_elder.pre": {
+    "mean": 0.18833,
+    "sd": 0.05363,
+    "ci95": [
+     0.16583,
+     0.21167
+    ]
+   },
+   "peer.emotional_per_elder.iv": {
+    "mean": 0.14729,
+    "sd": 0.04052,
+    "ci95": [
+     0.13021,
+     0.16479
+    ]
+   },
+   "peer.emotional_per_elder.post": {
+    "mean": 0.09438,
+    "sd": 0.02339,
+    "ci95": [
+     0.08458,
+     0.10437
+    ]
+   },
+   "peer.emotional_per_elder.post6": {
+    "mean": 0.09542,
+    "sd": 0.03004,
+    "ci95": [
+     0.08333,
+     0.10875
+    ]
+   },
+   "peer.share_with_emotional.pre": {
+    "mean": 0.17292,
+    "sd": 0.04367,
+    "ci95": [
+     0.15458,
+     0.19208
+    ]
+   },
+   "peer.share_with_emotional.iv": {
+    "mean": 0.13521,
+    "sd": 0.03601,
+    "ci95": [
+     0.12,
+     0.15063
+    ]
+   },
+   "peer.share_with_emotional.post": {
+    "mean": 0.09021,
+    "sd": 0.02218,
+    "ci95": [
+     0.08104,
+     0.1
+    ]
+   },
+   "peer.share_with_emotional.post6": {
+    "mean": 0.09167,
+    "sd": 0.02677,
+    "ci95": [
+     0.08042,
+     0.10333
+    ]
+   },
+   "peer.ties_per_elder.pre": {
+    "mean": 2.045,
+    "sd": 0.25401,
+    "ci95": [
+     1.93875,
+     2.15542
+    ]
+   },
+   "peer.ties_per_elder.iv": {
+    "mean": 1.91187,
+    "sd": 0.26138,
+    "ci95": [
+     1.80229,
+     2.02354
+    ]
+   },
+   "peer.ties_per_elder.post": {
+    "mean": 1.68229,
+    "sd": 0.28932,
+    "ci95": [
+     1.56042,
+     1.80583
+    ]
+   },
+   "peer.ties_per_elder.post6": {
+    "mean": 1.73917,
+    "sd": 0.28717,
+    "ci95": [
+     1.61958,
+     1.86292
+    ]
+   },
+   "peer.mean_strength.pre": {
+    "mean": 0.45206,
+    "sd": 0.02257,
+    "ci95": [
+     0.44243,
+     0.46152
+    ]
+   },
+   "peer.mean_strength.iv": {
+    "mean": 0.3469,
+    "sd": 0.02335,
+    "ci95": [
+     0.3368,
+     0.35691
+    ]
+   },
+   "peer.mean_strength.post": {
+    "mean": 0.24501,
+    "sd": 0.01915,
+    "ci95": [
+     0.23679,
+     0.25308
+    ]
+   },
+   "peer.mean_strength.post6": {
+    "mean": 0.26537,
+    "sd": 0.02037,
+    "ci95": [
+     0.25643,
+     0.27398
+    ]
+   },
+   "timebank.emotional_per_elder.pre": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "timebank.emotional_per_elder.iv": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "timebank.emotional_per_elder.post": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "timebank.emotional_per_elder.post6": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "timebank.share_with_emotional.pre": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "timebank.share_with_emotional.iv": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "timebank.share_with_emotional.post": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "timebank.share_with_emotional.post6": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "timebank.ties_per_elder.pre": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "timebank.ties_per_elder.iv": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "timebank.ties_per_elder.post": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "timebank.ties_per_elder.post6": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "timebank.mean_strength.pre": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "timebank.mean_strength.iv": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "timebank.mean_strength.post": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "timebank.mean_strength.post6": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "volunteer.emotional_per_elder.pre": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "volunteer.emotional_per_elder.iv": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "volunteer.emotional_per_elder.post": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "volunteer.emotional_per_elder.post6": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "volunteer.share_with_emotional.pre": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "volunteer.share_with_emotional.iv": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "volunteer.share_with_emotional.post": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "volunteer.share_with_emotional.post6": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "volunteer.ties_per_elder.pre": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "volunteer.ties_per_elder.iv": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "volunteer.ties_per_elder.post": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "volunteer.ties_per_elder.post6": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "volunteer.mean_strength.pre": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "volunteer.mean_strength.iv": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "volunteer.mean_strength.post": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "volunteer.mean_strength.post6": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "social_worker.emotional_per_elder.pre": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "social_worker.emotional_per_elder.iv": {
+    "mean": 0.80812,
+    "sd": 0.04014,
+    "ci95": [
+     0.78958,
+     0.82396
+    ]
+   },
+   "social_worker.emotional_per_elder.post": {
+    "mean": 0.18313,
+    "sd": 0.03122,
+    "ci95": [
+     0.16937,
+     0.19604
+    ]
+   },
+   "social_worker.emotional_per_elder.post6": {
+    "mean": 0.1975,
+    "sd": 0.04267,
+    "ci95": [
+     0.17917,
+     0.215
+    ]
+   },
+   "social_worker.share_with_emotional.pre": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "social_worker.share_with_emotional.iv": {
+    "mean": 0.68354,
+    "sd": 0.02647,
+    "ci95": [
+     0.67167,
+     0.69437
+    ]
+   },
+   "social_worker.share_with_emotional.post": {
+    "mean": 0.16958,
+    "sd": 0.02734,
+    "ci95": [
+     0.15771,
+     0.18104
+    ]
+   },
+   "social_worker.share_with_emotional.post6": {
+    "mean": 0.18208,
+    "sd": 0.03855,
+    "ci95": [
+     0.16583,
+     0.19833
+    ]
+   },
+   "social_worker.ties_per_elder.pre": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "social_worker.ties_per_elder.iv": {
+    "mean": 1.63146,
+    "sd": 0.0621,
+    "ci95": [
+     1.60563,
+     1.65813
+    ]
+   },
+   "social_worker.ties_per_elder.post": {
+    "mean": 1.865,
+    "sd": 0.06304,
+    "ci95": [
+     1.8375,
+     1.8925
+    ]
+   },
+   "social_worker.ties_per_elder.post6": {
+    "mean": 1.865,
+    "sd": 0.06304,
+    "ci95": [
+     1.8375,
+     1.8925
+    ]
+   },
+   "social_worker.mean_strength.pre": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "social_worker.mean_strength.iv": {
+    "mean": 0.53244,
+    "sd": 0.01448,
+    "ci95": [
+     0.52645,
+     0.53887
+    ]
+   },
+   "social_worker.mean_strength.post": {
+    "mean": 0.49634,
+    "sd": 0.02833,
+    "ci95": [
+     0.48489,
+     0.50878
+    ]
+   },
+   "social_worker.mean_strength.post6": {
+    "mean": 0.54467,
+    "sd": 0.02768,
+    "ci95": [
+     0.53346,
+     0.55719
+    ]
+   }
+  },
+  "timebank": {
+   "family.emotional_per_elder.pre": {
+    "mean": 3.335,
+    "sd": 0.40755,
+    "ci95": [
+     3.15833,
+     3.50833
+    ]
+   },
+   "family.emotional_per_elder.iv": {
+    "mean": 3.64146,
+    "sd": 0.45305,
+    "ci95": [
+     3.44167,
+     3.83292
+    ]
+   },
+   "family.emotional_per_elder.post": {
+    "mean": 3.59563,
+    "sd": 0.4735,
+    "ci95": [
+     3.39208,
+     3.79625
+    ]
+   },
+   "family.emotional_per_elder.post6": {
+    "mean": 3.64167,
+    "sd": 0.474,
+    "ci95": [
+     3.44125,
+     3.85167
+    ]
+   },
+   "family.share_with_emotional.pre": {
+    "mean": 0.80375,
+    "sd": 0.0764,
+    "ci95": [
+     0.77083,
+     0.83542
+    ]
+   },
+   "family.share_with_emotional.iv": {
+    "mean": 0.81979,
+    "sd": 0.07001,
+    "ci95": [
+     0.79,
+     0.84979
+    ]
+   },
+   "family.share_with_emotional.post": {
+    "mean": 0.81833,
+    "sd": 0.06696,
+    "ci95": [
+     0.78917,
+     0.84688
+    ]
+   },
+   "family.share_with_emotional.post6": {
+    "mean": 0.82208,
+    "sd": 0.06947,
+    "ci95": [
+     0.7925,
+     0.85208
+    ]
+   },
+   "family.ties_per_elder.pre": {
+    "mean": 3.045,
+    "sd": 0.3383,
+    "ci95": [
+     2.9,
+     3.19
+    ]
+   },
+   "family.ties_per_elder.iv": {
+    "mean": 3.045,
+    "sd": 0.3383,
+    "ci95": [
+     2.9025,
+     3.195
+    ]
+   },
+   "family.ties_per_elder.post": {
+    "mean": 3.045,
+    "sd": 0.3383,
+    "ci95": [
+     2.9025,
+     3.19
+    ]
+   },
+   "family.ties_per_elder.post6": {
+    "mean": 3.045,
+    "sd": 0.3383,
+    "ci95": [
+     2.9025,
+     3.1875
+    ]
+   },
+   "family.mean_strength.pre": {
+    "mean": 0.91603,
+    "sd": 0.0126,
+    "ci95": [
+     0.91017,
+     0.92095
+    ]
+   },
+   "family.mean_strength.iv": {
+    "mean": 0.95434,
+    "sd": 0.02305,
+    "ci95": [
+     0.9439,
+     0.9636
+    ]
+   },
+   "family.mean_strength.post": {
+    "mean": 0.94303,
+    "sd": 0.03062,
+    "ci95": [
+     0.92881,
+     0.95521
+    ]
+   },
+   "family.mean_strength.post6": {
+    "mean": 0.94585,
+    "sd": 0.02894,
+    "ci95": [
+     0.93269,
+     0.95744
+    ]
+   },
+   "middle.emotional_per_elder.pre": {
+    "mean": 0.18833,
+    "sd": 0.05363,
+    "ci95": [
+     0.16583,
+     0.21167
+    ]
+   },
+   "middle.emotional_per_elder.iv": {
+    "mean": 0.4,
+    "sd": 0.19446,
+    "ci95": [
+     0.31729,
+     0.48438
+    ]
+   },
+   "middle.emotional_per_elder.post": {
+    "mean": 0.28417,
+    "sd": 0.13206,
+    "ci95": [
+     0.2275,
+     0.34146
+    ]
+   },
+   "middle.emotional_per_elder.post6": {
+    "mean": 0.29583,
+    "sd": 0.13441,
+    "ci95": [
+     0.23708,
+     0.3525
+    ]
+   },
+   "middle.share_with_emotional.pre": {
+    "mean": 0.17292,
+    "sd": 0.04367,
+    "ci95": [
+     0.15458,
+     0.19167
+    ]
+   },
+   "middle.share_with_emotional.iv": {
+    "mean": 0.31938,
+    "sd": 0.14182,
+    "ci95": [
+     0.26042,
+     0.38021
+    ]
+   },
+   "middle.share_with_emotional.post": {
+    "mean": 0.23208,
+    "sd": 0.10144,
+    "ci95": [
+     0.18937,
+     0.27563
+    ]
+   },
+   "middle.share_with_emotional.post6": {
+    "mean": 0.24375,
+    "sd": 0.10443,
+    "ci95": [
+     0.19833,
+     0.2875
+    ]
+   },
+   "middle.ties_per_elder.pre": {
+    "mean": 2.045,
+    "sd": 0.25401,
+    "ci95": [
+     1.93708,
+     2.15417
+    ]
+   },
+   "middle.ties_per_elder.iv": {
+    "mean": 2.38833,
+    "sd": 0.43134,
+    "ci95": [
+     2.2025,
+     2.57292
+    ]
+   },
+   "middle.ties_per_elder.post": {
+    "mean": 2.16083,
+    "sd": 0.46837,
+    "ci95": [
+     1.96063,
+     2.35812
+    ]
+   },
+   "middle.ties_per_elder.post6": {
+    "mean": 2.23167,
+    "sd": 0.45709,
+    "ci95": [
+     2.03958,
+     2.42375
+    ]
+   },
+   "middle.mean_strength.pre": {
+    "mean": 0.45206,
+    "sd": 0.02257,
+    "ci95": [
+     0.44261,
+     0.46148
+    ]
+   },
+   "middle.mean_strength.iv": {
+    "mean": 0.40225,
+    "sd": 0.04278,
+    "ci95": [
+     0.38352,
+     0.42048
+    ]
+   },
+   "middle.mean_strength.post": {
+    "mean": 0.37232,
+    "sd": 0.08577,
+    "ci95": [
+     0.33466,
+     0.40868
+    ]
+   },
+   "middle.mean_strength.post6": {
+    "mean": 0.38275,
+    "sd": 0.08026,
+    "ci95": [
+     0.34743,
+     0.41609
+    ]
+   },
+   "peer.emotional_per_elder.pre": {
+    "mean": 0.18833,
+    "sd": 0.05363,
+    "ci95": [
+     0.16583,
+     0.21167
+    ]
+   },
+   "peer.emotional_per_elder.iv": {
+    "mean": 0.14313,
+    "sd": 0.03623,
+    "ci95": [
+     0.1275,
+     0.15833
+    ]
+   },
+   "peer.emotional_per_elder.post": {
+    "mean": 0.10208,
+    "sd": 0.03304,
+    "ci95": [
+     0.08771,
+     0.11625
+    ]
+   },
+   "peer.emotional_per_elder.post6": {
+    "mean": 0.10958,
+    "sd": 0.04395,
+    "ci95": [
+     0.09125,
+     0.12875
+    ]
+   },
+   "peer.share_with_emotional.pre": {
+    "mean": 0.17292,
+    "sd": 0.04367,
+    "ci95": [
+     0.155,
+     0.19167
+    ]
+   },
+   "peer.share_with_emotional.iv": {
+    "mean": 0.13229,
+    "sd": 0.033,
+    "ci95": [
+     0.11813,
+     0.14604
+    ]
+   },
+   "peer.share_with_emotional.post": {
+    "mean": 0.09479,
+    "sd": 0.03044,
+    "ci95": [
+     0.08208,
+     0.10812
+    ]
+   },
+   "peer.share_with_emotional.post6": {
+    "mean": 0.10292,
+    "sd": 0.04004,
+    "ci95": [
+     0.08667,
+     0.12
+    ]
+   },
+   "peer.ties_per_elder.pre": {
+    "mean": 2.045,
+    "sd": 0.25401,
+    "ci95": [
+     1.93833,
+     2.15583
+    ]
+   },
+   "peer.ties_per_elder.iv": {
+    "mean": 1.91917,
+    "sd": 0.24881,
+    "ci95": [
+     1.81292,
+     2.025
+    ]
+   },
+   "peer.ties_per_elder.post": {
+    "mean": 1.68083,
+    "sd": 0.29167,
+    "ci95": [
+     1.55625,
+     1.805
+    ]
+   },
+   "peer.ties_per_elder.post6": {
+    "mean": 1.75167,
+    "sd": 0.2778,
+    "ci95": [
+     1.63208,
+     1.8675
+    ]
+   },
+   "peer.mean_strength.pre": {
+    "mean": 0.45206,
+    "sd": 0.02257,
+    "ci95": [
+     0.44226,
+     0.46175
+    ]
+   },
+   "peer.mean_strength.iv": {
+    "mean": 0.34438,
+    "sd": 0.02353,
+    "ci95": [
+     0.33422,
+     0.35433
+    ]
+   },
+   "peer.mean_strength.post": {
+    "mean": 0.24548,
+    "sd": 0.02644,
+    "ci95": [
+     0.2346,
+     0.25742
+    ]
+   },
+   "peer.mean_strength.post6": {
+    "mean": 0.26347,
+    "sd": 0.02526,
+    "ci95": [
+     0.25293,
+     0.27489
+    ]
+   },
+   "timebank.emotional_per_elder.pre": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "timebank.emotional_per_elder.iv": {
+    "mean": 0.25688,
+    "sd": 0.19171,
+    "ci95": [
+     0.17708,
+     0.34083
+    ]
+   },
+   "timebank.emotional_per_elder.post": {
+    "mean": 0.18208,
+    "sd": 0.13142,
+    "ci95": [
+     0.12604,
+     0.23792
+    ]
+   },
+   "timebank.emotional_per_elder.post6": {
+    "mean": 0.18625,
+    "sd": 0.13323,
+    "ci95": [
+     0.12833,
+     0.24375
+    ]
+   },
+   "timebank.share_with_emotional.pre": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "timebank.share_with_emotional.iv": {
+    "mean": 0.21229,
+    "sd": 0.15828,
+    "ci95": [
+     0.145,
+     0.28083
+    ]
+   },
+   "timebank.share_with_emotional.post": {
+    "mean": 0.15375,
+    "sd": 0.1137,
+    "ci95": [
+     0.105,
+     0.20312
+    ]
+   },
+   "timebank.share_with_emotional.post6": {
+    "mean": 0.15792,
+    "sd": 0.11612,
+    "ci95": [
+     0.10875,
+     0.2075
+    ]
+   },
+   "timebank.ties_per_elder.pre": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "timebank.ties_per_elder.iv": {
+    "mean": 0.46917,
+    "sd": 0.34137,
+    "ci95": [
+     0.32375,
+     0.61417
+    ]
+   },
+   "timebank.ties_per_elder.post": {
+    "mean": 0.48,
+    "sd": 0.35184,
+    "ci95": [
+     0.33,
+     0.63
+    ]
+   },
+   "timebank.ties_per_elder.post6": {
+    "mean": 0.48,
+    "sd": 0.35184,
+    "ci95": [
+     0.33,
+     0.63
+    ]
+   },
+   "timebank.mean_strength.pre": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "timebank.mean_strength.iv": {
+    "mean": 0.52721,
+    "sd": 0.27217,
+    "ci95": [
+     0.39931,
+     0.63022
+    ]
+   },
+   "timebank.mean_strength.post": {
+    "mean": 0.69422,
+    "sd": 0.35896,
+    "ci95": [
+     0.52487,
+     0.83232
+    ]
+   },
+   "timebank.mean_strength.post6": {
+    "mean": 0.6953,
+    "sd": 0.35894,
+    "ci95": [
+     0.52633,
+     0.83255
+    ]
+   },
+   "volunteer.emotional_per_elder.pre": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "volunteer.emotional_per_elder.iv": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "volunteer.emotional_per_elder.post": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "volunteer.emotional_per_elder.post6": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "volunteer.share_with_emotional.pre": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "volunteer.share_with_emotional.iv": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "volunteer.share_with_emotional.post": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "volunteer.share_with_emotional.post6": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "volunteer.ties_per_elder.pre": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "volunteer.ties_per_elder.iv": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "volunteer.ties_per_elder.post": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "volunteer.ties_per_elder.post6": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "volunteer.mean_strength.pre": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "volunteer.mean_strength.iv": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "volunteer.mean_strength.post": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "volunteer.mean_strength.post6": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "social_worker.emotional_per_elder.pre": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "social_worker.emotional_per_elder.iv": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "social_worker.emotional_per_elder.post": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "social_worker.emotional_per_elder.post6": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "social_worker.share_with_emotional.pre": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "social_worker.share_with_emotional.iv": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "social_worker.share_with_emotional.post": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "social_worker.share_with_emotional.post6": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "social_worker.ties_per_elder.pre": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "social_worker.ties_per_elder.iv": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "social_worker.ties_per_elder.post": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "social_worker.ties_per_elder.post6": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "social_worker.mean_strength.pre": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "social_worker.mean_strength.iv": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "social_worker.mean_strength.post": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "social_worker.mean_strength.post6": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   }
+  },
+  "platform": {
+   "family.emotional_per_elder.pre": {
+    "mean": 3.335,
+    "sd": 0.40755,
+    "ci95": [
+     3.15958,
+     3.505
+    ]
+   },
+   "family.emotional_per_elder.iv": {
+    "mean": 3.59146,
+    "sd": 0.42864,
+    "ci95": [
+     3.40667,
+     3.77083
+    ]
+   },
+   "family.emotional_per_elder.post": {
+    "mean": 3.63333,
+    "sd": 0.48687,
+    "ci95": [
+     3.42604,
+     3.84521
+    ]
+   },
+   "family.emotional_per_elder.post6": {
+    "mean": 3.65208,
+    "sd": 0.47253,
+    "ci95": [
+     3.45667,
+     3.85417
+    ]
+   },
+   "family.share_with_emotional.pre": {
+    "mean": 0.80375,
+    "sd": 0.0764,
+    "ci95": [
+     0.77042,
+     0.835
+    ]
+   },
+   "family.share_with_emotional.iv": {
+    "mean": 0.81604,
+    "sd": 0.07532,
+    "ci95": [
+     0.78417,
+     0.84854
+    ]
+   },
+   "family.share_with_emotional.post": {
+    "mean": 0.81812,
+    "sd": 0.07149,
+    "ci95": [
+     0.78771,
+     0.84875
+    ]
+   },
+   "family.share_with_emotional.post6": {
+    "mean": 0.82083,
+    "sd": 0.0751,
+    "ci95": [
+     0.78833,
+     0.85292
+    ]
+   },
+   "family.ties_per_elder.pre": {
+    "mean": 3.045,
+    "sd": 0.3383,
+    "ci95": [
+     2.9025,
+     3.1875
+    ]
+   },
+   "family.ties_per_elder.iv": {
+    "mean": 3.045,
+    "sd": 0.3383,
+    "ci95": [
+     2.9,
+     3.1925
+    ]
+   },
+   "family.ties_per_elder.post": {
+    "mean": 3.045,
+    "sd": 0.3383,
+    "ci95": [
+     2.9025,
+     3.1875
+    ]
+   },
+   "family.ties_per_elder.post6": {
+    "mean": 3.045,
+    "sd": 0.3383,
+    "ci95": [
+     2.9025,
+     3.19
+    ]
+   },
+   "family.mean_strength.pre": {
+    "mean": 0.91603,
+    "sd": 0.0126,
+    "ci95": [
+     0.91032,
+     0.92098
+    ]
+   },
+   "family.mean_strength.iv": {
+    "mean": 0.95261,
+    "sd": 0.02317,
+    "ci95": [
+     0.94243,
+     0.9617
+    ]
+   },
+   "family.mean_strength.post": {
+    "mean": 0.94038,
+    "sd": 0.03117,
+    "ci95": [
+     0.92624,
+     0.95267
+    ]
+   },
+   "family.mean_strength.post6": {
+    "mean": 0.94297,
+    "sd": 0.02951,
+    "ci95": [
+     0.92959,
+     0.95474
+    ]
+   },
+   "middle.emotional_per_elder.pre": {
+    "mean": 0.18833,
+    "sd": 0.05363,
+    "ci95": [
+     0.16625,
+     0.21167
+    ]
+   },
+   "middle.emotional_per_elder.iv": {
+    "mean": 0.13479,
+    "sd": 0.03495,
+    "ci95": [
+     0.11854,
+     0.14917
+    ]
+   },
+   "middle.emotional_per_elder.post": {
+    "mean": 0.09896,
+    "sd": 0.03294,
+    "ci95": [
+     0.08542,
+     0.11354
+    ]
+   },
+   "middle.emotional_per_elder.post6": {
+    "mean": 0.10667,
+    "sd": 0.03997,
+    "ci95": [
+     0.09,
+     0.12417
+    ]
+   },
+   "middle.share_with_emotional.pre": {
+    "mean": 0.17292,
+    "sd": 0.04367,
+    "ci95": [
+     0.15458,
+     0.19167
+    ]
+   },
+   "middle.share_with_emotional.iv": {
+    "mean": 0.12521,
+    "sd": 0.03108,
+    "ci95": [
+     0.11125,
+     0.13771
+    ]
+   },
+   "middle.share_with_emotional.post": {
+    "mean": 0.09354,
+    "sd": 0.02972,
+    "ci95": [
+     0.08146,
+     0.10667
+    ]
+   },
+   "middle.share_with_emotional.post6": {
+    "mean": 0.10083,
+    "sd": 0.03565,
+    "ci95": [
+     0.08583,
+     0.11667
+    ]
+   },
+   "middle.ties_per_elder.pre": {
+    "mean": 2.045,
+    "sd": 0.25401,
+    "ci95": [
+     1.9375,
+     2.15667
+    ]
+   },
+   "middle.ties_per_elder.iv": {
+    "mean": 1.93167,
+    "sd": 0.25124,
+    "ci95": [
+     1.82792,
+     2.04167
+    ]
+   },
+   "middle.ties_per_elder.post": {
+    "mean": 1.70208,
+    "sd": 0.24341,
+    "ci95": [
+     1.60188,
+     1.80958
+    ]
+   },
+   "middle.ties_per_elder.post6": {
+    "mean": 1.76167,
+    "sd": 0.2543,
+    "ci95": [
+     1.65833,
+     1.87333
+    ]
+   },
+   "middle.mean_strength.pre": {
+    "mean": 0.45206,
+    "sd": 0.02257,
+    "ci95": [
+     0.44219,
+     0.46154
+    ]
+   },
+   "middle.mean_strength.iv": {
+    "mean": 0.3421,
+    "sd": 0.02313,
+    "ci95": [
+     0.33257,
+     0.35225
+    ]
+   },
+   "middle.mean_strength.post": {
+    "mean": 0.2409,
+    "sd": 0.0244,
+    "ci95": [
+     0.23081,
+     0.25172
+    ]
+   },
+   "middle.mean_strength.post6": {
+    "mean": 0.26092,
+    "sd": 0.0253,
+    "ci95": [
+     0.25082,
+     0.2722
+    ]
+   },
+   "peer.emotional_per_elder.pre": {
+    "mean": 0.18833,
+    "sd": 0.05363,
+    "ci95": [
+     0.16625,
+     0.21167
+    ]
+   },
+   "peer.emotional_per_elder.iv": {
+    "mean": 0.13479,
+    "sd": 0.03495,
+    "ci95": [
+     0.11917,
+     0.14917
+    ]
+   },
+   "peer.emotional_per_elder.post": {
+    "mean": 0.09896,
+    "sd": 0.03294,
+    "ci95": [
+     0.08563,
+     0.11333
+    ]
+   },
+   "peer.emotional_per_elder.post6": {
+    "mean": 0.10667,
+    "sd": 0.03997,
+    "ci95": [
+     0.09,
+     0.12417
+    ]
+   },
+   "peer.share_with_emotional.pre": {
+    "mean": 0.17292,
+    "sd": 0.04367,
+    "ci95": [
+     0.15417,
+     0.19167
+    ]
+   },
+   "peer.share_with_emotional.iv": {
+    "mean": 0.12521,
+    "sd": 0.03108,
+    "ci95": [
+     0.11125,
+     0.13771
+    ]
+   },
+   "peer.share_with_emotional.post": {
+    "mean": 0.09354,
+    "sd": 0.02972,
+    "ci95": [
+     0.08167,
+     0.10646
+    ]
+   },
+   "peer.share_with_emotional.post6": {
+    "mean": 0.10083,
+    "sd": 0.03565,
+    "ci95": [
+     0.08625,
+     0.11625
+    ]
+   },
+   "peer.ties_per_elder.pre": {
+    "mean": 2.045,
+    "sd": 0.25401,
+    "ci95": [
+     1.93875,
+     2.15625
+    ]
+   },
+   "peer.ties_per_elder.iv": {
+    "mean": 1.93167,
+    "sd": 0.25124,
+    "ci95": [
+     1.82646,
+     2.04021
+    ]
+   },
+   "peer.ties_per_elder.post": {
+    "mean": 1.70208,
+    "sd": 0.24341,
+    "ci95": [
+     1.60375,
+     1.81062
+    ]
+   },
+   "peer.ties_per_elder.post6": {
+    "mean": 1.76167,
+    "sd": 0.2543,
+    "ci95": [
+     1.65917,
+     1.87542
+    ]
+   },
+   "peer.mean_strength.pre": {
+    "mean": 0.45206,
+    "sd": 0.02257,
+    "ci95": [
+     0.44221,
+     0.46146
+    ]
+   },
+   "peer.mean_strength.iv": {
+    "mean": 0.3421,
+    "sd": 0.02313,
+    "ci95": [
+     0.33244,
+     0.35252
+    ]
+   },
+   "peer.mean_strength.post": {
+    "mean": 0.2409,
+    "sd": 0.0244,
+    "ci95": [
+     0.2309,
+     0.25168
+    ]
+   },
+   "peer.mean_strength.post6": {
+    "mean": 0.26092,
+    "sd": 0.0253,
+    "ci95": [
+     0.25072,
+     0.27223
+    ]
+   },
+   "timebank.emotional_per_elder.pre": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "timebank.emotional_per_elder.iv": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "timebank.emotional_per_elder.post": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "timebank.emotional_per_elder.post6": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "timebank.share_with_emotional.pre": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "timebank.share_with_emotional.iv": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "timebank.share_with_emotional.post": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "timebank.share_with_emotional.post6": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "timebank.ties_per_elder.pre": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "timebank.ties_per_elder.iv": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "timebank.ties_per_elder.post": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "timebank.ties_per_elder.post6": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "timebank.mean_strength.pre": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "timebank.mean_strength.iv": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "timebank.mean_strength.post": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "timebank.mean_strength.post6": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "volunteer.emotional_per_elder.pre": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "volunteer.emotional_per_elder.iv": {
+    "mean": 0.08937,
+    "sd": 0.02194,
+    "ci95": [
+     0.07979,
+     0.09854
+    ]
+   },
+   "volunteer.emotional_per_elder.post": {
+    "mean": 0.06708,
+    "sd": 0.01848,
+    "ci95": [
+     0.05917,
+     0.075
+    ]
+   },
+   "volunteer.emotional_per_elder.post6": {
+    "mean": 0.07458,
+    "sd": 0.0279,
+    "ci95": [
+     0.0625,
+     0.08625
+    ]
+   },
+   "volunteer.share_with_emotional.pre": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "volunteer.share_with_emotional.iv": {
+    "mean": 0.08521,
+    "sd": 0.02148,
+    "ci95": [
+     0.07604,
+     0.09438
+    ]
+   },
+   "volunteer.share_with_emotional.post": {
+    "mean": 0.065,
+    "sd": 0.01728,
+    "ci95": [
+     0.0575,
+     0.0725
+    ]
+   },
+   "volunteer.share_with_emotional.post6": {
+    "mean": 0.0725,
+    "sd": 0.02732,
+    "ci95": [
+     0.06083,
+     0.08417
+    ]
+   },
+   "volunteer.ties_per_elder.pre": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "volunteer.ties_per_elder.iv": {
+    "mean": 0.8825,
+    "sd": 0.22957,
+    "ci95": [
+     0.78271,
+     0.98083
+    ]
+   },
+   "volunteer.ties_per_elder.post": {
+    "mean": 1.5425,
+    "sd": 0.35142,
+    "ci95": [
+     1.3925,
+     1.6925
+    ]
+   },
+   "volunteer.ties_per_elder.post6": {
+    "mean": 1.5425,
+    "sd": 0.35142,
+    "ci95": [
+     1.3875,
+     1.6925
+    ]
+   },
+   "volunteer.mean_strength.pre": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "volunteer.mean_strength.iv": {
+    "mean": 0.21941,
+    "sd": 0.00773,
+    "ci95": [
+     0.21596,
+     0.2226
+    ]
+   },
+   "volunteer.mean_strength.post": {
+    "mean": 0.17352,
+    "sd": 0.01082,
+    "ci95": [
+     0.16887,
+     0.17824
+    ]
+   },
+   "volunteer.mean_strength.post6": {
+    "mean": 0.1877,
+    "sd": 0.01083,
+    "ci95": [
+     0.18312,
+     0.19234
+    ]
+   },
+   "social_worker.emotional_per_elder.pre": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "social_worker.emotional_per_elder.iv": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "social_worker.emotional_per_elder.post": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "social_worker.emotional_per_elder.post6": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "social_worker.share_with_emotional.pre": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "social_worker.share_with_emotional.iv": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "social_worker.share_with_emotional.post": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "social_worker.share_with_emotional.post6": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "social_worker.ties_per_elder.pre": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "social_worker.ties_per_elder.iv": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "social_worker.ties_per_elder.post": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "social_worker.ties_per_elder.post6": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "social_worker.mean_strength.pre": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "social_worker.mean_strength.iv": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "social_worker.mean_strength.post": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "social_worker.mean_strength.post6": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   }
+  },
+  "casework_nolink": {
+   "family.emotional_per_elder.pre": {
+    "mean": 3.335,
+    "sd": 0.40755,
+    "ci95": [
+     3.1575,
+     3.50458
+    ]
+   },
+   "family.emotional_per_elder.iv": {
+    "mean": 3.59458,
+    "sd": 0.47823,
+    "ci95": [
+     3.38917,
+     3.79625
+    ]
+   },
+   "family.emotional_per_elder.post": {
+    "mean": 3.61396,
+    "sd": 0.46113,
+    "ci95": [
+     3.41958,
+     3.80875
+    ]
+   },
+   "family.emotional_per_elder.post6": {
+    "mean": 3.64292,
+    "sd": 0.46305,
+    "ci95": [
+     3.44583,
+     3.845
+    ]
+   },
+   "family.share_with_emotional.pre": {
+    "mean": 0.80375,
+    "sd": 0.0764,
+    "ci95": [
+     0.77,
+     0.83625
+    ]
+   },
+   "family.share_with_emotional.iv": {
+    "mean": 0.81458,
+    "sd": 0.06945,
+    "ci95": [
+     0.785,
+     0.84437
+    ]
+   },
+   "family.share_with_emotional.post": {
+    "mean": 0.815,
+    "sd": 0.07294,
+    "ci95": [
+     0.78396,
+     0.84583
+    ]
+   },
+   "family.share_with_emotional.post6": {
+    "mean": 0.81458,
+    "sd": 0.07642,
+    "ci95": [
+     0.7825,
+     0.84708
+    ]
+   },
+   "family.ties_per_elder.pre": {
+    "mean": 3.045,
+    "sd": 0.3383,
+    "ci95": [
+     2.9025,
+     3.1925
+    ]
+   },
+   "family.ties_per_elder.iv": {
+    "mean": 3.045,
+    "sd": 0.3383,
+    "ci95": [
+     2.9025,
+     3.19
+    ]
+   },
+   "family.ties_per_elder.post": {
+    "mean": 3.045,
+    "sd": 0.3383,
+    "ci95": [
+     2.9025,
+     3.19
+    ]
+   },
+   "family.ties_per_elder.post6": {
+    "mean": 3.045,
+    "sd": 0.3383,
+    "ci95": [
+     2.9,
+     3.195
+    ]
+   },
+   "family.mean_strength.pre": {
+    "mean": 0.91603,
+    "sd": 0.0126,
+    "ci95": [
+     0.91021,
+     0.92096
+    ]
+   },
+   "family.mean_strength.iv": {
+    "mean": 0.95172,
+    "sd": 0.0225,
+    "ci95": [
+     0.94158,
+     0.96085
+    ]
+   },
+   "family.mean_strength.post": {
+    "mean": 0.94171,
+    "sd": 0.02976,
+    "ci95": [
+     0.92847,
+     0.95328
+    ]
+   },
+   "family.mean_strength.post6": {
+    "mean": 0.94421,
+    "sd": 0.02819,
+    "ci95": [
+     0.93137,
+     0.95543
+    ]
+   },
+   "middle.emotional_per_elder.pre": {
+    "mean": 0.18833,
+    "sd": 0.05363,
+    "ci95": [
+     0.16583,
+     0.21208
+    ]
+   },
+   "middle.emotional_per_elder.iv": {
+    "mean": 0.13958,
+    "sd": 0.04192,
+    "ci95": [
+     0.12146,
+     0.15771
+    ]
+   },
+   "middle.emotional_per_elder.post": {
+    "mean": 0.10167,
+    "sd": 0.03803,
+    "ci95": [
+     0.08604,
+     0.11854
+    ]
+   },
+   "middle.emotional_per_elder.post6": {
+    "mean": 0.10958,
+    "sd": 0.04453,
+    "ci95": [
+     0.09125,
+     0.12917
+    ]
+   },
+   "middle.share_with_emotional.pre": {
+    "mean": 0.17292,
+    "sd": 0.04367,
+    "ci95": [
+     0.15458,
+     0.19167
+    ]
+   },
+   "middle.share_with_emotional.iv": {
+    "mean": 0.12687,
+    "sd": 0.03498,
+    "ci95": [
+     0.11188,
+     0.14167
+    ]
+   },
+   "middle.share_with_emotional.post": {
+    "mean": 0.09479,
+    "sd": 0.03297,
+    "ci95": [
+     0.08083,
+     0.10917
+    ]
+   },
+   "middle.share_with_emotional.post6": {
+    "mean": 0.10083,
+    "sd": 0.0387,
+    "ci95": [
+     0.085,
+     0.11792
+    ]
+   },
+   "middle.ties_per_elder.pre": {
+    "mean": 2.045,
+    "sd": 0.25401,
+    "ci95": [
+     1.93833,
+     2.15583
+    ]
+   },
+   "middle.ties_per_elder.iv": {
+    "mean": 1.92125,
+    "sd": 0.24285,
+    "ci95": [
+     1.81812,
+     2.02854
+    ]
+   },
+   "middle.ties_per_elder.post": {
+    "mean": 1.69083,
+    "sd": 0.24717,
+    "ci95": [
+     1.58792,
+     1.80167
+    ]
+   },
+   "middle.ties_per_elder.post6": {
+    "mean": 1.74875,
+    "sd": 0.24694,
+    "ci95": [
+     1.64583,
+     1.85458
+    ]
+   },
+   "middle.mean_strength.pre": {
+    "mean": 0.45206,
+    "sd": 0.02257,
+    "ci95": [
+     0.44232,
+     0.46159
+    ]
+   },
+   "middle.mean_strength.iv": {
+    "mean": 0.34653,
+    "sd": 0.02412,
+    "ci95": [
+     0.33608,
+     0.35693
+    ]
+   },
+   "middle.mean_strength.post": {
+    "mean": 0.24891,
+    "sd": 0.02861,
+    "ci95": [
+     0.23706,
+     0.26121
+    ]
+   },
+   "middle.mean_strength.post6": {
+    "mean": 0.26904,
+    "sd": 0.02919,
+    "ci95": [
+     0.25677,
+     0.28178
+    ]
+   },
+   "peer.emotional_per_elder.pre": {
+    "mean": 0.18833,
+    "sd": 0.05363,
+    "ci95": [
+     0.16583,
+     0.21208
+    ]
+   },
+   "peer.emotional_per_elder.iv": {
+    "mean": 0.13958,
+    "sd": 0.04192,
+    "ci95": [
+     0.12146,
+     0.1575
+    ]
+   },
+   "peer.emotional_per_elder.post": {
+    "mean": 0.10167,
+    "sd": 0.03803,
+    "ci95": [
+     0.08604,
+     0.11833
+    ]
+   },
+   "peer.emotional_per_elder.post6": {
+    "mean": 0.10958,
+    "sd": 0.04453,
+    "ci95": [
+     0.09083,
+     0.12917
+    ]
+   },
+   "peer.share_with_emotional.pre": {
+    "mean": 0.17292,
+    "sd": 0.04367,
+    "ci95": [
+     0.15417,
+     0.19208
+    ]
+   },
+   "peer.share_with_emotional.iv": {
+    "mean": 0.12687,
+    "sd": 0.03498,
+    "ci95": [
+     0.11208,
+     0.14208
+    ]
+   },
+   "peer.share_with_emotional.post": {
+    "mean": 0.09479,
+    "sd": 0.03297,
+    "ci95": [
+     0.08083,
+     0.10896
+    ]
+   },
+   "peer.share_with_emotional.post6": {
+    "mean": 0.10083,
+    "sd": 0.0387,
+    "ci95": [
+     0.085,
+     0.11792
+    ]
+   },
+   "peer.ties_per_elder.pre": {
+    "mean": 2.045,
+    "sd": 0.25401,
+    "ci95": [
+     1.93708,
+     2.15417
+    ]
+   },
+   "peer.ties_per_elder.iv": {
+    "mean": 1.92125,
+    "sd": 0.24285,
+    "ci95": [
+     1.82021,
+     2.02646
+    ]
+   },
+   "peer.ties_per_elder.post": {
+    "mean": 1.69083,
+    "sd": 0.24717,
+    "ci95": [
+     1.58688,
+     1.79854
+    ]
+   },
+   "peer.ties_per_elder.post6": {
+    "mean": 1.74875,
+    "sd": 0.24694,
+    "ci95": [
+     1.64583,
+     1.85542
+    ]
+   },
+   "peer.mean_strength.pre": {
+    "mean": 0.45206,
+    "sd": 0.02257,
+    "ci95": [
+     0.44238,
+     0.46162
+    ]
+   },
+   "peer.mean_strength.iv": {
+    "mean": 0.34653,
+    "sd": 0.02412,
+    "ci95": [
+     0.33631,
+     0.35702
+    ]
+   },
+   "peer.mean_strength.post": {
+    "mean": 0.24891,
+    "sd": 0.02861,
+    "ci95": [
+     0.23708,
+     0.26163
+    ]
+   },
+   "peer.mean_strength.post6": {
+    "mean": 0.26904,
+    "sd": 0.02919,
+    "ci95": [
+     0.25684,
+     0.28167
+    ]
+   },
+   "timebank.emotional_per_elder.pre": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "timebank.emotional_per_elder.iv": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "timebank.emotional_per_elder.post": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "timebank.emotional_per_elder.post6": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "timebank.share_with_emotional.pre": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "timebank.share_with_emotional.iv": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "timebank.share_with_emotional.post": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "timebank.share_with_emotional.post6": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "timebank.ties_per_elder.pre": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "timebank.ties_per_elder.iv": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "timebank.ties_per_elder.post": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "timebank.ties_per_elder.post6": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "timebank.mean_strength.pre": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "timebank.mean_strength.iv": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "timebank.mean_strength.post": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "timebank.mean_strength.post6": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "volunteer.emotional_per_elder.pre": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "volunteer.emotional_per_elder.iv": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "volunteer.emotional_per_elder.post": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "volunteer.emotional_per_elder.post6": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "volunteer.share_with_emotional.pre": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "volunteer.share_with_emotional.iv": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "volunteer.share_with_emotional.post": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "volunteer.share_with_emotional.post6": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "volunteer.ties_per_elder.pre": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "volunteer.ties_per_elder.iv": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "volunteer.ties_per_elder.post": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "volunteer.ties_per_elder.post6": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "volunteer.mean_strength.pre": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "volunteer.mean_strength.iv": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "volunteer.mean_strength.post": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "volunteer.mean_strength.post6": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "social_worker.emotional_per_elder.pre": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "social_worker.emotional_per_elder.iv": {
+    "mean": 0.81229,
+    "sd": 0.03779,
+    "ci95": [
+     0.79583,
+     0.82792
+    ]
+   },
+   "social_worker.emotional_per_elder.post": {
+    "mean": 0.18229,
+    "sd": 0.0301,
+    "ci95": [
+     0.16896,
+     0.19458
+    ]
+   },
+   "social_worker.emotional_per_elder.post6": {
+    "mean": 0.20167,
+    "sd": 0.03924,
+    "ci95": [
+     0.18458,
+     0.21875
+    ]
+   },
+   "social_worker.share_with_emotional.pre": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "social_worker.share_with_emotional.iv": {
+    "mean": 0.68604,
+    "sd": 0.0249,
+    "ci95": [
+     0.67542,
+     0.69688
+    ]
+   },
+   "social_worker.share_with_emotional.post": {
+    "mean": 0.17083,
+    "sd": 0.02797,
+    "ci95": [
+     0.15854,
+     0.1825
+    ]
+   },
+   "social_worker.share_with_emotional.post6": {
+    "mean": 0.18875,
+    "sd": 0.0369,
+    "ci95": [
+     0.17292,
+     0.20417
+    ]
+   },
+   "social_worker.ties_per_elder.pre": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "social_worker.ties_per_elder.iv": {
+    "mean": 1.62208,
+    "sd": 0.0481,
+    "ci95": [
+     1.60146,
+     1.6425
+    ]
+   },
+   "social_worker.ties_per_elder.post": {
+    "mean": 1.8675,
+    "sd": 0.04064,
+    "ci95": [
+     1.85,
+     1.885
+    ]
+   },
+   "social_worker.ties_per_elder.post6": {
+    "mean": 1.8675,
+    "sd": 0.04064,
+    "ci95": [
+     1.85,
+     1.885
+    ]
+   },
+   "social_worker.mean_strength.pre": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "social_worker.mean_strength.iv": {
+    "mean": 0.53672,
+    "sd": 0.00997,
+    "ci95": [
+     0.53265,
+     0.54105
+    ]
+   },
+   "social_worker.mean_strength.post": {
+    "mean": 0.49901,
+    "sd": 0.01595,
+    "ci95": [
+     0.49232,
+     0.50586
+    ]
+   },
+   "social_worker.mean_strength.post6": {
+    "mean": 0.54678,
+    "sd": 0.01504,
+    "ci95": [
+     0.54053,
+     0.55329
+    ]
+   }
+  },
+  "timebank_pp0": {
+   "family.emotional_per_elder.pre": {
+    "mean": 3.335,
+    "sd": 0.40755,
+    "ci95": [
+     3.16125,
+     3.50583
+    ]
+   },
+   "family.emotional_per_elder.iv": {
+    "mean": 3.64146,
+    "sd": 0.45305,
+    "ci95": [
+     3.44583,
+     3.83688
+    ]
+   },
+   "family.emotional_per_elder.post": {
+    "mean": 3.63167,
+    "sd": 0.49712,
+    "ci95": [
+     3.41875,
+     3.84042
+    ]
+   },
+   "family.emotional_per_elder.post6": {
+    "mean": 3.65792,
+    "sd": 0.51065,
+    "ci95": [
+     3.445,
+     3.87708
+    ]
+   },
+   "family.share_with_emotional.pre": {
+    "mean": 0.80375,
+    "sd": 0.0764,
+    "ci95": [
+     0.77083,
+     0.83625
+    ]
+   },
+   "family.share_with_emotional.iv": {
+    "mean": 0.81979,
+    "sd": 0.07001,
+    "ci95": [
+     0.79,
+     0.84937
+    ]
+   },
+   "family.share_with_emotional.post": {
+    "mean": 0.82167,
+    "sd": 0.07367,
+    "ci95": [
+     0.79021,
+     0.85313
+    ]
+   },
+   "family.share_with_emotional.post6": {
+    "mean": 0.82708,
+    "sd": 0.07374,
+    "ci95": [
+     0.79458,
+     0.85792
+    ]
+   },
+   "family.ties_per_elder.pre": {
+    "mean": 3.045,
+    "sd": 0.3383,
+    "ci95": [
+     2.9025,
+     3.195
+    ]
+   },
+   "family.ties_per_elder.iv": {
+    "mean": 3.045,
+    "sd": 0.3383,
+    "ci95": [
+     2.9,
+     3.19
+    ]
+   },
+   "family.ties_per_elder.post": {
+    "mean": 3.045,
+    "sd": 0.3383,
+    "ci95": [
+     2.9,
+     3.1925
+    ]
+   },
+   "family.ties_per_elder.post6": {
+    "mean": 3.045,
+    "sd": 0.3383,
+    "ci95": [
+     2.9025,
+     3.1925
+    ]
+   },
+   "family.mean_strength.pre": {
+    "mean": 0.91603,
+    "sd": 0.0126,
+    "ci95": [
+     0.91044,
+     0.92099
+    ]
+   },
+   "family.mean_strength.iv": {
+    "mean": 0.95434,
+    "sd": 0.02305,
+    "ci95": [
+     0.94396,
+     0.96329
+    ]
+   },
+   "family.mean_strength.post": {
+    "mean": 0.94336,
+    "sd": 0.03007,
+    "ci95": [
+     0.92978,
+     0.95517
+    ]
+   },
+   "family.mean_strength.post6": {
+    "mean": 0.94635,
+    "sd": 0.02874,
+    "ci95": [
+     0.933,
+     0.95769
+    ]
+   },
+   "middle.emotional_per_elder.pre": {
+    "mean": 0.18833,
+    "sd": 0.05363,
+    "ci95": [
+     0.16625,
+     0.21125
+    ]
+   },
+   "middle.emotional_per_elder.iv": {
+    "mean": 0.4,
+    "sd": 0.19446,
+    "ci95": [
+     0.31812,
+     0.48458
+    ]
+   },
+   "middle.emotional_per_elder.post": {
+    "mean": 0.16208,
+    "sd": 0.05202,
+    "ci95": [
+     0.13958,
+     0.18354
+    ]
+   },
+   "middle.emotional_per_elder.post6": {
+    "mean": 0.17458,
+    "sd": 0.0632,
+    "ci95": [
+     0.1475,
+     0.20208
+    ]
+   },
+   "middle.share_with_emotional.pre": {
+    "mean": 0.17292,
+    "sd": 0.04367,
+    "ci95": [
+     0.15417,
+     0.19208
+    ]
+   },
+   "middle.share_with_emotional.iv": {
+    "mean": 0.31938,
+    "sd": 0.14182,
+    "ci95": [
+     0.25938,
+     0.38125
+    ]
+   },
+   "middle.share_with_emotional.post": {
+    "mean": 0.14833,
+    "sd": 0.04605,
+    "ci95": [
+     0.12875,
+     0.1675
+    ]
+   },
+   "middle.share_with_emotional.post6": {
+    "mean": 0.15917,
+    "sd": 0.05534,
+    "ci95": [
+     0.13542,
+     0.18333
+    ]
+   },
+   "middle.ties_per_elder.pre": {
+    "mean": 2.045,
+    "sd": 0.25401,
+    "ci95": [
+     1.93792,
+     2.15292
+    ]
+   },
+   "middle.ties_per_elder.iv": {
+    "mean": 2.38833,
+    "sd": 0.43134,
+    "ci95": [
+     2.205,
+     2.57187
+    ]
+   },
+   "middle.ties_per_elder.post": {
+    "mean": 2.15021,
+    "sd": 0.43149,
+    "ci95": [
+     1.96188,
+     2.33417
+    ]
+   },
+   "middle.ties_per_elder.post6": {
+    "mean": 2.22583,
+    "sd": 0.44163,
+    "ci95": [
+     2.035,
+     2.41167
+    ]
+   },
+   "middle.mean_strength.pre": {
+    "mean": 0.45206,
+    "sd": 0.02257,
+    "ci95": [
+     0.44241,
+     0.46163
+    ]
+   },
+   "middle.mean_strength.iv": {
+    "mean": 0.40225,
+    "sd": 0.04278,
+    "ci95": [
+     0.38335,
+     0.42047
+    ]
+   },
+   "middle.mean_strength.post": {
+    "mean": 0.34018,
+    "sd": 0.06559,
+    "ci95": [
+     0.31225,
+     0.368
+    ]
+   },
+   "middle.mean_strength.post6": {
+    "mean": 0.36616,
+    "sd": 0.06945,
+    "ci95": [
+     0.33598,
+     0.39524
+    ]
+   },
+   "peer.emotional_per_elder.pre": {
+    "mean": 0.18833,
+    "sd": 0.05363,
+    "ci95": [
+     0.16667,
+     0.21167
+    ]
+   },
+   "peer.emotional_per_elder.iv": {
+    "mean": 0.14313,
+    "sd": 0.03623,
+    "ci95": [
+     0.12729,
+     0.15833
+    ]
+   },
+   "peer.emotional_per_elder.post": {
+    "mean": 0.10125,
+    "sd": 0.03011,
+    "ci95": [
+     0.08875,
+     0.11396
+    ]
+   },
+   "peer.emotional_per_elder.post6": {
+    "mean": 0.10958,
+    "sd": 0.04208,
+    "ci95": [
+     0.09208,
+     0.12833
+    ]
+   },
+   "peer.share_with_emotional.pre": {
+    "mean": 0.17292,
+    "sd": 0.04367,
+    "ci95": [
+     0.15417,
+     0.19208
+    ]
+   },
+   "peer.share_with_emotional.iv": {
+    "mean": 0.13229,
+    "sd": 0.033,
+    "ci95": [
+     0.11813,
+     0.14625
+    ]
+   },
+   "peer.share_with_emotional.post": {
+    "mean": 0.09708,
+    "sd": 0.02791,
+    "ci95": [
+     0.08521,
+     0.10896
+    ]
+   },
+   "peer.share_with_emotional.post6": {
+    "mean": 0.10458,
+    "sd": 0.03866,
+    "ci95": [
+     0.08833,
+     0.12167
+    ]
+   },
+   "peer.ties_per_elder.pre": {
+    "mean": 2.045,
+    "sd": 0.25401,
+    "ci95": [
+     1.93917,
+     2.15625
+    ]
+   },
+   "peer.ties_per_elder.iv": {
+    "mean": 1.91917,
+    "sd": 0.24881,
+    "ci95": [
+     1.81292,
+     2.02854
+    ]
+   },
+   "peer.ties_per_elder.post": {
+    "mean": 1.67021,
+    "sd": 0.26476,
+    "ci95": [
+     1.55604,
+     1.78208
+    ]
+   },
+   "peer.ties_per_elder.post6": {
+    "mean": 1.74583,
+    "sd": 0.2679,
+    "ci95": [
+     1.63167,
+     1.85958
+    ]
+   },
+   "peer.mean_strength.pre": {
+    "mean": 0.45206,
+    "sd": 0.02257,
+    "ci95": [
+     0.44241,
+     0.46187
+    ]
+   },
+   "peer.mean_strength.iv": {
+    "mean": 0.34438,
+    "sd": 0.02353,
+    "ci95": [
+     0.3342,
+     0.35456
+    ]
+   },
+   "peer.mean_strength.post": {
+    "mean": 0.24416,
+    "sd": 0.0229,
+    "ci95": [
+     0.2347,
+     0.25408
+    ]
+   },
+   "peer.mean_strength.post6": {
+    "mean": 0.26366,
+    "sd": 0.02417,
+    "ci95": [
+     0.25347,
+     0.27425
+    ]
+   },
+   "timebank.emotional_per_elder.pre": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "timebank.emotional_per_elder.iv": {
+    "mean": 0.25688,
+    "sd": 0.19171,
+    "ci95": [
+     0.17625,
+     0.33917
+    ]
+   },
+   "timebank.emotional_per_elder.post": {
+    "mean": 0.06083,
+    "sd": 0.04828,
+    "ci95": [
+     0.04063,
+     0.08208
+    ]
+   },
+   "timebank.emotional_per_elder.post6": {
+    "mean": 0.065,
+    "sd": 0.05565,
+    "ci95": [
+     0.04208,
+     0.08958
+    ]
+   },
+   "timebank.share_with_emotional.pre": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "timebank.share_with_emotional.iv": {
+    "mean": 0.21229,
+    "sd": 0.15828,
+    "ci95": [
+     0.14479,
+     0.28021
+    ]
+   },
+   "timebank.share_with_emotional.post": {
+    "mean": 0.05771,
+    "sd": 0.04648,
+    "ci95": [
+     0.03813,
+     0.07812
+    ]
+   },
+   "timebank.share_with_emotional.post6": {
+    "mean": 0.06167,
+    "sd": 0.05231,
+    "ci95": [
+     0.04083,
+     0.085
+    ]
+   },
+   "timebank.ties_per_elder.pre": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "timebank.ties_per_elder.iv": {
+    "mean": 0.46917,
+    "sd": 0.34137,
+    "ci95": [
+     0.3225,
+     0.61417
+    ]
+   },
+   "timebank.ties_per_elder.post": {
+    "mean": 0.48,
+    "sd": 0.35184,
+    "ci95": [
+     0.33,
+     0.63
+    ]
+   },
+   "timebank.ties_per_elder.post6": {
+    "mean": 0.48,
+    "sd": 0.35184,
+    "ci95": [
+     0.33,
+     0.63
+    ]
+   },
+   "timebank.mean_strength.pre": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "timebank.mean_strength.iv": {
+    "mean": 0.52721,
+    "sd": 0.27217,
+    "ci95": [
+     0.39586,
+     0.63158
+    ]
+   },
+   "timebank.mean_strength.post": {
+    "mean": 0.57362,
+    "sd": 0.29871,
+    "ci95": [
+     0.43639,
+     0.68885
+    ]
+   },
+   "timebank.mean_strength.post6": {
+    "mean": 0.62687,
+    "sd": 0.32459,
+    "ci95": [
+     0.47437,
+     0.75259
+    ]
+   },
+   "volunteer.emotional_per_elder.pre": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "volunteer.emotional_per_elder.iv": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "volunteer.emotional_per_elder.post": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "volunteer.emotional_per_elder.post6": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "volunteer.share_with_emotional.pre": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "volunteer.share_with_emotional.iv": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "volunteer.share_with_emotional.post": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "volunteer.share_with_emotional.post6": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "volunteer.ties_per_elder.pre": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "volunteer.ties_per_elder.iv": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "volunteer.ties_per_elder.post": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "volunteer.ties_per_elder.post6": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "volunteer.mean_strength.pre": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "volunteer.mean_strength.iv": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "volunteer.mean_strength.post": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "volunteer.mean_strength.post6": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "social_worker.emotional_per_elder.pre": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "social_worker.emotional_per_elder.iv": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "social_worker.emotional_per_elder.post": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "social_worker.emotional_per_elder.post6": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "social_worker.share_with_emotional.pre": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "social_worker.share_with_emotional.iv": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "social_worker.share_with_emotional.post": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "social_worker.share_with_emotional.post6": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "social_worker.ties_per_elder.pre": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "social_worker.ties_per_elder.iv": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "social_worker.ties_per_elder.post": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "social_worker.ties_per_elder.post6": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "social_worker.mean_strength.pre": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "social_worker.mean_strength.iv": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "social_worker.mean_strength.post": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "social_worker.mean_strength.post6": {
+    "mean": 0.0,
+    "sd": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   }
+  }
+ },
+ "contrasts": {
+  "inner_activation_post": {
+   "mean": 0.00979,
+   "sd": 0.14089,
+   "ci95": [
+    -0.05083,
+    0.06896
+   ]
+  },
+  "inner_activation_post6": {
+   "mean": 0.025,
+   "sd": 0.18365,
+   "ci95": [
+    -0.05167,
+    0.10333
+   ]
+  },
+  "inner_link_share_post": {
+   "mean": 0.00354,
+   "sd": 0.1252,
+   "ci95": [
+    -0.04938,
+    0.05687
+   ]
+  },
+  "inner_family_strength_post": {
+   "mean": 0.0022,
+   "sd": 0.00594,
+   "ci95": [
+    -0.00033,
+    0.00477
+   ]
+  },
+  "inner_crowding_check_iv": {
+   "mean": 0.17562,
+   "sd": 0.10569,
+   "ci95": [
+    0.12937,
+    0.22021
+   ]
+  },
+  "middle_pair_post": {
+   "mean": 0.18208,
+   "sd": 0.13142,
+   "ci95": [
+    0.1275,
+    0.23771
+   ]
+  },
+  "middle_pair_vs_pp0_post": {
+   "mean": 0.12125,
+   "sd": 0.08625,
+   "ci95": [
+    0.08458,
+    0.15833
+   ]
+  },
+  "middle_peer_post": {
+   "mean": -0.00292,
+   "sd": 0.0258,
+   "ci95": [
+    -0.01375,
+    0.00833
+   ]
+  },
+  "outer_volunteer_ties_post": {
+   "mean": 1.5425,
+   "sd": 0.35142,
+   "ci95": [
+    1.39,
+    1.69
+   ]
+  },
+  "outer_volunteer_emotional_post": {
+   "mean": 0.06708,
+   "sd": 0.01848,
+   "ci95": [
+    0.05938,
+    0.075
+   ]
+  }
+ }
+}
