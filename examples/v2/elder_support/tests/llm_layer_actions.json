@@ -1,0 +1,1547 @@
+{
+ "preregistered": {
+  "windows": {
+   "pre": [
+    1,
+    6
+   ],
+   "iv": [
+    7,
+    18
+   ],
+   "post": [
+    19,
+    24
+   ]
+  },
+  "layers": [
+   "family",
+   "peer",
+   "timebank",
+   "volunteer",
+   "social_worker",
+   "activity",
+   "unknown"
+  ],
+  "batch": "tmp/batch (old router, Sol)"
+ },
+ "by_condition": {
+  "none": {
+   "runs": [
+    "none_s1",
+    "none_s2",
+    "none_s3"
+   ],
+   "per_elder_month": {
+    "pre": {
+     "family": {
+      "contacts": 0.13889,
+      "deep": 0.07408
+     },
+     "peer": {
+      "contacts": 1.28704,
+      "deep": 0.46296
+     },
+     "timebank": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "volunteer": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "social_worker": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "activity": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "unknown": {
+      "contacts": 0.0463,
+      "deep": 0.02778
+     }
+    },
+    "iv": {
+     "family": {
+      "contacts": 0.06019,
+      "deep": 0.01852
+     },
+     "peer": {
+      "contacts": 1.13889,
+      "deep": 0.46296
+     },
+     "timebank": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "volunteer": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "social_worker": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "activity": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "unknown": {
+      "contacts": 0.09259,
+      "deep": 0.00463
+     }
+    },
+    "post": {
+     "family": {
+      "contacts": 0.02778,
+      "deep": 0.01852
+     },
+     "peer": {
+      "contacts": 1.23148,
+      "deep": 0.40741
+     },
+     "timebank": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "volunteer": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "social_worker": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "activity": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "unknown": {
+      "contacts": 0.09259,
+      "deep": 0.0
+     }
+    }
+   },
+   "casework_link_per_focal_month": {
+    "pre": 0.0,
+    "iv": 0.0,
+    "post": 0.0
+   }
+  },
+  "casework": {
+   "runs": [
+    "casework_s1",
+    "casework_s2",
+    "casework_s3"
+   ],
+   "per_elder_month": {
+    "pre": {
+     "family": {
+      "contacts": 0.16667,
+      "deep": 0.05556
+     },
+     "peer": {
+      "contacts": 1.06481,
+      "deep": 0.28704
+     },
+     "timebank": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "volunteer": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "social_worker": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "activity": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "unknown": {
+      "contacts": 0.03704,
+      "deep": 0.0
+     }
+    },
+    "iv": {
+     "family": {
+      "contacts": 0.06019,
+      "deep": 0.02315
+     },
+     "peer": {
+      "contacts": 0.91667,
+      "deep": 0.375
+     },
+     "timebank": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "volunteer": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "social_worker": {
+      "contacts": 0.09259,
+      "deep": 0.00463
+     },
+     "activity": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "unknown": {
+      "contacts": 0.09259,
+      "deep": 0.0
+     }
+    },
+    "post": {
+     "family": {
+      "contacts": 0.0463,
+      "deep": 0.01852
+     },
+     "peer": {
+      "contacts": 0.9537,
+      "deep": 0.36111
+     },
+     "timebank": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "volunteer": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "social_worker": {
+      "contacts": 0.10185,
+      "deep": 0.0
+     },
+     "activity": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "unknown": {
+      "contacts": 0.13889,
+      "deep": 0.0
+     }
+    }
+   },
+   "casework_link_per_focal_month": {
+    "pre": 0.0,
+    "iv": 0.41204,
+    "post": 0.0
+   }
+  },
+  "timebank": {
+   "runs": [
+    "timebank_s1",
+    "timebank_s2",
+    "timebank_s3"
+   ],
+   "per_elder_month": {
+    "pre": {
+     "family": {
+      "contacts": 0.08333,
+      "deep": 0.03704
+     },
+     "peer": {
+      "contacts": 1.23148,
+      "deep": 0.49074
+     },
+     "timebank": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "volunteer": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "social_worker": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "activity": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "unknown": {
+      "contacts": 0.00926,
+      "deep": 0.0
+     }
+    },
+    "iv": {
+     "family": {
+      "contacts": 0.0463,
+      "deep": 0.00926
+     },
+     "peer": {
+      "contacts": 1.14815,
+      "deep": 0.51389
+     },
+     "timebank": {
+      "contacts": 0.00926,
+      "deep": 0.0
+     },
+     "volunteer": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "social_worker": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "activity": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "unknown": {
+      "contacts": 0.01852,
+      "deep": 0.0
+     }
+    },
+    "post": {
+     "family": {
+      "contacts": 0.01852,
+      "deep": 0.0
+     },
+     "peer": {
+      "contacts": 1.02778,
+      "deep": 0.49074
+     },
+     "timebank": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "volunteer": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "social_worker": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "activity": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "unknown": {
+      "contacts": 0.01852,
+      "deep": 0.0
+     }
+    }
+   },
+   "casework_link_per_focal_month": {
+    "pre": 0.0,
+    "iv": 0.0,
+    "post": 0.0
+   }
+  },
+  "platform": {
+   "runs": [
+    "platform_s1",
+    "platform_s3"
+   ],
+   "per_elder_month": {
+    "pre": {
+     "family": {
+      "contacts": 0.02778,
+      "deep": 0.0
+     },
+     "peer": {
+      "contacts": 1.06944,
+      "deep": 0.58333
+     },
+     "timebank": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "volunteer": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "social_worker": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "activity": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "unknown": {
+      "contacts": 0.01389,
+      "deep": 0.0
+     }
+    },
+    "iv": {
+     "family": {
+      "contacts": 0.03472,
+      "deep": 0.01389
+     },
+     "peer": {
+      "contacts": 0.98611,
+      "deep": 0.51389
+     },
+     "timebank": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "volunteer": {
+      "contacts": 0.09028,
+      "deep": 0.0
+     },
+     "social_worker": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "activity": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "unknown": {
+      "contacts": 0.02083,
+      "deep": 0.0
+     }
+    },
+    "post": {
+     "family": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "peer": {
+      "contacts": 1.04167,
+      "deep": 0.44444
+     },
+     "timebank": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "volunteer": {
+      "contacts": 0.11111,
+      "deep": 0.0
+     },
+     "social_worker": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "activity": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "unknown": {
+      "contacts": 0.02778,
+      "deep": 0.0
+     }
+    }
+   },
+   "casework_link_per_focal_month": {
+    "pre": 0.0,
+    "iv": 0.0,
+    "post": 0.0
+   }
+  }
+ },
+ "per_run": {
+  "casework_s1": {
+   "n_focal": 6,
+   "per_elder_month": {
+    "pre": {
+     "family": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "peer": {
+      "contacts": 1.22222,
+      "deep": 0.38889
+     },
+     "timebank": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "volunteer": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "social_worker": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "activity": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "unknown": {
+      "contacts": 0.05556,
+      "deep": 0.0
+     }
+    },
+    "iv": {
+     "family": {
+      "contacts": 0.01389,
+      "deep": 0.0
+     },
+     "peer": {
+      "contacts": 0.77778,
+      "deep": 0.36111
+     },
+     "timebank": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "volunteer": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "social_worker": {
+      "contacts": 0.11111,
+      "deep": 0.01389
+     },
+     "activity": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "unknown": {
+      "contacts": 0.125,
+      "deep": 0.0
+     }
+    },
+    "post": {
+     "family": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "peer": {
+      "contacts": 0.69444,
+      "deep": 0.33333
+     },
+     "timebank": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "volunteer": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "social_worker": {
+      "contacts": 0.13889,
+      "deep": 0.0
+     },
+     "activity": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "unknown": {
+      "contacts": 0.11111,
+      "deep": 0.0
+     }
+    }
+   },
+   "casework_link_per_focal_month": {
+    "pre": 0.0,
+    "iv": 0.31944,
+    "post": 0.0
+   }
+  },
+  "casework_s2": {
+   "n_focal": 6,
+   "per_elder_month": {
+    "pre": {
+     "family": {
+      "contacts": 0.38889,
+      "deep": 0.13889
+     },
+     "peer": {
+      "contacts": 0.94444,
+      "deep": 0.19444
+     },
+     "timebank": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "volunteer": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "social_worker": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "activity": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "unknown": {
+      "contacts": 0.0,
+      "deep": 0.0
+     }
+    },
+    "iv": {
+     "family": {
+      "contacts": 0.125,
+      "deep": 0.04167
+     },
+     "peer": {
+      "contacts": 0.95833,
+      "deep": 0.29167
+     },
+     "timebank": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "volunteer": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "social_worker": {
+      "contacts": 0.125,
+      "deep": 0.0
+     },
+     "activity": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "unknown": {
+      "contacts": 0.06944,
+      "deep": 0.0
+     }
+    },
+    "post": {
+     "family": {
+      "contacts": 0.13889,
+      "deep": 0.05556
+     },
+     "peer": {
+      "contacts": 0.88889,
+      "deep": 0.33333
+     },
+     "timebank": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "volunteer": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "social_worker": {
+      "contacts": 0.11111,
+      "deep": 0.0
+     },
+     "activity": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "unknown": {
+      "contacts": 0.25,
+      "deep": 0.0
+     }
+    }
+   },
+   "casework_link_per_focal_month": {
+    "pre": 0.0,
+    "iv": 0.51389,
+    "post": 0.0
+   }
+  },
+  "casework_s3": {
+   "n_focal": 6,
+   "per_elder_month": {
+    "pre": {
+     "family": {
+      "contacts": 0.11111,
+      "deep": 0.02778
+     },
+     "peer": {
+      "contacts": 1.02778,
+      "deep": 0.27778
+     },
+     "timebank": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "volunteer": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "social_worker": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "activity": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "unknown": {
+      "contacts": 0.05556,
+      "deep": 0.0
+     }
+    },
+    "iv": {
+     "family": {
+      "contacts": 0.04167,
+      "deep": 0.02778
+     },
+     "peer": {
+      "contacts": 1.01389,
+      "deep": 0.47222
+     },
+     "timebank": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "volunteer": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "social_worker": {
+      "contacts": 0.04167,
+      "deep": 0.0
+     },
+     "activity": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "unknown": {
+      "contacts": 0.08333,
+      "deep": 0.0
+     }
+    },
+    "post": {
+     "family": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "peer": {
+      "contacts": 1.27778,
+      "deep": 0.41667
+     },
+     "timebank": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "volunteer": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "social_worker": {
+      "contacts": 0.05556,
+      "deep": 0.0
+     },
+     "activity": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "unknown": {
+      "contacts": 0.05556,
+      "deep": 0.0
+     }
+    }
+   },
+   "casework_link_per_focal_month": {
+    "pre": 0.0,
+    "iv": 0.40278,
+    "post": 0.0
+   }
+  },
+  "none_s1": {
+   "n_focal": 6,
+   "per_elder_month": {
+    "pre": {
+     "family": {
+      "contacts": 0.16667,
+      "deep": 0.11111
+     },
+     "peer": {
+      "contacts": 1.41667,
+      "deep": 0.75
+     },
+     "timebank": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "volunteer": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "social_worker": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "activity": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "unknown": {
+      "contacts": 0.0,
+      "deep": 0.0
+     }
+    },
+    "iv": {
+     "family": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "peer": {
+      "contacts": 1.51389,
+      "deep": 0.73611
+     },
+     "timebank": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "volunteer": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "social_worker": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "activity": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "unknown": {
+      "contacts": 0.0,
+      "deep": 0.0
+     }
+    },
+    "post": {
+     "family": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "peer": {
+      "contacts": 1.36111,
+      "deep": 0.63889
+     },
+     "timebank": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "volunteer": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "social_worker": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "activity": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "unknown": {
+      "contacts": 0.0,
+      "deep": 0.0
+     }
+    }
+   },
+   "casework_link_per_focal_month": {
+    "pre": 0.0,
+    "iv": 0.0,
+    "post": 0.0
+   }
+  },
+  "none_s2": {
+   "n_focal": 6,
+   "per_elder_month": {
+    "pre": {
+     "family": {
+      "contacts": 0.16667,
+      "deep": 0.05556
+     },
+     "peer": {
+      "contacts": 1.33333,
+      "deep": 0.36111
+     },
+     "timebank": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "volunteer": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "social_worker": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "activity": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "unknown": {
+      "contacts": 0.13889,
+      "deep": 0.08333
+     }
+    },
+    "iv": {
+     "family": {
+      "contacts": 0.13889,
+      "deep": 0.04167
+     },
+     "peer": {
+      "contacts": 0.94444,
+      "deep": 0.33333
+     },
+     "timebank": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "volunteer": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "social_worker": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "activity": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "unknown": {
+      "contacts": 0.27778,
+      "deep": 0.01389
+     }
+    },
+    "post": {
+     "family": {
+      "contacts": 0.08333,
+      "deep": 0.05556
+     },
+     "peer": {
+      "contacts": 1.16667,
+      "deep": 0.22222
+     },
+     "timebank": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "volunteer": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "social_worker": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "activity": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "unknown": {
+      "contacts": 0.27778,
+      "deep": 0.0
+     }
+    }
+   },
+   "casework_link_per_focal_month": {
+    "pre": 0.0,
+    "iv": 0.0,
+    "post": 0.0
+   }
+  },
+  "none_s3": {
+   "n_focal": 6,
+   "per_elder_month": {
+    "pre": {
+     "family": {
+      "contacts": 0.08333,
+      "deep": 0.05556
+     },
+     "peer": {
+      "contacts": 1.11111,
+      "deep": 0.27778
+     },
+     "timebank": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "volunteer": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "social_worker": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "activity": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "unknown": {
+      "contacts": 0.0,
+      "deep": 0.0
+     }
+    },
+    "iv": {
+     "family": {
+      "contacts": 0.04167,
+      "deep": 0.01389
+     },
+     "peer": {
+      "contacts": 0.95833,
+      "deep": 0.31944
+     },
+     "timebank": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "volunteer": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "social_worker": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "activity": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "unknown": {
+      "contacts": 0.0,
+      "deep": 0.0
+     }
+    },
+    "post": {
+     "family": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "peer": {
+      "contacts": 1.16667,
+      "deep": 0.36111
+     },
+     "timebank": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "volunteer": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "social_worker": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "activity": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "unknown": {
+      "contacts": 0.0,
+      "deep": 0.0
+     }
+    }
+   },
+   "casework_link_per_focal_month": {
+    "pre": 0.0,
+    "iv": 0.0,
+    "post": 0.0
+   }
+  },
+  "platform_s1": {
+   "n_focal": 6,
+   "per_elder_month": {
+    "pre": {
+     "family": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "peer": {
+      "contacts": 1.11111,
+      "deep": 0.63889
+     },
+     "timebank": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "volunteer": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "social_worker": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "activity": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "unknown": {
+      "contacts": 0.0,
+      "deep": 0.0
+     }
+    },
+    "iv": {
+     "family": {
+      "contacts": 0.02778,
+      "deep": 0.0
+     },
+     "peer": {
+      "contacts": 1.01389,
+      "deep": 0.61111
+     },
+     "timebank": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "volunteer": {
+      "contacts": 0.05556,
+      "deep": 0.0
+     },
+     "social_worker": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "activity": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "unknown": {
+      "contacts": 0.02778,
+      "deep": 0.0
+     }
+    },
+    "post": {
+     "family": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "peer": {
+      "contacts": 1.16667,
+      "deep": 0.41667
+     },
+     "timebank": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "volunteer": {
+      "contacts": 0.08333,
+      "deep": 0.0
+     },
+     "social_worker": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "activity": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "unknown": {
+      "contacts": 0.05556,
+      "deep": 0.0
+     }
+    }
+   },
+   "casework_link_per_focal_month": {
+    "pre": 0.0,
+    "iv": 0.0,
+    "post": 0.0
+   }
+  },
+  "platform_s3": {
+   "n_focal": 6,
+   "per_elder_month": {
+    "pre": {
+     "family": {
+      "contacts": 0.05556,
+      "deep": 0.0
+     },
+     "peer": {
+      "contacts": 1.02778,
+      "deep": 0.52778
+     },
+     "timebank": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "volunteer": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "social_worker": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "activity": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "unknown": {
+      "contacts": 0.02778,
+      "deep": 0.0
+     }
+    },
+    "iv": {
+     "family": {
+      "contacts": 0.04167,
+      "deep": 0.02778
+     },
+     "peer": {
+      "contacts": 0.95833,
+      "deep": 0.41667
+     },
+     "timebank": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "volunteer": {
+      "contacts": 0.125,
+      "deep": 0.0
+     },
+     "social_worker": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "activity": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "unknown": {
+      "contacts": 0.01389,
+      "deep": 0.0
+     }
+    },
+    "post": {
+     "family": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "peer": {
+      "contacts": 0.91667,
+      "deep": 0.47222
+     },
+     "timebank": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "volunteer": {
+      "contacts": 0.13889,
+      "deep": 0.0
+     },
+     "social_worker": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "activity": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "unknown": {
+      "contacts": 0.0,
+      "deep": 0.0
+     }
+    }
+   },
+   "casework_link_per_focal_month": {
+    "pre": 0.0,
+    "iv": 0.0,
+    "post": 0.0
+   }
+  },
+  "timebank_s1": {
+   "n_focal": 6,
+   "per_elder_month": {
+    "pre": {
+     "family": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "peer": {
+      "contacts": 1.38889,
+      "deep": 0.61111
+     },
+     "timebank": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "volunteer": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "social_worker": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "activity": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "unknown": {
+      "contacts": 0.0,
+      "deep": 0.0
+     }
+    },
+    "iv": {
+     "family": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "peer": {
+      "contacts": 1.11111,
+      "deep": 0.54167
+     },
+     "timebank": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "volunteer": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "social_worker": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "activity": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "unknown": {
+      "contacts": 0.0,
+      "deep": 0.0
+     }
+    },
+    "post": {
+     "family": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "peer": {
+      "contacts": 1.02778,
+      "deep": 0.47222
+     },
+     "timebank": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "volunteer": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "social_worker": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "activity": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "unknown": {
+      "contacts": 0.0,
+      "deep": 0.0
+     }
+    }
+   },
+   "casework_link_per_focal_month": {
+    "pre": 0.0,
+    "iv": 0.0,
+    "post": 0.0
+   }
+  },
+  "timebank_s2": {
+   "n_focal": 6,
+   "per_elder_month": {
+    "pre": {
+     "family": {
+      "contacts": 0.16667,
+      "deep": 0.05556
+     },
+     "peer": {
+      "contacts": 1.33333,
+      "deep": 0.36111
+     },
+     "timebank": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "volunteer": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "social_worker": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "activity": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "unknown": {
+      "contacts": 0.02778,
+      "deep": 0.0
+     }
+    },
+    "iv": {
+     "family": {
+      "contacts": 0.08333,
+      "deep": 0.02778
+     },
+     "peer": {
+      "contacts": 1.43056,
+      "deep": 0.52778
+     },
+     "timebank": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "volunteer": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "social_worker": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "activity": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "unknown": {
+      "contacts": 0.01389,
+      "deep": 0.0
+     }
+    },
+    "post": {
+     "family": {
+      "contacts": 0.05556,
+      "deep": 0.0
+     },
+     "peer": {
+      "contacts": 1.16667,
+      "deep": 0.5
+     },
+     "timebank": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "volunteer": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "social_worker": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "activity": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "unknown": {
+      "contacts": 0.05556,
+      "deep": 0.0
+     }
+    }
+   },
+   "casework_link_per_focal_month": {
+    "pre": 0.0,
+    "iv": 0.0,
+    "post": 0.0
+   }
+  },
+  "timebank_s3": {
+   "n_focal": 6,
+   "per_elder_month": {
+    "pre": {
+     "family": {
+      "contacts": 0.08333,
+      "deep": 0.05556
+     },
+     "peer": {
+      "contacts": 0.97222,
+      "deep": 0.5
+     },
+     "timebank": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "volunteer": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "social_worker": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "activity": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "unknown": {
+      "contacts": 0.0,
+      "deep": 0.0
+     }
+    },
+    "iv": {
+     "family": {
+      "contacts": 0.05556,
+      "deep": 0.0
+     },
+     "peer": {
+      "contacts": 0.90278,
+      "deep": 0.47222
+     },
+     "timebank": {
+      "contacts": 0.02778,
+      "deep": 0.0
+     },
+     "volunteer": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "social_worker": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "activity": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "unknown": {
+      "contacts": 0.04167,
+      "deep": 0.0
+     }
+    },
+    "post": {
+     "family": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "peer": {
+      "contacts": 0.88889,
+      "deep": 0.5
+     },
+     "timebank": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "volunteer": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "social_worker": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "activity": {
+      "contacts": 0.0,
+      "deep": 0.0
+     },
+     "unknown": {
+      "contacts": 0.0,
+      "deep": 0.0
+     }
+    }
+   },
+   "casework_link_per_focal_month": {
+    "pre": 0.0,
+    "iv": 0.0,
+    "post": 0.0
+   }
+  }
+ }
+}
